@@ -4,23 +4,35 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PsyLens｜多平台游戏社区反馈洞察工作流</title>
+  <meta name="description" content="以《英雄联盟》海克斯大乱斗模式为例，整合 NGA、贴吧、B站公开社群反馈，形成主题、心理机制、证据链与行动建议。" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="hero">
-    <div class="wrap">
-      <div class="badge">项目主页</div>
-      <h1>PsyLens｜多平台游戏社区反馈洞察工作流</h1>
-      <p class="lead">以《英雄联盟》海克斯大乱斗模式为例，整合 NGA、贴吧、B站公开社群反馈，完成候选筛选、正文抓取、预清洗、AI 精修、主题归类、机制编码、证据校验与建议输出。</p>
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="wrap hero-content">
+      <div class="hero-main">
+        <div class="badge">公开案例 · 游戏用户研究 · AI辅助工作流</div>
+        <h1>PsyLens｜多平台游戏社区反馈洞察工作流</h1>
+        <p class="lead">
+          以《英雄联盟》海克斯大乱斗模式为例，整合 NGA、贴吧、B站公开社群反馈，
+          将分散、嘈杂、情绪密度很高的玩家表达，整理为主题结构、心理机制、证据链与行动建议。
+        </p>
+        <p class="hero-note">
+          当前版本形成三平台整洁版样本 360 条。跨平台结果显示，玩家争议最稳定的落点并不只是规则层面的公平焦虑，
+          更集中地指向一种持续出现的体验断裂：模式越来越难懂，策略越来越难稳，操作越来越难换来清晰回声。
+        </p>
+        <div class="hero-links">
+          <a href="files/PsyLens_enterprise_project_brief_v3.docx" class="btn primary">下载项目说明</a>
+          <a href="#files" class="btn">查看核查文件</a>
+        </div>
+      </div>
       <div class="hero-meta">
         <div class="meta-card"><strong>360</strong><span>三平台整洁样本</span></div>
         <div class="meta-card"><strong>697</strong><span>证据单元</span></div>
-        <div class="meta-card"><strong>19</strong><span>验证洞察</span></div>
-        <div class="meta-card"><strong>59</strong><span>主题帖/视频线程</span></div>
-      </div>
-      <div class="hero-links">
-        <a href="files/PsyLens_enterprise_project_brief_v3.docx" class="btn primary">下载项目说明</a>
-        <a href="#files" class="btn">查看核查文件</a>
+        <div class="meta-card"><strong>24</strong><span>验证洞察</span></div>
+        <div class="meta-card"><strong>59</strong><span>主题帖 / 视频线程</span></div>
       </div>
     </div>
   </header>
@@ -39,20 +51,37 @@
     <section id="overview" class="section">
       <h2>项目概况</h2>
       <div class="grid two">
-        <div class="card">
+        <article class="card">
           <h3>项目主题</h3>
-          <p>项目围绕《英雄联盟》海克斯大乱斗模式的公开社群反馈展开，关注玩家高频争议究竟稳定指向哪类体验问题与心理机制。这里不把公开讨论简单处理为“情绪数据”，而是将其进一步压缩为主题、机制、证据链和建议矩阵。</p>
-        </div>
-        <div class="card">
-          <h3>最终结论</h3>
-          <p>三平台整洁版结果显示，高频争议更稳定地指向<strong>胜任受挫</strong>。玩家更常表达的是玩法理解成本高、海克斯或英雄适配不清、努力与结果不匹配、操作感被削弱。公平威胁确实存在，但更多集中在匹配与奖励节点，是重要但次级的补充机制。</p>
-        </div>
+          <p>
+            海克斯大乱斗的讨论从来不缺热度，真正稀缺的是解释力。玩家会谈英雄、海克斯、匹配、奖励、队友和节奏，
+            这些话题表面热闹，落到研究层面却并不自动成立。PsyLens 关心的，正是如何把这些声音从“看上去都在抱怨”
+            整理成可追踪、可比较、可复核的研究材料。
+          </p>
+        </article>
+        <article class="card emphasis">
+          <h3>当前结论</h3>
+          <p>
+            三平台整洁版结果显示，高频争议更稳定地指向<strong>胜任受挫</strong>。玩家更常表达的是玩法理解成本高、海克斯与英雄适配不清、
+            努力与结果脱节、操作感被削弱。公平威胁确实存在，但更多集中在匹配与奖励节点，是重要但次级的补充机制。
+          </p>
+        </article>
       </div>
     </section>
 
     <section id="questions" class="section">
       <h2>研究问题</h2>
-      <div class="card">
+      <div class="card prose-card">
+        <p>
+          海克斯大乱斗的公开讨论很少缺少情绪，却经常缺少层次。真正困难的，不是找到不满，而是判断这些不满到底围着什么打转。
+          表面上看，玩家说的是英雄强弱、海克斯离谱、队友离谱、匹配不合理；再往里走一步，问题开始分岔：
+          有些表达源于规则节点，有些来自理解成本，有些则是一局接一局之后不断累积的失控感。
+        </p>
+        <p>
+          这也是 PsyLens 的出发点。项目不把公开评论当作一次简单的情绪统计，而是把它们视为一条研究线索：
+          在平台语境各异的玩家语言中，哪些主题反复出现；这些主题更稳定地通向哪类心理机制；如果需要把结果交给产品、社区或研究岗位继续使用，
+          这些证据应该被组织成什么样子。
+        </p>
         <ol class="q-list">
           <li>近期海克斯大乱斗公开讨论中，最集中的争议主题是什么？</li>
           <li>这些争议更稳定地与哪类心理机制共现？重点比较胜任受挫、公平威胁及其他补充机制。</li>
@@ -64,126 +93,178 @@
 
     <section id="workflow" class="section">
       <h2>执行流程</h2>
-      <div class="card">
+      <div class="card figure-card">
         <img src="assets/workflow_overview.png" alt="PsyLens 工作流总览" class="figure" />
         <p class="caption">候选采集 → 正文抓取 → 预清洗 → AI 精修 → 三平台合并 → 验证洞察与行动建议。</p>
       </div>
-      <div class="grid three">
-        <div class="card tight">
+      <div class="grid three top-gap">
+        <article class="card tight">
           <h3>候选采集</h3>
           <p>围绕玩法理解、英雄体验、队友互动、规则归因四个主题桶，在三平台收集候选讨论线程。</p>
-        </div>
-        <div class="card tight">
+        </article>
+        <article class="card tight">
           <h3>文本整理</h3>
           <p>抓取正文、热门评论和最新评论，保留与主题相关的文本，去掉空值、纯表情、无关噪音。</p>
-        </div>
-        <div class="card tight">
+        </article>
+        <article class="card tight">
           <h3>结构化输出</h3>
           <p>先做表层主题，再做机制标签，再把证据压缩为验证洞察和建议矩阵，避免一步式自动总结失真。</p>
-        </div>
+        </article>
       </div>
     </section>
 
     <section id="data" class="section">
       <h2>数据结构</h2>
-      <div class="grid two">
-        <div class="card">
+      <div class="grid two align-start">
+        <article class="card figure-card">
           <img src="assets/data_overview.png" alt="数据覆盖概况" class="figure" />
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <h3>样本概况</h3>
           <ul class="metric-list">
             <li><strong>平台：</strong>NGA、贴吧、B站各 120 条，共 360 条</li>
             <li><strong>时间窗：</strong>w1 为近期窗口 260 条，w2 为历史对照窗口 100 条</li>
             <li><strong>文本层级：</strong>recent_reply 318 条，op_context 42 条</li>
-            <li><strong>证据单元：</strong>697 个，支持后续机制解释与洞察验证</li>
+            <li><strong>证据单元：</strong>697 个，支撑后续机制解释与洞察验证</li>
           </ul>
-          <p>样本在平台之间做了平衡控制，保证三平台各自都能贡献表达方式和语境差异；时间窗同时保留近期窗口与历史窗口，避免结论被单一时点情绪波动完全主导。</p>
-        </div>
+          <p>
+            平台之间的平衡控制，让不同社区的表达习惯在同一页面上彼此校正。NGA 更集中、更锋利；贴吧更容易带出互动氛围和历史窗口；
+            B站则让视频语境下的英雄体验与评论节奏进入视野。时间窗同时保留近期与历史对照，则让当前判断接受一个更慢一点、更宽一点的检视。
+          </p>
+        </article>
       </div>
 
-      <div class="grid two">
-        <div class="card">
+      <div class="grid two top-gap">
+        <article class="card figure-card">
+          <h3>三平台主题结构对比</h3>
           <img src="assets/platform_theme_stacked.png" alt="三平台主题结构对比" class="figure" />
-        </div>
-        <div class="card">
+          <p>
+            NGA 更集中地放大玩法/机制争议，贴吧补充互动摩擦，B站则把英雄体验和视频语境下的表达带进来。
+            平台说法并不一样，主题结构却能在并置中互相照亮。
+          </p>
+        </article>
+        <article class="card figure-card">
+          <h3>三平台机制证据结构对比</h3>
           <img src="assets/platform_mechanism_stacked.png" alt="三平台机制证据结构对比" class="figure" />
-        </div>
+          <p>
+            胜任受挫在三平台内部都占更高比重。这种“表达方式不同、机制落点却收敛”的现象，
+            构成了当前项目最有价值的稳健性基础之一。
+          </p>
+        </article>
       </div>
 
-      <div class="grid two">
-        <div class="card">
+      <div class="grid two top-gap">
+        <article class="card figure-card">
+          <h3>时间窗 × 机制分布</h3>
           <img src="assets/window_mechanism_stacked.png" alt="不同时间窗的机制分布" class="figure" />
-        </div>
-        <div class="card">
+          <p>
+            w1 与 w2 之间存在比例差异，但主机制没有发生倒转。近期窗口带来更强的表达密度，
+            历史窗口则帮助判断哪些结论不只是短时间情绪高点上的回声。
+          </p>
+        </article>
+        <article class="card figure-card">
+          <h3>机制标签与证据置信度</h3>
           <img src="assets/mechanism_confidence_heatmap.png" alt="机制标签与证据置信度分布" class="figure" />
-        </div>
+          <p>
+            页面保留置信度维度，是为了把“标签很多”和“结论可信”分开。
+            证据越集中、置信度越高，越能说明这不是一次偶然命中的分类，而是一种反复出现的表达模式。
+          </p>
+        </article>
       </div>
     </section>
 
     <section id="findings" class="section">
       <h2>关键发现</h2>
       <div class="grid three">
-        <div class="card">
+        <article class="card">
           <h3>发现一：玩法/机制是主轴</h3>
-          <p>主题桶中，“玩法/机制”占 236 条，明显高于“队友互动”和“英雄体验”。这说明公开讨论的主要矛盾不是零散分布，而是集中在模式理解、海克斯与阵容适配、策略有效性和操作反馈上。</p>
-        </div>
-        <div class="card">
+          <p>
+            主题桶中，“玩法/机制”占 236 条，明显高于“队友互动”和“英雄体验”。公开讨论的主要矛盾，集中在模式理解、
+            海克斯与阵容适配、策略有效性和操作反馈上。
+          </p>
+        </article>
+        <article class="card">
           <h3>发现二：胜任受挫最稳定</h3>
-          <p>在去除不确定标签后，胜任受挫对应 268 个证据单元，显著高于公平威胁的 72 个。玩家更常表达“看不懂怎么赢”“操作感被削弱”“努力与回报脱节”等体验，这些都更接近能力发挥受阻，而不是单纯抽象的公平抱怨。</p>
-        </div>
-        <div class="card">
+          <p>
+            在去除不确定标签后，胜任受挫对应 268 个证据单元，显著高于公平威胁的 72 个。
+            玩家更常表达“看不懂怎么赢”“操作感被削弱”“努力与回报脱节”等体验，这些都更接近能力发挥受阻。
+          </p>
+        </article>
+        <article class="card">
           <h3>发现三：公平威胁集中在局部节点</h3>
-          <p>公平威胁主要出现在匹配、奖励和一部分规则归因相关讨论中。也就是说，公平问题并不缺席，但它更像是特定机制节点上的次级问题，而不是贯穿所有争议的唯一核心。</p>
-        </div>
+          <p>
+            公平威胁主要出现在匹配、奖励和一部分规则归因相关讨论中。公平问题并不缺席，
+            但它更像特定机制节点上的次级问题，并没有贯穿全部争议。
+          </p>
+        </article>
       </div>
 
-      <div class="grid two">
-        <div class="card">
+      <div class="grid two top-gap">
+        <article class="card figure-card">
+          <h3>主题桶分布</h3>
           <img src="assets/theme_distribution.png" alt="主题桶分布" class="figure" />
-        </div>
-        <div class="card">
+          <p>
+            玩法/机制讨论占据最高比重，队友互动与英雄体验构成第二层结构，规则归因比例明显更低。
+            玩家最常争论的，不是抽象的规则定义，而是更贴近实际对局的体验问题。
+          </p>
+        </article>
+        <article class="card figure-card">
+          <h3>机制标签分布</h3>
           <img src="assets/mechanism_distribution.png" alt="机制标签分布" class="figure" />
-        </div>
+          <p>
+            胜任受挫显著高于公平威胁。主问题集中在掌控感、理解感和有效反馈的断裂上，
+            公平问题则更集中在部分节点，并没有覆盖全部争议。
+          </p>
+        </article>
       </div>
     </section>
 
     <section id="interpretation" class="section">
       <h2>机制解释</h2>
-      <div class="card">
-        <h3>1. 主机制：胜任受挫</h3>
-        <p>从心理机制角度看，当前争议更接近“玩家很难形成清晰、稳定、可复现的有效策略”，进而感受到理解成本高、操作回报弱、个人努力难以转化为预期结果。这一结构对应的是能力感受阻，而不是单纯的制度不公。因此，回应重点应放在模式可理解性、策略可解释性和体验反馈的清晰度上。</p>
+      <div class="card prose-card">
+        <h3>主机制：胜任受挫</h3>
+        <p>
+          从心理机制角度看，当前争议更接近“玩家很难形成清晰、稳定、可复现的有效策略”，
+          进而感受到理解成本高、操作回报弱、个人努力难以转化为预期结果。这一结构对应的是能力感受阻，
+          因而页面中的建议更强调模式可理解性、策略可解释性和体验反馈的清晰度。
+        </p>
 
-        <h3>2. 次级机制：公平威胁</h3>
-        <p>匹配机制、奖励分配和某些规则节点会触发明显的公平威胁表达。这些表达说明玩家会把一部分负面体验归因为系统偏向、资源倾斜或回报不均，但这类感受更多出现在具体节点，而不是覆盖全部讨论。</p>
+        <h3>次级机制：公平威胁</h3>
+        <p>
+          匹配机制、奖励分配和某些规则节点会触发明显的公平威胁表达。这些表达说明，玩家会把一部分负面体验归因为系统偏向、
+          资源倾斜或回报不均，但这类感受更多出现在具体节点，而没有覆盖全部讨论。
+        </p>
 
-        <h3>3. 放大层：队友互动与信任缺口</h3>
-        <p>贴吧和 B站补充了更多队友互动语境。它们提示：社交摩擦、输赢归因方式和讨论氛围会放大原有挫败体验，并进一步带出沟通与信任缺口。这类信号适合在社区运营和内容沟通层处理，而不宜替代玩法/机制主轴。</p>
+        <h3>放大层：队友互动与信任缺口</h3>
+        <p>
+          贴吧和 B站补充了更多队友互动语境。它们提示，社交摩擦、输赢归因方式和讨论氛围会放大原有挫败体验，
+          并进一步带出沟通与信任缺口。这类信号更适合在社区运营和内容沟通层处理，而不宜替代玩法/机制主轴。
+        </p>
       </div>
     </section>
 
     <section class="section">
       <h2>跨平台解释</h2>
       <div class="grid three">
-        <div class="card tight">
+        <article class="card tight">
           <h3>NGA</h3>
           <p>玩法/机制争议最集中，主机制信号最清晰，适合作为项目主平台。</p>
-        </div>
-        <div class="card tight">
+        </article>
+        <article class="card tight">
           <h3>贴吧</h3>
           <p>补充了更多队友互动和历史窗口表达，更能观察社交摩擦如何叠加玩法挫败。</p>
-        </div>
-        <div class="card tight">
+        </article>
+        <article class="card tight">
           <h3>B站</h3>
           <p>补充了视频语境下的英雄体验与队友互动，但最终主机制仍然偏向胜任受挫。</p>
-        </div>
+        </article>
       </div>
     </section>
 
     <section id="files" class="section">
       <h2>核查文件</h2>
-      <div class="grid two">
-        <div class="card">
+      <div class="grid three align-start">
+        <article class="card">
           <h3>项目说明与结果文件</h3>
           <ul class="file-list">
             <li><a href="files/PsyLens_enterprise_project_brief_v3.docx">项目说明文件（DOCX）</a></li>
@@ -192,8 +273,8 @@
             <li><a href="files/04_validated_insights.jsonl">验证洞察（JSONL）</a></li>
             <li><a href="files/05_action_matrix.json">行动建议矩阵（JSON）</a></li>
           </ul>
-        </div>
-        <div class="card">
+        </article>
+        <article class="card">
           <h3>关键脚本</h3>
           <ul class="file-list">
             <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/scripts_public/run_pipeline.py">run_pipeline.py</a></li>
@@ -203,7 +284,15 @@
             <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/scripts_public/crawl_tieba_selected.py">crawl_tieba_selected.py</a></li>
             <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/scripts_public/crawl_bili_selected_auto.py">crawl_bili_selected_auto.py</a></li>
           </ul>
-        </div>
+        </article>
+        <article class="card">
+          <h3>项目边界</h3>
+          <p>
+            本项目基于公开社区反馈，属于探索性专题案例。页面关心的，不是替模式给出终局判词，
+            而是把纷杂玩家表达中的稳定结构、机制落点与证据组织方式尽可能清楚地摆出来。
+            这条工作流未来可以继续迁移到更多游戏模式、社区议题与用户研究场景中。
+          </p>
+        </article>
       </div>
     </section>
   </main>
