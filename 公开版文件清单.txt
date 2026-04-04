@@ -1,0 +1,31 @@
+﻿PsyLens GitHub 公开版文件清单
+
+目录：C:\Users\22358\Desktop\项目\PsyLens_GitHub_Public
+
+一、docs/files
+- PsyLens_enterprise_project_brief_v3.docx
+- input_feedback_phase2_multiplatform_clean.csv
+- final_evidence_table.csv
+- 04_validated_insights.jsonl
+- 05_action_matrix.json
+
+二、docs/assets
+- workflow_overview.png
+- data_overview.png
+- theme_distribution.png
+- mechanism_distribution.png
+
+三、scripts_public
+- run_pipeline.py
+- merge_phase2_inputs.py
+- preclean_feedback_registry.py
+- ai_curate_feedback.py
+- crawl_tieba_selected.py
+- crawl_bili_selected_auto.py
+
+四、不公开内容
+- .env
+- 各类 cookie 文件
+- 调试 HTML
+- 原始高风险抓取数据
+- 临时测试脚本
