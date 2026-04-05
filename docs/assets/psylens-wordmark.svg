@@ -1,0 +1,32 @@
+<svg width="720" height="220" viewBox="0 0 720 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">PsyLens</title>
+  <desc id="desc">Stylized PsyLens wordmark with lens-inspired highlights.</desc>
+  <defs>
+    <linearGradient id="ink" x1="82" y1="42" x2="618" y2="196" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6FDFF"/>
+      <stop offset="0.42" stop-color="#9EE8FF"/>
+      <stop offset="1" stop-color="#95B7FF"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="285" y1="40" x2="432" y2="176" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D4F5FF" stop-opacity="0.88"/>
+      <stop offset="1" stop-color="#89D9FF" stop-opacity="0.2"/>
+    </linearGradient>
+    <filter id="softGlow" x="0" y="0" width="720" height="220" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0.85  0 0 1 0 0.98  0 0 0 0.18 0" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#softGlow)">
+    <ellipse cx="354" cy="110" rx="214" ry="88" fill="url(#ring)" opacity="0.18"/>
+    <ellipse cx="356" cy="112" rx="154" ry="58" fill="none" stroke="url(#ring)" stroke-width="2.5" opacity="0.95"/>
+    <path d="M236 45C274 19 338 10 412 18C474 25 531 48 566 87" stroke="url(#ring)" stroke-width="2.8" stroke-linecap="round" opacity="0.88"/>
+    <path d="M188 171C226 194 280 206 344 202C425 197 503 163 557 112" stroke="url(#ring)" stroke-width="2.8" stroke-linecap="round" opacity="0.78"/>
+    <text x="72" y="150" fill="url(#ink)" font-family="Georgia, 'Times New Roman', serif" font-size="116" font-style="italic" font-weight="700" letter-spacing="5">PsyLens</text>
+    <path d="M543 61L583 74" stroke="#D7F6FF" stroke-width="2.8" stroke-linecap="round" opacity="0.9"/>
+    <path d="M555 48L601 60" stroke="#D7F6FF" stroke-width="1.6" stroke-linecap="round" opacity="0.56"/>
+  </g>
+</svg>
