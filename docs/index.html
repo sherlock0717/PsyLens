@@ -4,413 +4,521 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PsyLens｜多平台游戏社区反馈洞察工作流</title>
+  <meta name="description" content="PsyLens：把分散、嘈杂、情绪密度很高的玩家表达，收束成主题、心理机制、证据链与行动建议。" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="gate" class="gate">
-    <div class="gate-bg"></div>
-    <div class="gate-overlay"></div>
-    <div class="gate-content">
-      <p class="gate-badge">PsyLens</p>
+  <section class="gate" id="top">
+    <div class="gate-backdrop"></div>
+    <div class="gate-inner">
+      <p class="gate-kicker">PsyLens</p>
       <h1>把玩家七嘴八舌的抱怨，整理成看得见的结构。</h1>
-      <p class="gate-subtitle">多平台游戏社区反馈洞察工作流</p>
-      <p class="gate-note">案例：〈英雄联盟〉海克斯大乱斗模式</p>
-      <button id="enterBtn" class="enter-btn">ENTER</button>
+      <p class="gate-sub">多平台游戏社区反馈洞察工作流｜当前公开案例：〈英雄联盟〉海克斯大乱斗模式</p>
+      <a class="gate-enter" href="#home">ENTER</a>
     </div>
-  </div>
+  </section>
 
-  <header class="hero" id="top">
-    <div class="hero-media" aria-hidden="true"></div>
-    <div class="hero-overlay"></div>
-    <div class="wrap hero-inner">
-      <div class="brand-block">
-        <p class="eyebrow">PsyLens</p>
-        <h1>多平台游戏社区反馈洞察工作流</h1>
-        <p class="case-tag">案例：〈英雄联盟〉海克斯大乱斗模式</p>
+  <header class="site-header" id="home">
+    <div class="shell">
+      <div class="header-bar">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <span class="brand-text">PsyLens</span>
+        </div>
+        <nav class="top-nav">
+          <a href="#overview">概况</a>
+          <a href="#workflow">流程</a>
+          <a href="#results">结果</a>
+          <a href="#insights">洞察</a>
+          <a href="#actions">建议</a>
+          <a href="#value">价值</a>
+          <a href="#files">文件</a>
+        </nav>
       </div>
 
-      <div class="hero-copy">
-        <p class="lead">
-          这页不做情绪垃圾回收。它做的事更具体一点：把 NGA、贴吧和 B站里散落的公开评论，
-          收成主题、机制、证据链和行动建议，看看玩家究竟在为什么烦，烦到哪一层，又该从哪一层开始修。
-        </p>
-        <p class="hero-summary">
-          当前版本形成三平台整洁版样本 360 条，进一步拆分出 697 个证据单元，并收束为 19 条高频验证洞察。
-          页面里的主结论很稳定：海克斯大乱斗最刺人的问题，落点首先在胜任感受阻——模式越来越难懂，
-          打法越来越难抓手，努力和反馈之间那根线，时不时就断一下。
-        </p>
-      </div>
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">项目本体</p>
+          <h2>PsyLens 是一套把公开社区反馈收束成研究材料的工作流。</h2>
+          <p class="hero-lead">
+            当前公开页展示的是它在游戏社区场景下的一次完整落地：从 NGA、贴吧、B站的公开反馈出发，
+            把原本分散、嘈杂、情绪密度很高的玩家表达，压成可核查的主题结构、机制解释、证据单元与行动建议。
+          </p>
+          <div class="hero-case">
+            <span class="case-label">当前公开案例</span>
+            <span class="case-name">〈英雄联盟〉海克斯大乱斗模式</span>
+          </div>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#files">查看项目包</a>
+            <a class="btn btn-secondary" href="files/PsyLens_enterprise_project_brief_v3.docx">下载项目说明</a>
+          </div>
+        </div>
 
-      <div class="hero-metrics">
-        <div class="metric-card">
-          <div class="metric-number">3</div>
-          <div class="metric-label">平台</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-number">360</div>
-          <div class="metric-label">整洁样本</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-number">697</div>
-          <div class="metric-label">证据单元</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-number">19</div>
-          <div class="metric-label">验证洞察</div>
-        </div>
-      </div>
+        <aside class="hero-panel">
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-num">3</div>
+              <div class="metric-label">平台</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-num">360</div>
+              <div class="metric-label">整洁样本</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-num">697</div>
+              <div class="metric-label">证据单元</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-num">19</div>
+              <div class="metric-label">验证洞察</div>
+            </div>
+          </div>
 
-      <div class="hero-actions">
-        <a href="#files" class="btn primary">查看项目包</a>
-        <a href="files/PsyLens_enterprise_project_brief_v4.docx" class="btn secondary">下载项目说明</a>
+          <div class="hero-summary">
+            <p class="mini-title">当前公开口径</p>
+            <p>
+              高频争议更稳定地落在<strong>胜任受挫</strong>上。公平威胁是重要但次级的补充机制；
+              队友互动、沟通风格与社区摩擦更像放大器。
+            </p>
+          </div>
+        </aside>
       </div>
     </div>
   </header>
 
-  <main class="wrap page-content">
-    <nav class="toc">
-      <a href="#overview">概况</a>
-      <a href="#lens">理论</a>
-      <a href="#workflow">流程</a>
-      <a href="#results">结果</a>
-      <a href="#insights">洞察</a>
-      <a href="#actions">建议</a>
-      <a href="#value">价值</a>
-      <a href="#files">文件</a>
-    </nav>
-
-    <section id="overview" class="section">
-      <div class="section-heading">
-        <h2>项目概况</h2>
-      </div>
-      <div class="grid two">
-        <div class="card">
-          <h3>项目在做什么</h3>
-          <p>
-            玩家会骂英雄、骂海克斯、骂匹配、骂队友。把这些句子一股脑扔进“负面情绪”里，信息会掉一地。
-            PsyLens 关心的是另一件事：这些声音落在什么主题上，最后通向哪种体验问题，又能不能顺着证据往下走，
-            走到一种足够清楚、足够能讨论的解释。
-          </p>
+  <main>
+    <section class="section" id="overview">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">项目概况</p>
+          <h3>先看清项目，再看案例。</h3>
         </div>
-        <div class="card">
-          <h3>当前结论</h3>
-          <p>
-            三平台结果把矛头反复指向同一个地方：玩家最难受的，多半不是抽象的规则正义，而是掌控感和胜任感开始松动。
-            匹配和奖励会带出公平威胁，队友互动会继续拱火，压在底下的主轴依旧是——这模式越来越难让人形成
-            “我知道自己在怎么赢”的感觉。
-          </p>
+
+        <div class="two-col">
+          <div class="panel">
+            <h4>PsyLens 在做什么</h4>
+            <p>
+              玩家会骂英雄、骂海克斯、骂匹配、骂队友。直接把这些句子扔进“负面情绪”里，信息会掉一地。
+              PsyLens 关心的是另一件事：这些声音落在哪些主题上，最后更稳定地通向哪种体验问题，
+              又能不能顺着证据往下走，走到一种足够清楚、足够能讨论、也足够能核查的解释。
+            </p>
+          </div>
+
+          <div class="panel">
+            <h4>当前公开案例结论</h4>
+            <p>
+              这次案例里，玩家最刺痛的表达并不首先落在抽象的“系统不公平”上，
+              而是更集中在模式理解成本、操作反馈、努力与结果之间的断裂感。
+              匹配和奖励会带出公平威胁，队友互动会继续拱火，但主轴仍然是
+              <strong>“我越来越难形成自己知道该怎么赢的感觉”</strong>。
+            </p>
+          </div>
+        </div>
+
+        <div class="fact-strip">
+          <div class="fact-item"><span>时间窗</span><strong>w1 = 260｜w2 = 100</strong></div>
+          <div class="fact-item"><span>reply_type</span><strong>recent_reply = 318｜op_context = 42</strong></div>
+          <div class="fact-item"><span>主题主轴</span><strong>玩法/机制 = 236</strong></div>
+          <div class="fact-item"><span>主机制</span><strong>胜任受挫 = 268</strong></div>
         </div>
       </div>
     </section>
 
-    <section id="lens" class="section">
-      <div class="section-heading">
-        <h2>研究背景与理论依据</h2>
-        <p class="section-subtitle">为什么这页把“胜任受挫”放在解释链的正中央</p>
-      </div>
-      <div class="prose card prose-card">
-        <p>
-          盯着玩家评论看久了，会发现最常跳出来的，并不是“系统偏心”这么一句话，而是另一类更黏人的表达：
-          看不懂、打着没手感、努力像打在棉花上、对局到了中后段开始脱手。这些句子拼在一起，像是一张体验温度图，
-          温度最高的地方不在规则条文，而在模式理解、操作反馈和掌控感上。
-        </p>
-        <p>
-          这和自我决定理论里关于胜任感的讨论是连得上的：人需要从行动里得到清晰反馈，需要感到自己的投入能换来可理解、可预期的结果。
-          当这种感觉不断受阻，体验就会从“输了”滑向“这局根本抓不住”。游戏研究中，心理需要受挫已经被广泛用于解释玩家体验质量，
-          其中胜任感受阻与攻击性表达、沮丧和退出倾向有稳定关联。行业侧也有相近的实践语言——Riot 在 Player Dynamics 设计里，
-          一直强调要从结构上塑造更健康的互动和更顺手的游戏体验，而不是只在出事之后补处罚。 
-        </p>
-        <p>
-          所以页面没有把公开评论压成一个笼统的“公平问题”。这里做了更细的拆分：玩法理解、英雄体验、队友互动和规则归因先分开，
-          再去看它们分别更容易牵出什么。最后浮出来的结构很清楚：胜任受挫站在主轴上，公平威胁更多出现在匹配与奖励节点，
-          互动摩擦则像扩音器，把原本就扎人的不适再往外推了一层。
-        </p>
-        <p class="mini-ref">
-          参考线索：Ryan, Rigby & Przybylski（2006）；Przybylski et al.（2014）；Ballou & Deterding（2023）；Riot Games Player Dynamics（2022）。
-        </p>
-      </div>
-    </section>
+    <section class="section alt" id="workflow">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">执行流程</p>
+          <h3>不是一句提示词总结，而是一条能复核的链路。</h3>
+        </div>
 
-    <section id="workflow" class="section">
-      <div class="section-heading">
-        <h2>执行流程</h2>
-        <p class="section-subtitle">从公开评论，到可复核的研究材料</p>
-      </div>
-      <div class="card media-card">
-        <img src="assets/workflow_overview.png" alt="PsyLens 工作流总览" class="figure" />
-        <p class="caption">候选采集 → 正文抓取 → 预清洗 → AI 精修 → 三平台合并 → 证据拆分 → 验证洞察 → 建议输出</p>
-      </div>
-      <div class="process-grid">
-        <div class="process-card">
-          <h3>候选采集</h3>
-          <p>围绕玩法/机制、队友互动、英雄体验、规则归因四个主题桶，在三平台建立候选池。</p>
-        </div>
-        <div class="process-card">
-          <h3>正文抓取</h3>
-          <p>NGA 保留论坛密度，贴吧补互动与历史窗口，B站补视频语境评论。</p>
-        </div>
-        <div class="process-card">
-          <h3>预清洗</h3>
-          <p>空白、过短和明显无关的文本先出局，输入先洗干净，后面才站得稳。</p>
-        </div>
-        <div class="process-card">
-          <h3>AI 精修</h3>
-          <p>先做主题先验，再做机制先验，保留和项目问题真正有关的文本。</p>
-        </div>
-        <div class="process-card">
-          <h3>标准化合并</h3>
-          <p>统一字段、补齐时间窗、平衡平台样本，把不同说法拉到一张桌子上。</p>
-        </div>
-        <div class="process-card">
-          <h3>结果验证</h3>
-          <p>从证据单元收束成验证洞察，再压成建议矩阵，最后由人工复核口径。</p>
+        <div class="workflow">
+          <div class="flow-card"><span>01</span><strong>候选采集</strong><p>围绕玩法/机制、队友互动、英雄体验、规则归因建立候选池。</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-card"><span>02</span><strong>正文抓取</strong><p>NGA 保留论坛密度，贴吧补互动与历史窗口，B站补视频语境评论。</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-card"><span>03</span><strong>预清洗</strong><p>空白、过短和明显无关的文本先出局，输入先洗干净。</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-card"><span>04</span><strong>AI 精修</strong><p>补主题先验、机制先验、保留理由与剔除理由。</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-card"><span>05</span><strong>标准化合并</strong><p>统一字段、补齐时间窗、平衡平台样本。</p></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-card"><span>06</span><strong>证据拆分与建议输出</strong><p>从样本到证据，再从证据到洞察与行动建议。</p></div>
         </div>
       </div>
     </section>
 
-    <section id="results" class="section">
-      <div class="section-heading">
-        <h2>数据与结果</h2>
-        <p class="section-subtitle">这些图不只是报数，也承担解释结构和稳健性的工作</p>
-      </div>
+    <section class="section" id="results">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">数据与结果</p>
+          <h3>这一页只保留和当前源文件对得上的结构。</h3>
+        </div>
 
-      <div class="chart-group single">
-        <div class="chart-card">
-          <h3>样本量与时间窗</h3>
-          <img src="assets/data_overview.png" alt="样本量与时间窗分布" class="figure" />
-          <p>三平台各 120 条整洁样本。w1 更热，w2 仍有对照价值，能帮结论离开一时热闹。</p>
-        </div>
-      </div>
+        <div class="grid-2">
+          <div class="panel chart-panel">
+            <div class="panel-head">
+              <h4>样本覆盖概况</h4>
+              <p>三平台各 120 条；w1 更热，w2 保留历史对照。</p>
+            </div>
+            <div class="split-bars">
+              <div class="bar-group">
+                <div class="bar-label-row"><span>NGA</span><span>120</span></div>
+                <div class="bar-track"><div class="bar-fill fill-a" style="width:100%"></div></div>
+                <div class="bar-label-row"><span>贴吧</span><span>120</span></div>
+                <div class="bar-track"><div class="bar-fill fill-b" style="width:100%"></div></div>
+                <div class="bar-label-row"><span>B站</span><span>120</span></div>
+                <div class="bar-track"><div class="bar-fill fill-c" style="width:100%"></div></div>
+              </div>
 
-      <div class="chart-group">
-        <div class="chart-card">
-          <h3>主题桶分布</h3>
-          <img src="assets/theme_distribution.png" alt="主题桶分布" class="figure" />
-          <p>玩法/机制牢牢站在主轴上，队友互动和英雄体验构成第二层结构，规则归因占比很低。</p>
-        </div>
-        <div class="chart-card">
-          <h3>机制标签分布</h3>
-          <img src="assets/mechanism_distribution.png" alt="机制标签分布" class="figure" />
-          <p>胜任受挫高高立着，说明问题更多出在掌控感、理解感和有效反馈的断裂上。</p>
-        </div>
-      </div>
+              <div class="bar-group">
+                <div class="bar-label-row"><span>w1</span><span>260</span></div>
+                <div class="bar-track"><div class="bar-fill fill-c" style="width:100%"></div></div>
+                <div class="bar-label-row"><span>w2</span><span>100</span></div>
+                <div class="bar-track"><div class="bar-fill fill-d" style="width:38.46%"></div></div>
+              </div>
+            </div>
+          </div>
 
-      <div class="chart-group">
-        <div class="chart-card">
-          <h3>三平台主题结构对比</h3>
-          <img src="assets/platform_theme_stacked.png" alt="三平台主题结构对比" class="figure" />
-          <p>NGA 把玩法/机制拉得最尖，贴吧把互动摩擦补上，B站把英雄体验和视频语境里的吐槽带进来。</p>
+          <div class="panel chart-panel">
+            <div class="panel-head">
+              <h4>主题桶分布</h4>
+              <p>玩法/机制牢牢站在主轴上，规则归因占比很低。</p>
+            </div>
+            <div class="bar-list">
+              <div class="bar-item">
+                <div class="bar-label-row"><span>玩法/机制</span><span>236</span></div>
+                <div class="bar-track"><div class="bar-fill fill-a" style="width:100%"></div></div>
+              </div>
+              <div class="bar-item">
+                <div class="bar-label-row"><span>队友互动</span><span>60</span></div>
+                <div class="bar-track"><div class="bar-fill fill-b" style="width:25.42%"></div></div>
+              </div>
+              <div class="bar-item">
+                <div class="bar-label-row"><span>英雄体验</span><span>58</span></div>
+                <div class="bar-track"><div class="bar-fill fill-c" style="width:24.58%"></div></div>
+              </div>
+              <div class="bar-item">
+                <div class="bar-label-row"><span>规则归因</span><span>6</span></div>
+                <div class="bar-track"><div class="bar-fill fill-d" style="width:2.54%"></div></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="chart-card">
-          <h3>三平台机制证据结构对比</h3>
-          <img src="assets/platform_mechanism_stacked.png" alt="三平台机制证据结构对比" class="figure" />
-          <p>三个平台都把主要证据推向胜任受挫。平台说话方式不同，重心却对得很齐。</p>
-        </div>
-      </div>
 
-      <div class="chart-group">
-        <div class="chart-card">
-          <h3>时间窗 × 机制分布</h3>
-          <img src="assets/window_mechanism_stacked.png" alt="时间窗与机制分布" class="figure" />
-          <p>w1 火更旺，w2 没把主轴改写掉。近期表达更密，历史窗口让结论多了一层耐看性。</p>
-        </div>
-        <div class="chart-card">
-          <h3>主题 × 机制关系</h3>
-          <img src="assets/topic_mechanism_heatmap.png" alt="主题与机制关系热力图" class="figure" />
-          <p>玩法/机制和胜任受挫的耦合最强；规则归因更容易牵出公平威胁；队友互动在社区规范/摩擦上抬得更明显。</p>
-        </div>
-      </div>
+        <div class="grid-2 lower-gap">
+          <div class="panel chart-panel">
+            <div class="panel-head">
+              <h4>机制标签分布</h4>
+              <p>去除 uncertain 后，主机制非常明确；uncertain 仍保留 336 条，方便后续复核。</p>
+            </div>
 
-      <div class="chart-group single">
-        <div class="chart-card">
-          <h3>证据收束路径</h3>
-          <img src="assets/evidence_funnel.png" alt="证据收束路径" class="figure" />
-          <p>整洁样本 360 条，拆成 697 个证据单元，再收束为 19 条高频验证洞察，最后压成 4 个建议方向。结论不是一下子蹦出来的。</p>
+            <div class="bar-list">
+              <div class="bar-item">
+                <div class="bar-label-row"><span>胜任受挫</span><span>268</span></div>
+                <div class="bar-track"><div class="bar-fill fill-a" style="width:100%"></div></div>
+              </div>
+              <div class="bar-item">
+                <div class="bar-label-row"><span>公平威胁</span><span>72</span></div>
+                <div class="bar-track"><div class="bar-fill fill-d" style="width:26.87%"></div></div>
+              </div>
+              <div class="bar-item">
+                <div class="bar-label-row"><span>信任/沟通缺口</span><span>10</span></div>
+                <div class="bar-track"><div class="bar-fill fill-c" style="width:3.73%"></div></div>
+              </div>
+              <div class="bar-item">
+                <div class="bar-label-row"><span>归属感下降</span><span>8</span></div>
+                <div class="bar-track"><div class="bar-fill fill-e" style="width:2.99%"></div></div>
+              </div>
+              <div class="bar-item">
+                <div class="bar-label-row"><span>规范/安全风险</span><span>3</span></div>
+                <div class="bar-track"><div class="bar-fill fill-f" style="width:1.12%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel chart-panel">
+            <div class="panel-head">
+              <h4>三平台主题结构对比</h4>
+              <p>这里保留的是样本层三平台对比，不把机制层写成三平台，避免越过当前结果文件。</p>
+            </div>
+
+            <div class="stack-list">
+              <div class="stack-row">
+                <div class="stack-label">NGA</div>
+                <div class="stack-track">
+                  <span class="stack a" style="width:67.5%"></span>
+                  <span class="stack b" style="width:7.5%"></span>
+                  <span class="stack c" style="width:25%"></span>
+                  <span class="stack d" style="width:0%"></span>
+                </div>
+                <div class="stack-note">81 / 9 / 30 / 0</div>
+              </div>
+              <div class="stack-row">
+                <div class="stack-label">贴吧</div>
+                <div class="stack-track">
+                  <span class="stack a" style="width:59.17%"></span>
+                  <span class="stack b" style="width:22.5%"></span>
+                  <span class="stack c" style="width:14.17%"></span>
+                  <span class="stack d" style="width:4.17%"></span>
+                </div>
+                <div class="stack-note">71 / 27 / 17 / 5</div>
+              </div>
+              <div class="stack-row">
+                <div class="stack-label">B站</div>
+                <div class="stack-track">
+                  <span class="stack a" style="width:70%"></span>
+                  <span class="stack b" style="width:20%"></span>
+                  <span class="stack c" style="width:9.17%"></span>
+                  <span class="stack d" style="width:0.83%"></span>
+                </div>
+                <div class="stack-note">84 / 24 / 11 / 1</div>
+              </div>
+            </div>
+
+            <div class="legend">
+              <span><i class="dot a"></i>玩法/机制</span>
+              <span><i class="dot b"></i>队友互动</span>
+              <span><i class="dot c"></i>英雄体验</span>
+              <span><i class="dot d"></i>规则归因</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel check-panel">
+          <div class="panel-head">
+            <h4>核查说明</h4>
+            <p>这一版把当前源文件之间真正存在的口径滑动显式压平。</p>
+          </div>
+          <div class="check-grid">
+            <div>
+              <strong>样本层</strong>
+              <p>三平台整洁版输入 360 条，平台与时间窗分布完整，可以直接写成三平台样本结构。</p>
+            </div>
+            <div>
+              <strong>证据层</strong>
+              <p>
+                当前公开版 <code>final_evidence_table.csv</code> 与 <code>04_validated_insights.jsonl</code>
+                的 parent_id 编码范围为 1–240，对应整洁版输入中的 B站与 NGA；因此本页移除了原来把机制层直接写成“三平台都……”的表述。
+              </p>
+            </div>
+            <div>
+              <strong>页面策略</strong>
+              <p>保留三平台样本层展示，机制层写整体结构与主轴，不再硬写成三平台机制证据对比。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="funnel">
+          <div class="funnel-step large"><span>360</span><small>整洁版输入</small></div>
+          <div class="funnel-arrow">→</div>
+          <div class="funnel-step mid"><span>697</span><small>证据单元</small></div>
+          <div class="funnel-arrow">→</div>
+          <div class="funnel-step small"><span>19</span><small>验证洞察</small></div>
         </div>
       </div>
     </section>
 
-    <section id="insights" class="section">
-      <div class="section-heading">
-        <h2>代表性验证洞察</h2>
-      </div>
-      <div class="grid two">
-        <div class="card insight-card">
-          <h3>玩法/机制 × 胜任受挫</h3>
-          <p class="insight-summary">玩家反复提到“看不懂、打不出、理解成本高、努力与结果不匹配”，这条线最密、最稳。</p>
-          <p class="insight-meta">置信度：高</p>
+    <section class="section alt" id="insights">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">代表性验证洞察</p>
+          <h3>先看最稳的几条，再看它们如何落到证据上。</h3>
         </div>
-        <div class="card insight-card">
-          <h3>匹配机制 × 公平威胁</h3>
-          <p class="insight-summary">对局配对、奖励反馈和局内资源倾斜更容易触发“系统给得不均”这类归因。</p>
-          <p class="insight-meta">置信度：高</p>
-        </div>
-        <div class="card insight-card">
-          <h3>社区冲突 × 信任/沟通缺口</h3>
-          <p class="insight-summary">队友互动、输赢归因和语气摩擦会把原本就存在的挫败，再往外推成关系裂口。</p>
-          <p class="insight-meta">置信度：高</p>
-        </div>
-        <div class="card insight-card">
-          <h3>玩法/机制 × 公平威胁</h3>
-          <p class="insight-summary">部分平衡讨论会继续转向“某些选择拥有不成比例优势”的系统归因。</p>
-          <p class="insight-meta">置信度：高</p>
+
+        <div class="card-grid">
+          <article class="insight-card">
+            <div class="card-tags"><span>玩法/机制</span><span>胜任受挫</span><span>高</span></div>
+            <h4>主轴不是抽象公平，而是模式越来越难让人形成抓手。</h4>
+            <p>玩家反复提到“看不懂、打不出、理解成本高、努力与结果不匹配”，这条线最密、也最稳。</p>
+          </article>
+
+          <article class="insight-card">
+            <div class="card-tags"><span>玩法/机制</span><span>公平威胁</span><span>高</span></div>
+            <h4>一部分平衡讨论会继续转化成“某些选择优势过大”的系统归因。</h4>
+            <p>公平威胁不是缺席，而是更多出现在具体机制节点和超模归因上。</p>
+          </article>
+
+          <article class="insight-card">
+            <div class="card-tags"><span>匹配机制</span><span>胜任受挫</span><span>高</span></div>
+            <h4>匹配差距会直接削弱操作感与可控感。</h4>
+            <p>玩家抱怨的不只是“输”，而是“这局我连自己该怎么打都抓不住”。</p>
+          </article>
+
+          <article class="insight-card">
+            <div class="card-tags"><span>匹配机制</span><span>公平威胁</span><span>高</span></div>
+            <h4>匹配问题很容易被解读成系统层面的不均。</h4>
+            <p>连胜/连败、阵容差距、队友质量与资源反馈，会把问题抬到“系统是不是在搞我”的层面。</p>
+          </article>
+
+          <article class="insight-card">
+            <div class="card-tags"><span>社区冲突</span><span>公平威胁</span><span>高</span></div>
+            <h4>社区摩擦会把原本的挫败外翻成对队友和系统的抱怨。</h4>
+            <p>它更像负面体验的放大器，而不是唯一中心。</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <section id="evidence" class="section">
-      <div class="section-heading">
-        <h2>代表性证据单元</h2>
-        <p class="section-subtitle">原始表达保留玩家语气，解释部分只做必要压缩</p>
-      </div>
-      <div class="evidence-list">
-        <div class="quote-card">
-          <p class="quote-text">“还要让 3000 的经济去出个……一整把都不一定能做完任务的心之钢。”</p>
-          <p class="quote-tag">玩法/机制 · 胜任受挫 · 强度高</p>
+    <section class="section" id="evidence">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">代表性证据单元</p>
+          <h3>保留玩家原话的力度，解释只做必要压缩。</h3>
         </div>
-        <div class="quote-card">
-          <p class="quote-text">“最弱智的就是为了叠什么然后选个……又出个心之钢。”</p>
-          <p class="quote-tag">玩法/机制 · 公平威胁 · 强度中</p>
-        </div>
-        <div class="quote-card">
-          <p class="quote-text">“队友根本不理解模式节奏，输掉以后全怪系统。”</p>
-          <p class="quote-tag">队友互动 · 信任/沟通缺口 · 强度高</p>
-        </div>
-        <div class="quote-card">
-          <p class="quote-text">“对面阵容和我们完全不是一个级别，打起来像送分局。”</p>
-          <p class="quote-tag">匹配机制 · 公平威胁 · 强度高</p>
+
+        <div class="evidence-grid">
+          <article class="evidence-card">
+            <blockquote>“还要让3000的经济去出个八成打完一整把都不一定能做完任务的心之钢。”</blockquote>
+            <p>玩法/机制 · 胜任受挫 · 强度高</p>
+          </article>
+
+          <article class="evidence-card">
+            <blockquote>“最弱智的就是为了叠什么然后选个钢化你心，然后你妈的为了钢化你心又出个心之钢。”</blockquote>
+            <p>玩法/机制 · 公平威胁 · 强度中</p>
+          </article>
+
+          <article class="evidence-card">
+            <blockquote>“我要是有技术，有操作我为什么不去打排位呢？”</blockquote>
+            <p>匹配机制 · 胜任受挫 · 强度高</p>
+          </article>
+
+          <article class="evidence-card">
+            <blockquote>“如果匹配机制公平就应该把这种提莫和不爱点的人绑死在一起玩一辈子。”</blockquote>
+            <p>匹配机制 · 公平威胁 · 强度高</p>
+          </article>
+
+          <article class="evidence-card">
+            <blockquote>“前排尽职尽责挨打抗伤害的时候碰到那些瞎丢瞎玩的后排时又找谁说理去呢是吧。”</blockquote>
+            <p>社区冲突 · 公平威胁 · 强度高</p>
+          </article>
+
+          <article class="evidence-card">
+            <blockquote>“如果你感觉到了游戏以外内容的恶意。”</blockquote>
+            <p>社区冲突 · 信任/沟通缺口 · 强度高</p>
+          </article>
         </div>
       </div>
     </section>
 
-    <section id="actions" class="section">
-      <div class="section-heading">
-        <h2>行动建议矩阵</h2>
-        <p class="section-subtitle">建议沿着“先把模式讲清楚，再把节点修明白”的顺序落地</p>
-      </div>
-
-      <div class="matrix-grid">
-        <div class="matrix-card">
-          <div class="matrix-level">稳妥</div>
-          <h3>降低玩法理解成本</h3>
-          <p>把核心海克斯、常见阵容适配逻辑和高频误解点讲明白。先让玩家知道这局为什么会输，再谈这局值不值得输。</p>
-          <p class="matrix-problem">对应问题：理解成本高；努力与结果不匹配</p>
+    <section class="section alt" id="actions">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">行动建议矩阵</p>
+          <h3>顺序是：先把模式讲清楚，再把节点修明白。</h3>
         </div>
 
-        <div class="matrix-card">
-          <div class="matrix-level">平衡</div>
-          <h3>改善匹配体验与反馈透明度</h3>
-          <p>把匹配差距、重开/投降体验和奖励反馈这些节点讲得更直观，减少“系统给得不均”一类放大的归因。</p>
-          <p class="matrix-problem">对应问题：匹配相关公平威胁；奖励节点负向归因</p>
-        </div>
+        <div class="matrix">
+          <div class="matrix-row">
+            <div class="matrix-level safe">稳妥</div>
+            <div class="matrix-main">
+              <h4>降低玩法理解成本</h4>
+              <p>在版本说明、模式说明和示例内容里，把核心海克斯、常见阵容适配逻辑与高频误解点讲明白。</p>
+            </div>
+            <div class="matrix-problem">理解成本高；努力与结果不匹配</div>
+          </div>
 
-        <div class="matrix-card">
-          <div class="matrix-level">平衡</div>
-          <h3>给队友互动做减震</h3>
-          <p>围绕协作预期、输赢归因和社区内容引导做修整，别让一局的挫败轻易演变成对队友和系统的连环甩锅。</p>
-          <p class="matrix-problem">对应问题：队友互动摩擦；信任与沟通缺口</p>
-        </div>
+          <div class="matrix-row">
+            <div class="matrix-level balanced">平衡</div>
+            <div class="matrix-main">
+              <h4>改善匹配体验与反馈透明度</h4>
+              <p>围绕匹配差距、重开/投降体验、奖励反馈等节点，补更可解释的说明与更可感知的反馈。</p>
+            </div>
+            <div class="matrix-problem">匹配相关公平威胁；奖励节点负向归因</div>
+          </div>
 
-        <div class="matrix-card">
-          <div class="matrix-level">进阶</div>
-          <h3>把模式运营从“修公平”升级为“修可理解性”</h3>
-          <p>模式更新和活动传播里，除了平衡性，也要主动回应设计逻辑和有效策略形成路径，让玩家知道自己该往哪条线上长手感。</p>
-          <p class="matrix-problem">对应问题：主机制是胜任受挫；单纯谈公平会失焦</p>
-        </div>
-      </div>
-    </section>
+          <div class="matrix-row">
+            <div class="matrix-level balanced">平衡</div>
+            <div class="matrix-main">
+              <h4>给队友互动做减震</h4>
+              <p>在社区内容与模式沟通里，引导更清晰的协作预期和输赢归因，减少把挫败立即转成甩锅。</p>
+            </div>
+            <div class="matrix-problem">队友互动摩擦；信任与沟通缺口</div>
+          </div>
 
-    <section id="value" class="section">
-      <div class="section-heading">
-        <h2>项目价值与后续扩展</h2>
-      </div>
-      <div class="grid three">
-        <div class="card tight">
-          <h3>游戏研究价值</h3>
-          <p>把分散的公开玩家反馈收束成可讨论的主题结构和机制解释，适合用于模式复盘、社区研究和问题梳理。</p>
+          <div class="matrix-row">
+            <div class="matrix-level bold">进阶</div>
+            <div class="matrix-main">
+              <h4>把模式运营从“修公平”升级成“修可理解性”</h4>
+              <p>在模式更新与活动传播里，不只回应平衡性，也主动回应设计逻辑和有效策略形成路径。</p>
+            </div>
+            <div class="matrix-problem">主机制是胜任受挫；单纯谈公平会失焦</div>
+          </div>
         </div>
-        <div class="card tight">
-          <h3>方法价值</h3>
-          <p>展示了一条从公开文本采集、清洗、结构化编码到验证洞察输出的完整流程，不停在情绪统计和词频展示上。</p>
-        </div>
-        <div class="card tight">
-          <h3>可迁移价值</h3>
-          <p>同样的流程可以迁移到其他游戏模式、产品社区、用户反馈乃至员工体验文本，案例只是入口，方法才是主体。</p>
-        </div>
-      </div>
-      <div class="card extension-card">
-        <h3>后续扩展</h3>
-        <ul class="extension-list">
-          <li>把案例扩到更多游戏模式，比较不同玩法结构下的主机制差异。</li>
-          <li>增加人工评估集，提高标签与洞察的可解释性。</li>
-          <li>将当前流程继续整理成可复用模板，用于后续社区、产品和体验研究案例。</li>
-        </ul>
       </div>
     </section>
 
-    <section id="files" class="section">
-      <div class="section-heading">
-        <h2>项目包与核查入口</h2>
-      </div>
-      <div class="files-grid">
-        <div class="file-card">
-          <h3>项目说明</h3>
-          <p>完整阅读项目背景、研究问题、执行路径、结果结构、洞察与建议矩阵。</p>
-          <a href="files/PsyLens_enterprise_project_brief_v4.docx">下载项目说明文件</a>
+    <section class="section" id="value">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">项目价值</p>
+          <h3>案例是入口，方法才是主体。</h3>
         </div>
-        <div class="file-card">
-          <h3>关键结果</h3>
-          <p>查看三平台整洁版输入、证据表、验证洞察与建议矩阵。</p>
+
+        <div class="value-grid">
+          <div class="panel">
+            <h4>游戏研究价值</h4>
+            <p>把分散的公开玩家反馈收束成可讨论的主题结构和机制解释，适合用于模式复盘、社区研究和问题梳理。</p>
+          </div>
+          <div class="panel">
+            <h4>方法价值</h4>
+            <p>展示了一条从公开文本采集、清洗、结构化编码到验证洞察输出的完整流程，不停在情绪统计和词频展示上。</p>
+          </div>
+          <div class="panel">
+            <h4>核查价值</h4>
+            <p>结果文件、说明文件、脚本和网页口径可以互相对照；这一版也把当前公开结果里的口径滑动显式收回了。</p>
+          </div>
+          <div class="panel">
+            <h4>可迁移价值</h4>
+            <p>同样的流程可以迁移到其他游戏模式、产品社区、用户反馈，甚至员工体验文本；海克斯大乱斗只是当前公开案例。</p>
+          </div>
+        </div>
+
+        <div class="panel extension-panel">
+          <h4>后续扩展</h4>
           <ul>
-            <li><a href="files/input_feedback_phase2_multiplatform_clean.csv">三平台整洁版输入</a></li>
-            <li><a href="files/final_evidence_table.csv">证据表</a></li>
-            <li><a href="files/04_validated_insights.jsonl">验证洞察</a></li>
-            <li><a href="files/05_action_matrix.json">行动建议矩阵</a></li>
+            <li>补齐结构化 evidence 层对贴吧输入的对齐结果，再恢复更完整的平台机制比较。</li>
+            <li>增加人工评估集，提高标签与洞察的可解释性。</li>
+            <li>把行动建议进一步压缩为业务摘要、作品集卡片和对外发布版本。</li>
           </ul>
         </div>
-        <div class="file-card">
-          <h3>关键脚本</h3>
-          <p>查看项目在抓取、清洗、合并、编码与输出上的主要实现路径。</p>
-          <ul>
-            <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/scripts_public/run_pipeline.py">run_pipeline.py</a></li>
-            <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/scripts_public/merge_phase2_inputs.py">merge_phase2_inputs.py</a></li>
-            <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/scripts_public/preclean_feedback_registry.py">preclean_feedback_registry.py</a></li>
-            <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/scripts_public/ai_curate_feedback.py">ai_curate_feedback.py</a></li>
-            <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/scripts_public/crawl_tieba_selected.py">crawl_tieba_selected.py</a></li>
-            <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/scripts_public/crawl_bili_selected_auto.py">crawl_bili_selected_auto.py</a></li>
-          </ul>
-        </div>
       </div>
     </section>
 
-    <section id="boundary" class="section">
-      <div class="section-heading">
-        <h2>页面收口</h2>
-      </div>
-      <div class="prose">
-        <p>
-          这页不是判官，也不是情绪收纳箱。它更像一张整理得够干净的工作台：玩家的声音从这里进来，
-          结构和解释从这里长出来。海克斯大乱斗是这套流程的案例，PsyLens 本身才是更长线的部分。
-        </p>
+    <section class="section alt" id="files">
+      <div class="shell">
+        <div class="section-head">
+          <p class="section-kicker">项目包与核查入口</p>
+          <h3>文档、结果文件与说明入口留在一页里，方便直接核查。</h3>
+        </div>
+
+        <div class="files-grid">
+          <a class="file-card" href="files/PsyLens_enterprise_project_brief_v3.docx">
+            <strong>项目说明文件</strong>
+            <span>企业投递版项目说明</span>
+          </a>
+          <a class="file-card" href="files/input_feedback_phase2_multiplatform_clean.csv">
+            <strong>三平台整洁版输入</strong>
+            <span>360 行 clean input</span>
+          </a>
+          <a class="file-card" href="files/final_evidence_table.csv">
+            <strong>证据表</strong>
+            <span>697 个 evidence unit</span>
+          </a>
+          <a class="file-card" href="files/04_validated_insights.jsonl">
+            <strong>验证洞察</strong>
+            <span>19 条 validated insights</span>
+          </a>
+          <a class="file-card" href="files/05_action_matrix.json">
+            <strong>行动建议矩阵</strong>
+            <span>自动结果与人工口径可对照</span>
+          </a>
+          <a class="file-card" href="../README.md">
+            <strong>README</strong>
+            <span>仓库入口说明</span>
+          </a>
+        </div>
       </div>
     </section>
   </main>
-
-  <script>
-    const gate = document.getElementById('gate');
-    const enterBtn = document.getElementById('enterBtn');
-    const hero = document.querySelector('.hero');
-
-    function enterSite() {
-      gate.classList.add('hidden');
-      document.body.classList.add('entered');
-      setTimeout(() => {
-        gate.style.display = 'none';
-      }, 900);
-      hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    enterBtn.addEventListener('click', enterSite);
-  </script>
 </body>
 </html>
