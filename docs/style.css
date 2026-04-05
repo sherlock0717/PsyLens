@@ -851,3 +851,207 @@ body.entered .gate-screen {
   .footer-brand { gap: 10px; }
   .footer-inner { justify-items: start; }
 }
+
+/* --- round: mobile gate + richer content --- */
+html, body { min-height: 100%; }
+body.gate-locked {
+  height: calc(var(--app-vh, 1vh) * 100);
+  overflow: hidden;
+}
+.gate-screen {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding:
+    max(14px, env(safe-area-inset-top))
+    12px
+    max(18px, env(safe-area-inset-bottom));
+}
+.gate-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(980px, 100%);
+  max-height: calc(var(--app-vh, 1vh) * 100 - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 28px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.gate-copy,
+.gate-metrics,
+.gate-action-row { width: 100%; }
+.gate-action-row {
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  bottom: 0;
+  margin-top: auto;
+  padding-top: 18px;
+  background: linear-gradient(180deg, rgba(7, 18, 29, 0), rgba(7, 18, 29, 0.96) 24%);
+}
+.enter-button {
+  min-height: 56px;
+  min-width: 196px;
+  padding: 16px 30px;
+  position: relative;
+  z-index: 2;
+  touch-action: manipulation;
+}
+.enter-button span { pointer-events: none; }
+.hero-copy-block,
+.stats-panel,
+.feature-card,
+.finding-card,
+.insight-card,
+.quote-card,
+.action-card,
+.material-card,
+.reference-card,
+.note-card,
+.chart-card,
+.overview-card {
+  box-shadow: var(--shadow-sm);
+}
+.feature-grid.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.findings-five {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.insight-grid.five-up {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.workflow-notes {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.note-card,
+.reference-card {
+  padding: 24px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+  border: 1px solid rgba(184, 224, 255, 0.12);
+}
+.note-card h3,
+.reference-card h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  line-height: 1.24;
+}
+.note-card p,
+.reference-card p {
+  margin: 0;
+  color: var(--text-soft);
+  max-width: 34ch;
+}
+.reference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.reference-type {
+  margin: 0 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.reference-card a {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 16px;
+  color: var(--accent-3);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.reference-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.reference-links a { margin-top: 0; }
+.section-head h2,
+.section-head-strong h2 {
+  max-width: 16ch;
+}
+.section-lead,
+.hero-lead,
+.hero-summary,
+.gate-copy,
+.feature-card p,
+.finding-card p,
+.insight-card p,
+.action-card p,
+.material-card p,
+.note-card p,
+.reference-card p {
+  max-width: 52ch;
+}
+.material-card p,
+.feature-card p,
+.finding-card p,
+.insight-card p,
+.action-card p,
+.reference-card p,
+.note-card p,
+.plain-list li,
+.extension-list li {
+  line-height: 1.76;
+}
+@media (max-width: 1180px) {
+  .feature-grid.four,
+  .findings-five,
+  .insight-grid.five-up,
+  .workflow-notes,
+  .reference-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 900px) {
+  .gate-panel {
+    padding: 30px 22px 28px;
+    max-height: calc(var(--app-vh, 1vh) * 100 - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 18px);
+  }
+  .feature-grid.four,
+  .findings-five,
+  .insight-grid.five-up,
+  .workflow-notes,
+  .reference-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .gate-screen {
+    align-items: start;
+  }
+  .gate-panel {
+    border-radius: 28px;
+    min-height: calc(var(--app-vh, 1vh) * 100 - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 14px);
+    max-height: none;
+    padding: 24px 18px 18px;
+  }
+  .gate-mark {
+    width: min(320px, 92vw);
+  }
+  .gate-copy {
+    font-size: 16px;
+    line-height: 1.68;
+  }
+  .gate-action-row {
+    padding-top: 16px;
+    padding-bottom: max(4px, env(safe-area-inset-bottom));
+  }
+  .enter-button {
+    width: min(100%, 320px);
+  }
+  .section-head h2,
+  .section-head-strong h2 {
+    max-width: 100%;
+  }
+  .note-card,
+  .reference-card {
+    padding: 22px 18px;
+  }
+}
