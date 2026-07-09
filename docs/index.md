@@ -1,4 +1,6 @@
-﻿# PsyLens
+﻿> **说明**：当前 GitHub Pages 实际展示页为 `index.html`；本文件为早期 Markdown 摘要，仅作历史记录。最新页面内容与表述请以 `index.html` 为准。
+
+# PsyLens
 
 ## 多平台游戏社区反馈洞察工作流
 
