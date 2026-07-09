@@ -1,219 +1,151 @@
 # PsyLens
 
-多平台游戏社区反馈洞察工作流项目公开仓库。
+PsyLens 是一个将多平台公开游戏社区反馈转化为可追溯证据链、心理机制解释与产品行动建议的分析工作流（analysis workflow）。当前公开案例以《英雄联盟》海克斯大乱斗模式为对象，整合 NGA、贴吧、B 站三个平台的公开反馈，展示从非结构化玩家表达到结构化洞察资产的完整过程。
 
-当前公开案例以《英雄联盟》海克斯大乱斗模式为例，展示如何把公开社区反馈整理成主题、心理机制、证据链与行动建议。
+> 说明：本项目是个人研究与作品集性质的公开案例，用于展示方法与工作流，**不是任何企业的内部项目，也不代表 Riot Games 或任何公司的内部判断**。
 
-## 仓库内容
+GitHub Pages 展示页：`https://sherlock0717.github.io/PsyLens/`
 
-- `docs/`：GitHub Pages 页面文件、公开结果文件、展示素材
-- `docs/files/`：项目说明、整洁版输入、证据表、验证洞察、行动建议矩阵
-- `docs/assets/`：页面图表与展示素材
-- `scripts_public/`：公开版关键脚本
+---
 
-## 页面入口
+## 1. Project Overview（项目概述）
 
-GitHub Pages：`https://sherlock0717.github.io/PsyLens/`
+- **PsyLens 是什么**：一套把「公开社区反馈 → 证据链 → 心理机制 → 行动建议」串起来的分析工作流，强调结论可追溯、边界可说明。
+- **当前案例**：《英雄联盟》海克斯大乱斗（Hex ARAM）模式的社区讨论。
+- **使用的数据**：NGA、贴吧、B 站三平台的**公开**社区反馈（评论、回复、热评等）。
+- **输出的结果**：三平台整洁样本、证据单元表（evidence unit）、验证洞察（validated insights）、行动建议矩阵（action matrix），以及一个可对外阅读的展示页。
+- **适合谁阅读**：用户研究（UXR）、游戏产品 / 模式策划、社区运营与发行、以及关注「AI 辅助分析工作流」的读者。
 
-## 公开仓库与完整执行包的关系
+---
 
-这个公开仓库主要用于：
+## 2. Case Scope（案例范围）
 
-1. 展示项目结构与结果
-2. 提供公开版关键结果文件
-3. 提供公开版关键脚本用于阅读、复用和二次开发参考
+| 维度 | 内容 |
+| --- | --- |
+| 案例对象 | 《英雄联盟》海克斯大乱斗模式 |
+| 数据来源 | NGA、贴吧、B 站公开反馈 |
+| 样本规模 | 360 条整洁样本，三平台各 120 条 |
+| 证据单元 | 697 个 evidence unit |
+| 验证洞察 | 19 条 validated insights |
+| 行动建议 | `docs/files/05_action_matrix.json`（AI 生成/辅助生成的行动建议矩阵） |
 
-如果你想完整重跑项目，请使用本地执行包与私有数据环境，而不是只依赖当前公开仓库。
+> 上述数字与仓库现有公开文件一致；如需逐行核验，请以 `docs/files/` 下实际文件为准。
 
-## How to use
+---
 
-### 1）先确认你在看什么
+## 3. Core Questions（核心问题）
 
-- 如果你的目标是**看项目结果**，优先看：
-  - `docs/files/PsyLens_enterprise_project_brief_v3.docx`
-  - `docs/files/input_feedback_phase2_multiplatform_clean.csv`
-  - `docs/files/final_evidence_table.csv`
-  - `docs/files/04_validated_insights.jsonl`
-  - `docs/files/05_action_matrix.json`
-- 如果你的目标是**理解脚本结构**，再看 `scripts_public/`
+（整理自 `docs/index.md` 的既有研究问题，未新增未经支持的问题）
 
-### 2）先用 `-h` 看参数
+1. 玩家围绕海克斯大乱斗，主要在争议什么？（重点观察玩法/机制、队友互动、英雄体验、规则归因）
+2. 这些高频表达更稳定地指向哪类体验机制？（重点比较胜任受挫、公平威胁及其他补充机制）
+3. 不同平台语境下，主机制是否一致？（比较 NGA、贴吧、B 站的表达风格差异与结论一致性）
+4. 这些反馈如何转化为产品、社区与研究可用的行动建议？
 
-公开版脚本都采用命令行参数方式。建议先运行帮助，再决定怎么传参。
+---
 
-```powershell
-python scripts_public/run_pipeline.py -h
-python scripts_public/merge_phase2_inputs.py -h
-python scripts_public/preclean_feedback_registry.py -h
-python scripts_public/ai_curate_feedback.py -h
-python scripts_public/crawl_tieba_selected.py -h
-python scripts_public/crawl_bili_selected_auto.py -h
+## 4. Method Framework（方法框架）
+
+```
+Public Feedback → Clean Input → Evidence Unit → Mechanism Label → Validated Insight → Action Matrix
+公开反馈        → 整洁输入    → 证据单元      → 机制标签        → 验证洞察          → 行动建议矩阵
 ```
 
-### 3）关键脚本最常用的参数是什么
+| 步骤 | 输入 | 处理 | 产出 | 对应文件 |
+| --- | --- | --- | --- | --- |
+| Public Feedback → Clean Input | 三平台公开反馈 | 预清洗、AI 辅助精修、按平台平衡合并、字段标准化 | 整洁样本 | `docs/files/input_feedback_phase2_multiplatform_clean.csv` |
+| Clean Input → Evidence Unit | 整洁样本 | 将一条反馈拆成可独立判断的证据单元 | 证据单元表 | `docs/files/final_evidence_table.csv` |
+| Evidence Unit → Mechanism Label | 证据单元 | 标注 surface_topic 与心理机制标签、置信度 | 带机制标签的证据表 | `docs/files/final_evidence_table.csv` |
+| Mechanism Label → Validated Insight | 带标签证据 | 按共现频率/强度收束成洞察，并标注是否需人工复核 | 验证洞察 | `docs/files/04_validated_insights.jsonl` |
+| Validated Insight → Action Matrix | 验证洞察 | 生成分层行动建议（AI 辅助） | 行动建议矩阵 | `docs/files/05_action_matrix.json` |
 
-#### `run_pipeline.py`
+方法细节见 [`METHODOLOGY.md`](METHODOLOGY.md)。
 
-用于把整洁版输入进一步处理成证据表、验证洞察和行动建议矩阵。
+---
 
-常见参数：
+## 5. Key Public Outputs（关键公开产物）
 
-- `--case`：case 配置文件路径
-- `--mode`：`game` 或 `ux`
-- `--input`：输入 CSV 路径
-- `--review_provider`：可选复核模型提供方
-- `--review_model`：可选复核模型名
-- `--review_sample`：可选抽样复核数量
+- [`docs/files/input_feedback_phase2_multiplatform_clean.csv`](docs/files/input_feedback_phase2_multiplatform_clean.csv)：三平台整洁样本（360 条，三平台各 120）。
+- [`docs/files/final_evidence_table.csv`](docs/files/final_evidence_table.csv)：证据单元表（697 个 evidence unit），含 surface_topic、mechanism_label、confidence 等字段。
+- [`docs/files/04_validated_insights.jsonl`](docs/files/04_validated_insights.jsonl)：19 条验证洞察，含 supporting_ids 与 needs_human_review 标记。
+- [`docs/files/05_action_matrix.json`](docs/files/05_action_matrix.json)：行动建议矩阵，含 safe / balanced / bold 三层建议（AI 生成/辅助生成，需配合人工判断）。
+- `docs/files/PsyLens_enterprise_project_brief_v3.docx`：项目说明文档（当前展示页下载入口指向此版本）。
+- `docs/files/PsyLens_enterprise_project_brief_v4.docx`：项目说明文档的另一版本。**仓库中同时保留 v3 与 v4 文件，后续需确认展示页应指向哪一版**；本仓库不擅自删除或改名任何一版。
 
-示例：
+字段级说明见 [`DATA_DICTIONARY.md`](DATA_DICTIONARY.md)。
 
-```powershell
-python scripts_public/run_pipeline.py --case config/case_tencent_nga_lol_recent.yaml --mode game --input data/raw/input_feedback_phase2_multiplatform_clean.csv
+---
+
+## 6. Repository Structure（仓库结构）
+
+```
+PsyLens/
+├── README.md                 # 项目入口（本文件）
+├── PROJECT_BRIEF.md          # Markdown 版项目说明
+├── METHODOLOGY.md            # 方法论：处理链路、标签体系、证据链、AI 边界
+├── DATA_DICTIONARY.md        # 数据字典：公开结果文件的字段说明
+├── REPRODUCIBILITY.md        # 复现边界：公开仓库能做什么、不能做什么
+├── 公开版文件清单.txt         # 公开/不公开文件清单
+├── scripts_public/           # 公开版关键脚本（用于理解流程与接口）
+└── docs/                     # GitHub Pages 根目录
+    ├── index.html            # 展示页
+    ├── index.md              # 展示页的 Markdown 版内容
+    ├── style.css             # 页面样式
+    ├── assets/               # 页面图表与展示素材（PNG / SVG）
+    └── files/                # 公开结果文件（CSV / JSONL / JSON / DOCX）
 ```
 
-#### `merge_phase2_inputs.py`
+---
 
-用于把多个平台的 AI 精修结果合并成统一字段结构，并按平台平衡样本。
+## 7. How to Read This Repository（建议阅读顺序）
 
-常见参数：
+1. 先看 GitHub Pages 展示页，建立整体印象。
+2. 再看 [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md)，理解背景、范围与结论。
+3. 再看 [`METHODOLOGY.md`](METHODOLOGY.md)，理解方法链路与判断边界。
+4. 再看 [`DATA_DICTIONARY.md`](DATA_DICTIONARY.md)，理解字段含义。
+5. 再看 `docs/files/` 下公开结果文件，核对数据与洞察。
+6. 最后看 `scripts_public/`，理解处理流程与接口实现。
 
-- `--inputs`：一个或多个输入 CSV
-- `--output`：输出 CSV
-- `--per-platform`：每个平台保留多少条，默认 120
+---
 
-示例：
+## 8. Reproducibility Boundary（复现边界）
 
-```powershell
-python scripts_public/merge_phase2_inputs.py --inputs data/raw/feedback_registry_nga_ai.csv data/raw/feedback_registry_tieba_ai.csv data/raw/feedback_registry_bili_ai.csv --output data/raw/input_feedback_phase2_multiplatform_clean.csv --per-platform 120
-```
+- 当前公开仓库适合：**阅读项目、审查项目结构、理解方法、查看公开结果**。
+- 公开仓库**不等于**完整本地执行包。
+- 公开仓库当前**缺少**完整重跑所需的：prompts、config、完整原始抓取数据、私有环境变量。
+- `scripts_public/` 主要用于**理解流程和接口**，**不承诺一键复现完整结果**。
+- 详细说明见 [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md)。
 
-#### `preclean_feedback_registry.py`
+---
 
-用于对 registry 文本做基础预清洗，去掉明显空白、图片路径、论坛 reply 头等噪声。
+## 9. AI Assistance and Human Review Boundary（AI 辅助与人工复核边界）
 
-常见参数：
+- 部分清洗、分类、洞察收束和行动建议**包含 AI 辅助**。
+- AI 产物**不应被理解为完全人工的研究结论**。
+- 页面与文档中的结论，需要与证据表（`final_evidence_table.csv`）、验证洞察（`04_validated_insights.jsonl`）以及人工复核边界**一起阅读**。
+- `docs/files/05_action_matrix.json` 是 **AI 生成/辅助生成**的行动建议矩阵，使用时需配合人工判断。
+- 部分洞察在 `04_validated_insights.jsonl` 中带有 `needs_human_review: true` 标记，表示证据有限、需人工复核。
 
-- `--input`：输入 registry
-- `--output`：输出 preclean 文件
+---
 
-示例：
+## 10. Limitations（局限性）
 
-```powershell
-python scripts_public/preclean_feedback_registry.py --input data/raw/feedback_registry_tieba.csv --output data/raw/feedback_registry_tieba_preclean.csv
-```
+- 数据来自**公开社区**，不代表所有玩家。
+- 三平台各 120 条是公开案例中的**平衡样本**，不等于自然舆情分布。
+- 心理机制标签是**解释性框架**，不是临床测量。
+- AI 辅助分类**存在误差**，需人工复核。
+- 行动建议是基于公开反馈形成的**产品假设**，**不代表 Riot 或任何企业的内部判断**。
 
-#### `ai_curate_feedback.py`
+---
 
-用于对预清洗后的文本做 AI 精修，补充 `cleaned_text`、`keep_ai`、`theme_bucket`、`mechanism_prior`、`info_score` 等字段。
+## 11. Public Page（公开页面）
 
-常见参数：
+GitHub Pages: `https://sherlock0717.github.io/PsyLens/`
 
-- `--input`：输入 preclean 文件
-- `--output`：输出 AI 精修文件
-- `--model`：可选模型名；默认读取环境变量
+---
 
-示例：
+## 12. License / Usage Note（许可与使用说明）
 
-```powershell
-python scripts_public/ai_curate_feedback.py --input data/raw/feedback_registry_tieba_preclean.csv --output data/raw/feedback_registry_tieba_ai.csv
-```
+当前仓库用于作品集展示、公开结果说明与方法结构参考。使用或引用时请保留项目来源说明。
 
-#### `crawl_tieba_selected.py`
-
-用于抓取贴吧 selected 帖子的正文与回复，并导出统一结构的 `feedback_registry_tieba.csv`。
-
-常见参数：
-
-- `--selected`：贴吧 selected CSV
-- `--output`：输出 registry
-- `--summary`：可选 summary 输出
-- `--cookie-string` / `--cookie-file`：贴吧 cookie
-- `--debug-html-dir`：保存 blocked / raw html，便于排错
-- `--local-html-dir`：优先读取本地 html
-- `--max-pages-per-thread`：每个线程最多抓多少页
-- `--max-replies-per-thread`：每个线程最多保留多少条回复
-- `--min-text-len`：最短文本长度
-- `--sleep-sec`：请求间隔
-- `--only-lz`：是否只看楼主
-
-### 4）在本地完整执行包里怎么跑
-
-当前项目本地根目录约定为：
-
-```text
-C:\Users\22358\Downloads\PsyLens_Execution_Pack_Tencent_GameCommunity
-```
-
-当前项目脚本目录约定为：
-
-```text
-C:\Users\22358\Downloads\PsyLens_Execution_Pack_Tencent_GameCommunity\scripts
-```
-
-如果你已经有完整执行包，可以直接在该目录下运行。
-
-示例流程：
-
-```powershell
-cd C:\Users\22358\Downloads\PsyLens_Execution_Pack_Tencent_GameCommunity\scripts
-python preclean_feedback_registry.py --input ..\data\raw\feedback_registry_tieba.csv --output ..\data\raw\feedback_registry_tieba_preclean.csv
-python ai_curate_feedback.py --input ..\data\raw\feedback_registry_tieba_preclean.csv --output ..\data\raw\feedback_registry_tieba_ai.csv
-python merge_phase2_inputs.py --inputs ..\data\raw\feedback_registry_nga_ai.csv ..\data\raw\feedback_registry_tieba_ai.csv ..\data\raw\feedback_registry_bili_ai.csv --output ..\data\raw\input_feedback_phase2_multiplatform_clean.csv --per-platform 120
-python run_pipeline.py --case ..\config\case_tencent_nga_lol_recent.yaml --mode game --input ..\data\raw\input_feedback_phase2_multiplatform_clean.csv
-```
-
-### 5）运行前至少要准备什么
-
-公开脚本会用到的常见 Python 包包括：
-
-```powershell
-pip install pandas pyyaml python-dotenv openai tqdm requests beautifulsoup4
-```
-
-如果你要运行 AI 精修或完整 pipeline，还需要准备对应环境变量，例如：
-
-- `DEEPSEEK_API_KEY`
-- `DEEPSEEK_BASE_URL`
-- `DEEPSEEK_MODEL`
-- 或 OpenAI 对应变量
-
-### 6）怎么看公开仓库里的 scripts_public
-
-`scripts_public` 更适合以下用途：
-
-- 理解项目工作流怎么拆
-- 看字段怎么标准化
-- 看输入与输出接口长什么样
-- 在你自己的项目里复用部分脚本逻辑
-
-它不是“只下载公开仓库就一定能完整一键复现”的承诺版本。
-
-## 关键结果文件说明
-
-### `input_feedback_phase2_multiplatform_clean.csv`
-
-三平台整洁版输入。当前公开版共 360 行，三平台各 120 行。
-
-### `final_evidence_table.csv`
-
-证据表。当前公开版共 697 个 evidence unit。
-
-### `04_validated_insights.jsonl`
-
-验证洞察文件。当前公开版共 19 条。
-
-### `05_action_matrix.json`
-
-自动生成的行动建议矩阵。对外表达时建议与人工修订版建议矩阵配合阅读。
-
-## 当前公开结论
-
-当前公开案例里，海克斯大乱斗的高频争议更稳定地指向**胜任受挫**：
-
-- 玩家更常表达的是看不懂、打不顺、抓不住有效策略
-- 公平威胁存在，但更集中在匹配、奖励与部分规则归因节点
-- 队友互动与社区摩擦更像放大器，而不是唯一中心
-
-## License
-
-当前仓库用于项目展示、公开结果说明与方法结构参考。使用时请保留项目来源说明。
+本仓库当前**没有正式的开源 License 文件**；如后续补充，将以仓库根目录的 `LICENSE` 为准。
