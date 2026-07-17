@@ -1,0 +1,150 @@
+{
+  "schema_version": "showcase-1.0",
+  "generated_at": "2026-07-17T16:56:33.578346+08:00",
+  "brand": "PsyLens",
+  "tagline": "社区反馈分析与可靠性评测",
+  "hero_summary": {
+    "case": "三平台社区反馈案例",
+    "sample_count": 360,
+    "platform_count": 3,
+    "provisional_evidence_count": 927,
+    "evaluation_status": "PASS"
+  },
+  "feature_flags": {
+    "show_full_data_download": false,
+    "show_raw_urls": false,
+    "show_draft_v2_insights": false,
+    "show_draft_action_hypotheses": false,
+    "show_historical_findings": true
+  },
+  "plain_metrics": [
+    {
+      "key": "sample_integrity",
+      "label": "样本编号完整性",
+      "value": 1.0,
+      "plain": "每条反馈都有唯一编号"
+    },
+    {
+      "key": "evidence_traceable",
+      "label": "证据可回溯",
+      "value": 1.0,
+      "plain": "每条展示证据都能回到对应的原始反馈"
+    },
+    {
+      "key": "platform_coverage",
+      "label": "平台覆盖",
+      "value": 3,
+      "plain": "覆盖三个平台"
+    },
+    {
+      "key": "label_completion",
+      "label": "标签覆盖",
+      "value": 1.0,
+      "plain": "证据都带机制标签（含不确定）"
+    },
+    {
+      "key": "uncertain",
+      "label": "不确定项",
+      "value": 0.5243,
+      "plain": "约一半证据机制暂判不准，诚实标注"
+    },
+    {
+      "key": "human_review",
+      "label": "人工复核覆盖",
+      "value": 0.0,
+      "plain": "尚无真人复核（当前为机器提案与历史标签）"
+    },
+    {
+      "key": "demo_repro",
+      "label": "离线 Demo 复现",
+      "value": 1.0,
+      "plain": "同样的输入每次得到同样的结果"
+    }
+  ],
+  "evidence_example": {
+    "sample_excerpt": "……让个金，还要让 3000 的经济去出个八成打完一整把都不一定能做完任务的心之钢……",
+    "evidence_id": "NGA_0001_U02",
+    "platform": "平台 C（NGA）",
+    "label_source": "legacy AI 标签（未人工复核）",
+    "note": "该示例的证据文本可在对应原始反馈中唯一定位（不展示原始 URL）"
+  },
+  "counts": {
+    "samples": 360,
+    "migrated_evidence": 695,
+    "bili_candidates": 279,
+    "provisional_evidence": 927,
+    "draft_insights": 28,
+    "draft_actions": 6,
+    "unresolved_ambiguous": 2
+  },
+  "status": {
+    "legacy_status": "BLOCKED",
+    "v2_migration_status": "PASS",
+    "provisional_evidence_status": "PASS",
+    "human_review_status": "NOT_STARTED",
+    "publication_readiness": "PENDING_USER_DECISIONS"
+  },
+  "open_decisions": [
+    {
+      "decision_id": "D-001",
+      "title": "完整数据是否在页面提供下载",
+      "recommended_option": "页面不提供完整数据下载",
+      "status": "deferred"
+    },
+    {
+      "decision_id": "D-002",
+      "title": "原始 source_url 是否继续保留和公开",
+      "recommended_option": "底层保留、公开层全部隐藏",
+      "status": "deferred"
+    },
+    {
+      "decision_id": "D-003",
+      "title": "两条歧义证据如何处理",
+      "recommended_option": "keep_pending",
+      "status": "deferred"
+    },
+    {
+      "decision_id": "D-004",
+      "title": "Agent 提议的 B 站标签是否获人工认可",
+      "recommended_option": "保持 agent_proposed_unreviewed",
+      "status": "deferred"
+    },
+    {
+      "decision_id": "D-005",
+      "title": "草稿结构化洞察是否发布",
+      "recommended_option": "隐藏",
+      "status": "deferred"
+    },
+    {
+      "decision_id": "D-006",
+      "title": "草稿行动建议是否发布",
+      "recommended_option": "隐藏",
+      "status": "deferred"
+    },
+    {
+      "decision_id": "D-007",
+      "title": "Pages 最终部署方式",
+      "recommended_option": "仅在分支内准备 workflow",
+      "status": "deferred"
+    },
+    {
+      "decision_id": "D-008",
+      "title": "是否合并 main",
+      "recommended_option": "暂不合并",
+      "status": "deferred"
+    },
+    {
+      "decision_id": "D-009",
+      "title": "是否公开正式 DOCX",
+      "recommended_option": "生成底稿并归档旧版，DOCX 待确认",
+      "status": "deferred"
+    },
+    {
+      "decision_id": "D-010",
+      "title": "是否进一步做真实模型运行",
+      "recommended_option": "保持离线 mock",
+      "status": "deferred"
+    }
+  ],
+  "note": "草稿结构化洞察与产品假设默认不公开（feature flags）；页面不展示原始 URL 与完整数据下载。"
+}

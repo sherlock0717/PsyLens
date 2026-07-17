@@ -3,1037 +3,168 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>PsyLens｜从公开社区反馈到可核查产品洞察</title>
-  <meta name="description" content="PsyLens 是一套把公开游戏社区反馈拆成证据单元、解释体验机制并转化为产品假设的分析方法案例。当前公开案例以《英雄联盟》海克斯大乱斗模式为例。">
+  <title>PsyLens｜社区反馈分析与可靠性评测</title>
+  <meta name="description" content="PsyLens 把公开社区反馈整理成可回溯证据，并评估从编码到产品假设的每一步是否可靠。">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="gate-locked">
-  <div class="gate-screen" id="gate" aria-modal="true" role="dialog" aria-labelledby="gateTitle">
-    <div class="gate-backdrop"></div>
-    <div class="gate-panel">
-      <div class="gate-mark-wrap">
-        <img src="assets/psylens-wordmark.svg" alt="PsyLens" class="gate-mark">
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <header class="hero" id="home">
+    <nav class="topbar" aria-label="主导航">
+      <img src="assets/psylens-wordmark.svg" alt="PsyLens" class="wordmark">
+      <div class="nav-links">
+        <a href="#evaluation">评测结果</a>
+        <a href="#flow">分析流程</a>
+        <a href="#demo">离线 Demo</a>
+        <a href="https://github.com/sherlock0717/PsyLens">GitHub</a>
       </div>
-      <p class="gate-kicker">多平台游戏社区反馈洞察工作流</p>
-      <h1 id="gateTitle">从高噪声社区反馈，<br>到可核查的产品洞察。</h1>
-      <p class="gate-copy">
-        当前公开案例以《英雄联盟》海克斯大乱斗模式为例，整合 NGA、贴吧、B 站三平台的公开反馈，
-        沿一条可追溯的链路，得到主题、体验机制、证据与产品假设。
+    </nav>
+
+    <div class="hero-inner">
+      <p class="kicker">社区反馈分析与可靠性评测</p>
+      <h1>把公开反馈整理成可回溯证据，<br>并评估每一步是否可靠。</h1>
+      <p class="lede">
+        PsyLens 不只展示"分析出了什么"，更评估"样本 → 证据 → 编码 → 洞察 → 产品假设"这条链路是否站得住。
       </p>
-      <div class="gate-metrics" aria-label="关键指标">
-        <div class="gate-metric"><strong>3</strong><span>平台</span></div>
-        <div class="gate-metric"><strong>360</strong><span>整洁样本</span></div>
-        <div class="gate-metric"><strong>697</strong><span>证据单元</span></div>
-        <div class="gate-metric"><strong>19</strong><span>验证洞察</span></div>
-      </div>
-      <div class="gate-action-row">
-        <button class="enter-button" id="enterButton" type="button" aria-label="进入 PsyLens 页面">
-          <span>ENTER</span>
-        </button>
+      <dl class="hero-stats" id="heroStats" aria-label="当前案例概况">
+        <div><dt>当前案例</dt><dd>三平台社区反馈</dd></div>
+        <div><dt>样本</dt><dd data-showcase="samples">360</dd></div>
+        <div><dt>平台</dt><dd data-showcase="platforms">3</dd></div>
+        <div><dt>可核查证据</dt><dd data-showcase="provisional_evidence">—</dd></div>
+        <div><dt>评测状态</dt><dd data-showcase="eval_status">—</dd></div>
+      </dl>
+      <div class="hero-actions">
+        <a class="btn primary" href="#evaluation">查看评测结果</a>
+        <a class="btn" href="#flow">查看分析流程</a>
+        <a class="btn" href="#demo">运行离线 Demo</a>
+        <a class="btn ghost" href="https://github.com/sherlock0717/PsyLens">GitHub 仓库</a>
       </div>
     </div>
-  </div>
+  </header>
 
-  <main id="page" aria-hidden="true">
-    <header class="hero-shell" id="home">
-      <div class="hero-glow hero-glow-a"></div>
-      <div class="hero-glow hero-glow-b"></div>
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <div class="brand-lockup">
-            <img src="assets/psylens-wordmark.svg" alt="PsyLens" class="hero-wordmark">
-            <p class="brand-subtitle">多平台游戏社区反馈洞察工作流</p>
-          </div>
-          <div class="hero-copy-block">
-            <p class="eyebrow">当前公开案例 · 个人研究 / 作品集</p>
-            <h1>《英雄联盟》海克斯大乱斗社区反馈分析</h1>
-            <p class="hero-lead">
-              PsyLens 展示的是一套分析方法：把公开社区反馈拆成证据单元，解释背后的体验机制，
-              再转化为可讨论的产品假设。当前以海克斯大乱斗模式为例，整合 NGA、贴吧、B 站三平台公开反馈。
-            </p>
-            <div class="hero-actions">
-              <a class="button-primary" href="files/PsyLens_enterprise_project_brief_v3.docx">下载项目说明</a>
-              <a class="button-secondary" href="#materials">按核验路径阅读</a>
-            </div>
-          </div>
-        </div>
+  <main id="main">
+    <section class="block" id="problem">
+      <h2>它解决什么问题</h2>
+      <p>面对成百上千条社区抱怨，很难判断哪些是真问题、哪些结论靠得住。PsyLens 用普通语言回答四件事：</p>
+      <ul class="clean-list">
+        <li>高频抱怨究竟集中在哪些方面；</li>
+        <li>这些反馈如何被拆成一条条可回溯的证据；</li>
+        <li>分析用的标签是否稳定、有多少暂时判不准；</li>
+        <li>由此得到的洞察和产品建议，能否回到最初的原始反馈。</li>
+      </ul>
+    </section>
 
-        <div class="hero-side">
-          <div class="stats-panel">
-            <div class="stats-grid">
-              <article class="stat-card">
-                <span class="stat-value">3</span>
-                <span class="stat-label">平台</span>
-              </article>
-              <article class="stat-card">
-                <span class="stat-value">360</span>
-                <span class="stat-label">整洁样本</span>
-              </article>
-              <article class="stat-card">
-                <span class="stat-value">697</span>
-                <span class="stat-label">证据单元</span>
-              </article>
-              <article class="stat-card">
-                <span class="stat-value">19</span>
-                <span class="stat-label">验证洞察</span>
-              </article>
-            </div>
-            <div class="hero-mini-note">
-              <div class="mini-note-row">
-                <span class="mini-note-label">主线</span>
-                <span class="mini-note-value">玩法 / 机制 → 胜任受挫</span>
-              </div>
-              <div class="mini-note-row">
-                <span class="mini-note-label">节点</span>
-                <span class="mini-note-value">匹配 / 奖励 / 规则归因</span>
-              </div>
-              <div class="mini-note-row">
-                <span class="mini-note-label">动作</span>
-                <span class="mini-note-value">先降低理解成本，再优化节点</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <section class="block" id="case">
+      <h2>当前案例与数据组成</h2>
+      <p>案例整合三个社区平台的公开反馈，共 360 条样本，每个平台各 120 条。数据分两层：</p>
+      <ul class="clean-list">
+        <li><strong>样本层</strong>：一条完整的反馈原文；</li>
+        <li><strong>证据层</strong>：从原文中切出的、可单独判断的证据单元。</li>
+      </ul>
+      <p>因此证据数量不等于样本数量——一条反馈可能切出多条证据，也可能一条都不构成独立证据。仓库中同时保留了早期的 legacy 结果与经过重建、带稳定编号的 v2 数据。</p>
+    </section>
 
-      <div class="container">
-        <p class="hero-thesis">
-          这不是一次普通的舆情统计，而是一个<strong>从高噪声社区反馈，到可核查产品洞察</strong>的方法案例——
-          先拆证据，再解释机制，最后收束为可讨论的产品假设。
-        </p>
-      </div>
+    <section class="block" id="flow">
+      <h2>分析与评测流程</h2>
+      <ol class="flow">
+        <li>反馈</li>
+        <li>证据单元</li>
+        <li>主题与机制编码</li>
+        <li>结构化洞察</li>
+        <li>产品假设</li>
+        <li>可靠性评测</li>
+      </ol>
+      <p class="muted">流程细节与字段定义见仓库 README 与方法文档。</p>
+    </section>
 
-      <div class="container">
-        <div class="claim-ladder" aria-label="本页主张层级">
-          <p class="claim-ladder-title">从数据事实到产品假设：这些结论可以怎样使用</p>
-          <div class="claim-ladder-grid">
-            <article class="claim-level-card level-fact">
-              <span class="claim-level-no">01</span>
-              <p class="claim-level-kind">数据事实</p>
-              <h3>可以直接说明</h3>
-              <p>当前公开平衡样本中，玩法 / 机制相关讨论最多，胜任受挫证据多于公平威胁。</p>
-              <p class="claim-basis">依据：360 样本 · 697 证据单元 · 19 洞察</p>
-            </article>
-            <article class="claim-level-card level-interpret">
-              <span class="claim-level-no">02</span>
-              <p class="claim-level-kind">解释判断</p>
-              <h3>可以合理解释</h3>
-              <p>高频争议更稳定地指向胜任受挫，而不是单纯的公平抱怨。</p>
-              <p class="claim-basis">依据：机制标签与证据链 · 属解释性框架，非心理测量</p>
-            </article>
-            <article class="claim-level-card level-hypothesis">
-              <span class="claim-level-no">03</span>
-              <p class="claim-level-kind">产品假设</p>
-              <h3>可以转化为方向</h3>
-              <p>降低理解成本、改善匹配解释、建立反馈闭环等产品方向。</p>
-              <p class="claim-basis">属行动建议方向 · 不是已验证有效的产品结论</p>
-            </article>
-            <article class="claim-level-card level-scope">
-              <span class="claim-level-no">04</span>
-              <p class="claim-level-kind">使用范围</p>
-              <h3>适合被这样看待</h3>
-              <p>作为个人研究与作品集案例，展示方法链路与分析能力。</p>
-              <p class="claim-basis">不代表全体玩家或企业内部判断 · 不承诺一键完整复现</p>
-            </article>
-          </div>
-        </div>
-      </div>
-
-      <nav class="section-nav compact-nav container" aria-label="页面导航">
-        <a href="#question">问题</a>
-        <a href="#data">数据</a>
-        <a href="#method">方法</a>
-        <a href="#trace">溯源</a>
-        <a href="#findings">发现</a>
-        <a href="#actions">建议</a>
-        <a href="#roles">能力</a>
-        <a href="#limitations">边界</a>
-        <a href="#materials">核验</a>
-      </nav>
-      <p class="reading-path container">
-        建议阅读路径：先看<strong>方法</strong>（方法框架 · 证据溯源），再看<strong>结论</strong>（关键发现），最后看<strong>边界</strong>（使用边界）。
-      </p>
-    </header>
-
-    <section class="section" id="question">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-kicker">研究问题</p>
-          <h2>从高噪声反馈中识别稳定的问题结构</h2>
-          <p class="section-lead">
-            社区反馈里混着情绪、归因和行动诉求，所以只做情绪统计或"公平抱怨"统计并不够。
-            本项目先把反馈拆成证据，再判断它更稳定地指向哪类体验机制。下面四个问题贯穿全案。
-          </p>
-        </div>
-
-        <div class="feature-grid four">
-          <article class="question-card">
-            <span class="feature-tag">01</span>
-            <h3>主要在争议什么</h3>
-            <p>近期公开讨论中最集中的争议是什么？重点看玩法 / 机制、队友互动、英雄体验与规则归因四类主题。</p>
-          </article>
-          <article class="question-card">
-            <span class="feature-tag">02</span>
-            <h3>指向哪类体验</h3>
-            <p>这些高频表达更稳定地与哪类心理体验共现？重点比较胜任受挫、公平威胁与其他补充机制。</p>
-          </article>
-          <article class="question-card">
-            <span class="feature-tag">03</span>
-            <h3>平台是否一致</h3>
-            <p>不同平台的表达方式差别很大，但落到主线上是否一致？比较 NGA、贴吧、B 站三个平台。</p>
-          </article>
-          <article class="question-card">
-            <span class="feature-tag">04</span>
-            <h3>如何转成建议</h3>
-            <p>如果从产品与社区视角回应，这些问题可以转化成哪些可讨论的行动方向。</p>
-          </article>
-        </div>
-        <p class="source-note">研究问题与项目说明、方法说明一致，未新增未经支持的问题。</p>
+    <section class="block" id="evaluation">
+      <h2>当前评测结果</h2>
+      <p>用普通语言呈现，工程指标保留在 README 与评测方法文档中。</p>
+      <div class="metric-grid" id="metricGrid" aria-label="评测结果">
+        <p class="muted">评测数据加载中……如未显示，请查看仓库中的评测方法文档。</p>
       </div>
     </section>
 
-    <section class="section alt" id="data">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-kicker">数据快照</p>
-          <h2>样本层看分布，证据层看收束</h2>
-          <p class="section-lead">
-            当前公开版保留 360 条整洁样本，三平台各 120 条。样本层回答"哪里在讨论、什么时间窗、以什么方式表达"；
-            证据层回答"这些表达更稳定地指向什么问题"。
-          </p>
-        </div>
-
-        <div class="overview-grid">
-          <article class="overview-card">
-            <h3>平台分布</h3>
-            <div class="stacked-pill">
-              <span>B 站 120</span>
-              <span>NGA 120</span>
-              <span>贴吧 120</span>
-            </div>
-            <ul class="plain-list">
-              <li><strong>NGA</strong>：偏复盘讨论，玩法 / 机制讨论最密集，语气最集中。</li>
-              <li><strong>贴吧</strong>：偏即时互动，队友互动与历史窗口表达更明显。</li>
-              <li><strong>B 站</strong>：边看边评论，英雄体验与互动语气更活跃。</li>
-            </ul>
-          </article>
-
-          <article class="overview-card">
-            <h3>时间窗与文本类型</h3>
-            <div class="split-metrics">
-              <div>
-                <span class="split-number">260</span>
-                <span class="split-label">近期窗口 w1</span>
-              </div>
-              <div>
-                <span class="split-number">100</span>
-                <span class="split-label">对照窗口 w2</span>
-              </div>
-              <div>
-                <span class="split-number">318</span>
-                <span class="split-label">近期评论</span>
-              </div>
-              <div>
-                <span class="split-number">42</span>
-                <span class="split-label">楼主正文</span>
-              </div>
-            </div>
-          </article>
-
-          <article class="overview-card">
-            <h3>整体收束</h3>
-            <div class="split-metrics compact">
-              <div>
-                <span class="split-number">697</span>
-                <span class="split-label">证据单元</span>
-              </div>
-              <div>
-                <span class="split-number">19</span>
-                <span class="split-label">验证洞察</span>
-              </div>
-              <div>
-                <span class="split-number">4</span>
-                <span class="split-label">行动方向</span>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="chart-layout two-up">
-          <article class="chart-card">
-            <div class="chart-head">
-              <h3>主题分布（样本层）</h3>
-              <p>玩法 / 机制稳居主轴，其余主题在旁补充结构、语气与节点。</p>
-            </div>
-            <div class="metric-chart">
-              <div class="metric-row">
-                <div class="metric-label">玩法 / 机制</div>
-                <div class="metric-track"><span style="width: 100%"></span></div>
-                <div class="metric-value">236</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">队友互动</div>
-                <div class="metric-track"><span style="width: 25.4%"></span></div>
-                <div class="metric-value">60</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">英雄体验</div>
-                <div class="metric-track"><span style="width: 24.6%"></span></div>
-                <div class="metric-value">58</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">规则归因</div>
-                <div class="metric-track"><span style="width: 2.5%"></span></div>
-                <div class="metric-value">6</div>
-              </div>
-            </div>
-          </article>
-
-          <article class="chart-card">
-            <div class="chart-head">
-              <h3>心理机制分布（证据层）</h3>
-              <p>剔除"暂不确定"的 336 条后，主机制与补充机制的层级已经清楚。</p>
-            </div>
-            <div class="metric-chart">
-              <div class="metric-row">
-                <div class="metric-label">胜任受挫</div>
-                <div class="metric-track"><span style="width: 100%"></span></div>
-                <div class="metric-value">268</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">公平威胁</div>
-                <div class="metric-track"><span style="width: 26.9%"></span></div>
-                <div class="metric-value">72</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">信任 / 沟通缺口</div>
-                <div class="metric-track"><span style="width: 3.7%"></span></div>
-                <div class="metric-value">10</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">归属感下降</div>
-                <div class="metric-track"><span style="width: 3.0%"></span></div>
-                <div class="metric-value">8</div>
-              </div>
-              <div class="metric-row">
-                <div class="metric-label">规范 / 安全风险</div>
-                <div class="metric-track"><span style="width: 1.1%"></span></div>
-                <div class="metric-value">3</div>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <article class="chart-card platform-card">
-          <div class="chart-head">
-            <h3>三平台议题侧重</h3>
-            <p>平台表达方式不同，主轴却相当统一：玩法 / 机制在三平台都排在第一位。</p>
-          </div>
-          <div class="platform-legend" aria-hidden="true">
-            <span class="legend-chip balance"><i></i>玩法 / 机制</span>
-            <span class="legend-chip team"><i></i>队友互动</span>
-            <span class="legend-chip hero"><i></i>英雄体验</span>
-            <span class="legend-chip fairness"><i></i>规则归因</span>
-          </div>
-          <div class="platform-rows">
-            <div class="platform-row">
-              <div class="platform-name">B 站</div>
-              <div class="platform-body">
-                <div class="platform-track" aria-label="B 站议题分布">
-                  <span class="seg balance" style="width:70%"></span>
-                  <span class="seg team" style="width:20%"></span>
-                  <span class="seg hero" style="width:9.2%"></span>
-                  <span class="seg fairness" style="width:0.8%"></span>
-                </div>
-                <div class="platform-tags">
-                  <span class="platform-tag balance">玩法 / 机制 84</span>
-                  <span class="platform-tag team">队友互动 24</span>
-                  <span class="platform-tag hero">英雄体验 11</span>
-                  <span class="platform-tag fairness">规则归因 1</span>
-                </div>
-              </div>
-            </div>
-            <div class="platform-row">
-              <div class="platform-name">NGA</div>
-              <div class="platform-body">
-                <div class="platform-track" aria-label="NGA 议题分布">
-                  <span class="seg balance" style="width:67.5%"></span>
-                  <span class="seg hero" style="width:25%"></span>
-                  <span class="seg team" style="width:7.5%"></span>
-                </div>
-                <div class="platform-tags">
-                  <span class="platform-tag balance">玩法 / 机制 81</span>
-                  <span class="platform-tag hero">英雄体验 30</span>
-                  <span class="platform-tag team">队友互动 9</span>
-                </div>
-              </div>
-            </div>
-            <div class="platform-row">
-              <div class="platform-name">贴吧</div>
-              <div class="platform-body">
-                <div class="platform-track" aria-label="贴吧议题分布">
-                  <span class="seg balance" style="width:59.2%"></span>
-                  <span class="seg team" style="width:22.5%"></span>
-                  <span class="seg hero" style="width:14.2%"></span>
-                  <span class="seg fairness" style="width:4.2%"></span>
-                </div>
-                <div class="platform-tags">
-                  <span class="platform-tag balance">玩法 / 机制 71</span>
-                  <span class="platform-tag team">队友互动 27</span>
-                  <span class="platform-tag hero">英雄体验 17</span>
-                  <span class="platform-tag fairness">规则归因 5</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <p class="source-note">
-          数据来源：<a href="files/input_feedback_phase2_multiplatform_clean.csv">整洁样本文件</a>；字段说明见
-          <a href="https://github.com/sherlock0717/PsyLens/blob/main/DATA_DICTIONARY.md" target="_blank" rel="noopener noreferrer">数据字典</a>。
-          三平台各 120 条是为跨平台可比而设计的<strong>平衡样本</strong>，<strong>不代表自然舆情的声量分布</strong>。
-        </p>
-      </div>
+    <section class="block" id="evidence">
+      <h2>证据示例</h2>
+      <figure class="evidence-card" id="evidenceCard">
+        <blockquote data-showcase="evidence_excerpt">……让个金，还要让 3000 的经济去出个八成打完一整把都不一定能做完任务的心之钢……</blockquote>
+        <figcaption>
+          <span>这段原始反馈被切成一条证据单元</span>
+          <span class="muted" data-showcase="evidence_meta">当前标签来源：历史 AI 标签（未人工复核）·平台 C</span>
+        </figcaption>
+      </figure>
+      <p class="muted">该示例的证据文本可在对应原始反馈中被唯一定位；页面不展示原始链接。</p>
     </section>
 
-    <section class="section" id="method">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-kicker">方法框架</p>
-          <h2>从一条评论，到一条建议</h2>
-          <p class="section-lead">
-            一条反馈里常常同时夹着主题归因、体验判断和情绪。只有先把它拆成可以单独判断的证据，比较才站得住。
-            整个过程沿一条固定链路推进，每一步都有明确产出，并对应可查的公开文件。
-          </p>
-        </div>
-
-        <div class="method-grid" aria-label="方法链路">
-          <article class="method-card">
-            <span class="method-step">01</span>
-            <h3>公开反馈</h3>
-            <p>汇集三平台公开的帖子、楼层回复与视频评论。</p>
-            <span class="method-en">Public Feedback</span>
-          </article>
-          <article class="method-card">
-            <span class="method-step">02</span>
-            <h3>整洁样本</h3>
-            <p>预清洗去噪、按平台平衡，统一字段与时间窗口径。</p>
-            <span class="method-en">Clean Input</span>
-          </article>
-          <article class="method-card">
-            <span class="method-step">03</span>
-            <h3>证据单元</h3>
-            <p>把一条反馈拆成可独立判断的最小证据。</p>
-            <span class="method-en">Evidence Unit</span>
-          </article>
-          <article class="method-card">
-            <span class="method-step">04</span>
-            <h3>机制解释</h3>
-            <p>为每条证据标注对应的心理机制与置信度。</p>
-            <span class="method-en">Mechanism</span>
-          </article>
-          <article class="method-card">
-            <span class="method-step">05</span>
-            <h3>验证洞察</h3>
-            <p>按共现的频率与强度，把证据收束成洞察。</p>
-            <span class="method-en">Validated Insight</span>
-          </article>
-          <article class="method-card">
-            <span class="method-step">06</span>
-            <h3>行动建议</h3>
-            <p>把洞察压缩成分层的产品建议方向。</p>
-            <span class="method-en">Action</span>
-          </article>
-        </div>
-        <p class="source-note">
-          方法细节、标签体系与证据回溯方式见
-          <a href="https://github.com/sherlock0717/PsyLens/blob/main/METHODOLOGY.md" target="_blank" rel="noopener noreferrer">方法说明</a>。
-        </p>
-      </div>
+    <section class="block" id="historical">
+      <h2>历史分析观察</h2>
+      <p>仓库保留了早期 legacy 分析得到的观察。这些内容来自历史分析，目前正在用 v2 证据层重新复核，尚未作为当前结论。</p>
     </section>
 
-    <section class="section alt" id="workflow">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-kicker">执行流程</p>
-          <h2>从公开评论到可核验证据的处理链路</h2>
-          <p class="section-lead">
-            候选要筛选，正文要抓取，格式要统一，证据要能回溯。链路稳定，结论才不容易失真；链路一旦断裂，后续结论就难以站稳。
-          </p>
-        </div>
-
-        <div class="workflow-wrap">
-          <figure class="workflow-figure">
-            <img src="assets/workflow_overview.png" alt="PsyLens 工作流总览" loading="lazy">
-          </figure>
-          <div class="workflow-steps">
-            <article class="workflow-step">
-              <span>01</span>
-              <div>
-                <h3>候选采集</h3>
-                <p>在三平台建立候选池，按主题与时间窗清洗、配额筛选，先稳住样本口径。</p>
-              </div>
-            </article>
-            <article class="workflow-step">
-              <span>02</span>
-              <div>
-                <h3>正文抓取与预清洗</h3>
-                <p>把正文、回复与评论合并到同一套字段，先处理空白、过短与明显无关的文本。</p>
-              </div>
-            </article>
-            <article class="workflow-step">
-              <span>03</span>
-              <div>
-                <h3>AI 精修与标准化合并</h3>
-                <p>补齐主题、机制先验、信息强度与剔除理由，再统一字段、时间窗与文本类型。</p>
-              </div>
-            </article>
-            <article class="workflow-step">
-              <span>04</span>
-              <div>
-                <h3>证据收束</h3>
-                <p>把整洁样本拆成证据单元，再向上收束为验证洞察与行动建议。</p>
-              </div>
-            </article>
-          </div>
-        </div>
-
-        <div class="workflow-notes">
-          <article class="note-card">
-            <h3>贴吧链路</h3>
-            <p>正文抓取最初大量返回空结果，后补充了安全验证识别、选择器回退与本地调试留痕，才让正文阶段稳定产出。</p>
-          </article>
-          <article class="note-card">
-            <h3>B 站链路</h3>
-            <p>最初只能取到标题与简介，后改为同时抓取热门视频与最新评论，评论内容才真正进入结构化处理。</p>
-          </article>
-          <article class="note-card">
-            <h3>字段统一</h3>
-            <p>平台来源、时间窗、文本类型与主题标签统一后，三平台样本才能放在同一视图下比较。</p>
-          </article>
-        </div>
-        <p class="source-note">
-          公开脚本仅用于理解流程与接口，公开仓库不承诺一键完整复现，边界见
-          <a href="https://github.com/sherlock0717/PsyLens/blob/main/REPRODUCIBILITY.md" target="_blank" rel="noopener noreferrer">复现说明</a>。
-        </p>
-      </div>
+    <section class="block" id="demo">
+      <h2>离线 Demo</h2>
+      <p>输入几条反馈，Demo 会离线生成证据单元、草稿结构化洞察、待验证产品假设和一份评测报告。默认不联网、不调用模型。</p>
+      <pre class="code">python tools/run_demo.py</pre>
     </section>
 
-    <section class="section" id="trace">
-      <div class="container">
-        <div class="section-head section-head-strong">
-          <p class="section-kicker">证据溯源</p>
-          <h2>一条证据是怎么成立的</h2>
-          <p class="section-lead">
-            用一条真实证据做示例，展示从玩家原话到建议方向如何一步步、可追溯地成立。每一环都能在公开文件里核对。
-          </p>
-        </div>
-
-        <div class="trace-panel">
-          <div class="trace-row">
-            <span class="trace-label">原始表达</span>
-            <div class="trace-body">
-              <p>玩家讨论海克斯装备与阵容强度：随到强化就是"爽局"，随不到就"折磨一整把"，体验落差很大。</p>
-            </div>
-          </div>
-          <div class="trace-row">
-            <span class="trace-label">证据单元</span>
-            <div class="trace-body">
-              <p>"说真的，你选就选了，让个金，还要让 3000 的经济去出个八成打完一整把都不一定能做完任务的心之钢。"</p>
-            </div>
-          </div>
-          <div class="trace-row">
-            <span class="trace-label">机制解释</span>
-            <div class="trace-body">
-              <p>指向<strong>胜任受挫</strong>：投入很大（3000 经济）却换不到确定回报——努力与结果不匹配。置信度：高。</p>
-            </div>
-          </div>
-          <div class="trace-row">
-            <span class="trace-label">对应洞察</span>
-            <div class="trace-body">
-              <p>归入"玩法 / 机制 与 胜任受挫高频共现"这一条主线洞察，属高置信、高频。</p>
-            </div>
-          </div>
-          <div class="trace-row">
-            <span class="trace-label">建议方向</span>
-            <div class="trace-body">
-              <p>指向"降低玩法理解成本、缓解努力—回报落差"。此为产品假设，需人工判断，并非已验证的产品结论。</p>
-            </div>
-          </div>
-          <p class="trace-verify">可核验信息：证据编号 <code>1_u2</code>（来源样本 <code>parent_id=1</code>，平台 B 站），可在证据表与验证洞察文件中逐项核对。</p>
-        </div>
-        <p class="evidence-note">
-          来源：<a href="files/final_evidence_table.csv">证据表</a>、
-          <a href="files/04_validated_insights.jsonl">验证洞察</a>、
-          <a href="files/05_action_matrix.json">行动建议矩阵</a>。原句为玩家用语，页面仅做必要节选。
-        </p>
-      </div>
+    <section class="block" id="method">
+      <h2>方法与当前状态</h2>
+      <ul class="clean-list">
+        <li>机器给出的标签是<strong>提案</strong>，不是人工复核结论；</li>
+        <li>有两条极短证据来源不确定，仍待人工确认；</li>
+        <li>产品建议是<strong>待验证假设</strong>，需要实验验证；</li>
+        <li>页面不展示原始链接，完整数据下载默认不开放。</li>
+      </ul>
     </section>
 
-    <section class="section alt" id="findings">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-kicker">关键发现</p>
-          <h2>主线不是"抱怨不公平"，而是胜任受挫更集中</h2>
-          <p class="section-lead">
-            把 697 条证据摊开看，玩家更常表达的是"看不懂、打不顺、努力换不到结果"，而不是单纯地说"系统不公平"。
-          </p>
-        </div>
-
-        <article class="finding-hero-card">
-          <div class="finding-hero-copy">
-            <p class="finding-tag">主结论</p>
-            <h3>胜任受挫，比公平威胁更集中</h3>
-            <p>"看不懂、打不顺、努力与结果不匹配"是最密集的一类表达。公平威胁真实存在，但更集中在少数节点，不构成主线。所以更适合用胜任受挫来解释当前争议的主线。</p>
-            <p class="finding-boundary">机制标签由 AI 辅助并经人工复核，是解释性框架，不是心理测量。</p>
-          </div>
-          <div class="finding-hero-figure" aria-label="胜任受挫 268 对比公平威胁 72">
-            <div class="versus">
-              <div class="versus-item strong">
-                <span class="versus-num">268</span>
-                <span class="versus-label">胜任受挫</span>
-              </div>
-              <span class="versus-vs">vs</span>
-              <div class="versus-item">
-                <span class="versus-num">72</span>
-                <span class="versus-label">公平威胁</span>
-              </div>
-            </div>
-            <p class="versus-note">证据层机制标签（剔除"暂不确定"的 336 条后）</p>
-          </div>
-        </article>
-
-        <div class="finding-support-grid">
-          <article class="finding-support-card">
-            <p class="finding-tag">样本主轴</p>
-            <h3>玩法 / 机制是讨论主轴</h3>
-            <p class="finding-figure">236</p>
-            <p>样本层主题里玩法 / 机制居首；争议首先聚在模式怎么理解、怎么操作、努力能否换来回报。</p>
-            <p class="finding-boundary">证据层对应的 balance 为 192；两者属不同层级，不能相加。</p>
-          </article>
-          <article class="finding-support-card">
-            <p class="finding-tag">节点信号</p>
-            <h3>公平威胁集中在少数节点</h3>
-            <p class="finding-figure">72</p>
-            <p>主要出现在匹配、奖励与部分规则归因场景，显眼但没有覆盖整体。</p>
-            <p class="finding-boundary">重要、需单独关注，但不适合当作唯一解释。</p>
-          </article>
-          <article class="finding-support-card">
-            <p class="finding-tag">放大器</p>
-            <h3>社区摩擦是放大器</h3>
-            <p class="finding-figure">10 · 8 · 3</p>
-            <p>信任 / 沟通缺口、归属感下降、规范 / 安全风险合计远低于主线，会放大已有挫败但不改变主机制。</p>
-            <p class="finding-boundary">相关洞察多为低频信号，需人工复核。</p>
-          </article>
-          <article class="finding-support-card">
-            <p class="finding-tag">跨平台</p>
-            <h3>三平台表达不同，主线一致</h3>
-            <p class="finding-figure">84 · 81 · 71</p>
-            <p>玩法 / 机制在 B 站、NGA、贴吧都排第一位；表达方式各异，落到主线上却一致。</p>
-            <p class="finding-boundary">三平台各 120 为平衡样本，不代表真实声量比例。</p>
-          </article>
-        </div>
-        <p class="source-note">
-          数字来自<a href="files/final_evidence_table.csv">证据表</a>与<a href="files/input_feedback_phase2_multiplatform_clean.csv">整洁样本</a>，与数据核验一致。
-        </p>
-      </div>
+    <section class="block" id="files">
+      <h2>文件与复现入口</h2>
+      <ul class="link-list">
+        <li><a href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/README.md">README</a></li>
+        <li><a href="https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/demo">离线 Demo</a></li>
+        <li><a href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/evaluation/EVALUATION_METHOD.md">评测方法</a></li>
+        <li><a href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/methodology/MECHANISM_CODEBOOK.md">Codebook</a></li>
+        <li><a href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/pipeline/FULL_PIPELINE.md">完整抓取链</a></li>
+        <li><a href="https://github.com/sherlock0717/PsyLens">GitHub</a></li>
+      </ul>
     </section>
-
-    <section class="section" id="insights">
-      <div class="container">
-        <div class="section-head section-head-strong">
-          <p class="section-kicker">洞察体系</p>
-          <h2>哪些结论可以直接采信，哪些还需复核</h2>
-          <p class="section-lead">
-            19 条验证洞察不必逐条细读。真正重要的是分清两类：一类是高置信的主线，可以直接采信；另一类是证据有限的补充信号，需要人工复核后再使用。
-          </p>
-        </div>
-
-        <div class="insight-split">
-          <article class="insight-band strong">
-            <p class="insight-band-kicker">高置信主线 · 约 8 条</p>
-            <h3>反复出现、可直接采信</h3>
-            <p>这些洞察在多条证据中高频共现，稳定支撑"玩法 / 机制 → 胜任受挫"这条主线，以及匹配节点上的胜任受挫与公平威胁。</p>
-          </article>
-          <article class="insight-band">
-            <p class="insight-band-kicker">需复核补充 · 约 11 条</p>
-            <h3>证据有限、需人工确认</h3>
-            <p>这些多为低频或高强度的补充信号（如社区冲突相关），已标注需人工复核，用于补充主线，不宜单独作为结论。</p>
-          </article>
-        </div>
-
-        <div class="insight-grid five-up">
-          <article class="insight-card">
-            <div class="insight-topline">
-              <span class="insight-topic">玩法 / 机制 × 胜任受挫</span>
-              <span class="confidence high">高</span>
-            </div>
-            <h3>反复提到"看不懂、打不出、努力与结果不匹配"。</h3>
-            <p>这是当前案例里最密集、最稳定的一条线，也是整体结论的解释核心。</p>
-          </article>
-          <article class="insight-card">
-            <div class="insight-topline">
-              <span class="insight-topic">匹配 × 胜任受挫</span>
-              <span class="confidence high">高</span>
-            </div>
-            <h3>对局质量拉开时，最先松掉的是正常操作感。</h3>
-            <p>匹配差距会直接削弱可控感，这也是胜任受挫常从匹配处冒头的原因。</p>
-          </article>
-          <article class="insight-card">
-            <div class="insight-topline">
-              <span class="insight-topic">匹配 × 公平威胁</span>
-              <span class="confidence high">高</span>
-            </div>
-            <h3>配对、奖励与局内资源倾斜，更容易触发"给得不均"的判断。</h3>
-            <p>公平威胁并不缺席，但更集中在部分节点，不会盖过主线。</p>
-          </article>
-          <article class="insight-card">
-            <div class="insight-topline">
-              <span class="insight-topic">社区冲突 × 信任缺口</span>
-              <span class="confidence review">需复核</span>
-            </div>
-            <h3>队友互动与输赢归因，会把已有挫败推成关系裂口。</h3>
-            <p>属低频补充信号，会放大体验恶化后的尾音，但不改写主机制。</p>
-          </article>
-          <article class="insight-card">
-            <div class="insight-topline">
-              <span class="insight-topic">玩法 / 机制 × 公平威胁</span>
-              <span class="confidence high">高</span>
-            </div>
-            <h3>部分平衡讨论会转向"某些选择优势过大"的判断。</h3>
-            <p>这解释了公平威胁为何持续出现，却没有把主轴从胜任受挫改写掉。</p>
-          </article>
-        </div>
-        <p class="source-note">完整洞察清单见 <a href="files/04_validated_insights.jsonl">验证洞察文件</a>，其中约 11 条标注为需人工复核。</p>
-      </div>
-    </section>
-
-    <section class="section alt" id="evidence">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-kicker">代表性证据</p>
-          <h2>先听见玩家在意什么</h2>
-          <p class="section-lead">
-            原始表达尽量保留玩家语气，解释只做必要压缩。以下为节选，完整数据见证据表。
-          </p>
-        </div>
-
-        <div class="quote-grid">
-          <article class="quote-card">
-            <p class="quote-text">"还要让 3000 的经济去出个……一整把都不一定能做完任务的心之钢。"</p>
-            <p class="quote-meta">玩法 / 机制 · 胜任受挫 · 强度高</p>
-          </article>
-          <article class="quote-card">
-            <p class="quote-text">"为了叠效果选了某件装备……结果又被迫接着出心之钢。"</p>
-            <p class="quote-meta">玩法 / 机制 · 公平威胁 · 强度中</p>
-          </article>
-          <article class="quote-card">
-            <p class="quote-text">"队友根本不理解模式节奏，输掉以后全怪系统。"</p>
-            <p class="quote-meta">队友互动 · 信任 / 沟通缺口 · 强度高</p>
-          </article>
-          <article class="quote-card">
-            <p class="quote-text">"对面阵容和我们完全不是一个级别，打起来像送分局。"</p>
-            <p class="quote-meta">匹配机制 · 公平威胁 · 强度高</p>
-          </article>
-          <article class="quote-card">
-            <p class="quote-text">"想问问莉莉娅海斗到底怎么玩，出什么。"</p>
-            <p class="quote-meta">玩法理解 · 胜任受挫 · 强度高</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="actions">
-      <div class="container">
-        <div class="section-head section-head-strong">
-          <p class="section-kicker">行动建议</p>
-          <h2>从洞察到产品假设</h2>
-          <p class="section-lead">
-            这些建议不是最终产品决策，而是基于公开反馈形成的讨论起点。它们顺着"先降低理解成本、再优化关键节点"的思路展开，供进一步验证与讨论使用。
-          </p>
-        </div>
-
-        <div class="action-grid">
-          <article class="hypothesis-card">
-            <span class="action-level">稳妥</span>
-            <h3>降低理解成本</h3>
-            <p class="hyp-line"><span class="hyp-key">问题来源</span>理解成本高、努力与结果不匹配（胜任受挫主线）。</p>
-            <p class="hyp-line"><span class="hyp-key">建议方向</span>在版本 / 模式说明与示例内容里讲清核心海克斯、阵容适配逻辑与高频误解点。</p>
-            <p class="hyp-line boundary"><span class="hyp-key">使用边界</span>产品假设，供讨论；未经上线验证。</p>
-          </article>
-          <article class="hypothesis-card">
-            <span class="action-level">平衡</span>
-            <h3>改善匹配解释</h3>
-            <p class="hyp-line"><span class="hyp-key">问题来源</span>匹配相关公平威胁、奖励节点负向归因。</p>
-            <p class="hyp-line"><span class="hyp-key">建议方向</span>围绕匹配差距、重开投降体验、奖励反馈补更可解释的说明与更可感知的反馈。</p>
-            <p class="hyp-line boundary"><span class="hyp-key">使用边界</span>产品假设，供讨论；不代表企业内部判断。</p>
-          </article>
-          <article class="hypothesis-card">
-            <span class="action-level">平衡</span>
-            <h3>缓冲队友摩擦</h3>
-            <p class="hyp-line"><span class="hyp-key">问题来源</span>队友互动摩擦、信任与沟通缺口（放大器信号）。</p>
-            <p class="hyp-line"><span class="hyp-key">建议方向</span>在社区内容与模式沟通中提前讲清协作预期与输赢归因，减少连环归咎。</p>
-            <p class="hyp-line boundary"><span class="hyp-key">使用边界</span>基于低频补充信号，优先级需结合业务判断。</p>
-          </article>
-          <article class="hypothesis-card">
-            <span class="action-level">进阶</span>
-            <h3>建立反馈闭环</h3>
-            <p class="hyp-line"><span class="hyp-key">问题来源</span>主机制是胜任受挫，单纯谈公平会失焦。</p>
-            <p class="hyp-line"><span class="hyp-key">建议方向</span>在模式更新与传播中同时回应设计逻辑、有效策略路径与常见误区，形成解释—反馈的闭环。</p>
-            <p class="hyp-line boundary"><span class="hyp-key">使用边界</span>方向性假设，需要真实数据与实验进一步验证。</p>
-          </article>
-        </div>
-        <p class="source-note">
-          页面这 4 张卡片是<strong>人工整理的呈现</strong>；对应的<a href="files/05_action_matrix.json">行动建议矩阵文件</a>由 AI 生成，分稳妥 / 平衡 / 进阶三层、每层 2 条，两者不是一一对应。
-        </p>
-      </div>
-    </section>
-
-    <section class="section alt" id="roles">
-      <div class="container">
-        <div class="section-head section-head-strong">
-          <p class="section-kicker">能力映射</p>
-          <h2>这套材料能对应哪些工作</h2>
-          <p class="section-lead">
-            同一套材料，落到不同岗位手里读法不同：用户研究关注玩家行为与需求，产品关注模式目标与优先级，社区与发行关注反馈趋势与玩家沟通。
-          </p>
-        </div>
-
-        <div class="role-grid">
-          <article class="role-card">
-            <p class="role-type">用户研究</p>
-            <h3>把散乱抱怨翻译成待验证问题</h3>
-            <p>适合整理研究问题、访谈提纲与调研方向。看到玩家在意什么只是第一步，把"在意"翻译成可研究的问题，才真正进入工作。</p>
-            <div class="role-links">
-              <a href="https://www.riotgames.com/en/work-with-us/job/7334619/principal-researcher-league-of-legends-pubsports-los-angeles-usa" target="_blank" rel="noopener noreferrer">Riot：Principal Researcher</a>
-              <a href="https://www.ubisoft.com/en-us/company/careers/our-jobs/design/user-experience-design-user-research" target="_blank" rel="noopener noreferrer">Ubisoft：UX Research</a>
-            </div>
-          </article>
-
-          <article class="role-card">
-            <p class="role-type">游戏产品 / 模式策划</p>
-            <h3>把"先修哪里"排成优先级</h3>
-            <p>适合判断模式目标、节点优先级与路线：先修理解成本，还是先处理匹配、奖励、局内资源这些最容易引发争议的节点。</p>
-            <div class="role-links">
-              <a href="https://www.riotgames.com/en/work-with-us/job/7260522/game-product-manager-gameplay-ffgs-shanghai-china" target="_blank" rel="noopener noreferrer">Riot：Game Product Manager</a>
-              <a href="https://www.leagueoflegends.com/en-gb/news/dev/dev-ranked-and-matchmaking-in-2020/" target="_blank" rel="noopener noreferrer">League /dev：Ranked &amp; Matchmaking</a>
-            </div>
-          </article>
-
-          <article class="role-card">
-            <p class="role-type">社区运营 / 发行</p>
-            <h3>把趋势、沟通与活动节点串起来</h3>
-            <p>适合把本地趋势、玩家反馈与面向玩家的沟通串成一条线：什么时候该解释、什么时候该回应、什么时候该把反馈上报团队。</p>
-            <div class="role-links">
-              <a href="https://www.riotgames.com/en/work-with-us/job/7773289" target="_blank" rel="noopener noreferrer">Riot：Community Manager II</a>
-              <a href="https://www.riotgames.com/en/work-with-us/job/7695533/publishing-product-manager-event-valorant-contract-shanghai-china" target="_blank" rel="noopener noreferrer">Riot：Publishing Product Manager</a>
-            </div>
-          </article>
-
-          <article class="role-card">
-            <p class="role-type">社区健康</p>
-            <h3>找出最会放大情绪的互动点</h3>
-            <p>适合识别哪类互动会把挫败继续放大，哪里该先做预防、引导与规则设计。情绪升级前，往往先有一局失去手感的对局。</p>
-            <div class="role-links">
-              <a href="https://www.riotgames.com/en/news/player-dynamics-design-looking-behind-the-curtain" target="_blank" rel="noopener noreferrer">Riot：Player Dynamics Design</a>
-              <a href="https://www.riotgames.com/en/news/an-update-on-player-dynamics" target="_blank" rel="noopener noreferrer">Riot：Player Dynamics Update</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="anchors">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-kicker">理论与外部参照</p>
-          <h2>把页面里的概念，接回更大的背景</h2>
-          <p class="section-lead">
-            如果想把"胜任受挫""匹配透明度""社区摩擦"这些概念放回更大的背景，下面这组材料可作参照：包含心理学理论、游戏研究，以及企业侧公开经验与页面设计方法。
-          </p>
-        </div>
-
-        <div class="reference-grid">
-          <article class="reference-card">
-            <p class="reference-type">心理学 · 游戏动机</p>
-            <h3>Ryan, Rigby &amp; Przybylski (2006)</h3>
-            <p>自我决定理论进入游戏研究的一篇经典文章，胜任、自主、关系三条线是后续很多讨论的起点。</p>
-            <a href="https://selfdeterminationtheory.org/SDT/documents/2006_RyanRigbyPrzybylski_MandE.pdf" target="_blank" rel="noopener noreferrer">打开原文</a>
-          </article>
-          <article class="reference-card">
-            <p class="reference-type">心理学 · 需求受挫</p>
-            <h3>Kosa et al. (2022)</h3>
-            <p>直接讨论网络游戏中的需求受挫，适合把"手感变差""越打越别扭"放回更明确的研究语言。</p>
-            <a href="https://www.tandfonline.com/doi/full/10.1080/0144929X.2021.1928753" target="_blank" rel="noopener noreferrer">打开原文</a>
-          </article>
-          <article class="reference-card">
-            <p class="reference-type">游戏研究 · 体验机制</p>
-            <h3>Ballou &amp; Deterding (2023)</h3>
-            <p>关于游戏中需求受挫的扎根理论研究，适合继续深入挫败体验的形成路径。</p>
-            <a href="https://dl.acm.org/doi/10.1145/3611028" target="_blank" rel="noopener noreferrer">打开原文</a>
-          </article>
-          <article class="reference-card">
-            <p class="reference-type">企业案例 · 社区健康</p>
-            <h3>Riot：Player Dynamics</h3>
-            <p>如果想了解企业如何把互动健康、摩擦治理与长期体验做成体系，可参考 Riot 的公开说明。</p>
-            <a href="https://www.riotgames.com/en/news/an-update-on-player-dynamics" target="_blank" rel="noopener noreferrer">打开文章</a>
-          </article>
-          <article class="reference-card">
-            <p class="reference-type">企业案例 · 匹配与奖励</p>
-            <h3>League /dev：Ranked &amp; Matchmaking</h3>
-            <p>匹配透明度、奖励感与实力表达如何放在同一套改进目标里，这篇适合作对照。</p>
-            <a href="https://www.leagueoflegends.com/en-gb/news/dev/dev-ranked-and-matchmaking-in-2020/" target="_blank" rel="noopener noreferrer">打开文章</a>
-          </article>
-          <article class="reference-card">
-            <p class="reference-type">网页设计 · 信息层级</p>
-            <h3>NN/g：视觉层级与卡片</h3>
-            <p>页面排版沿用了同样的思路：先让读者抓住主线，再把卡片当作一个个信息单位来读。</p>
-            <div class="reference-links">
-              <a href="https://www.nngroup.com/articles/visual-hierarchy-ux-definition/" target="_blank" rel="noopener noreferrer">视觉层级</a>
-              <a href="https://www.nngroup.com/articles/cards-component/" target="_blank" rel="noopener noreferrer">卡片组件</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section alt" id="limitations">
-      <div class="container">
-        <div class="section-head">
-          <p class="section-kicker">使用边界</p>
-          <h2>结论的使用边界</h2>
-          <p class="section-lead">
-            这部分不是削弱结论，而是说明这些结论适合被怎样使用。按样本、方法、AI 辅助与产品建议四类分别说明。
-          </p>
-        </div>
-
-        <div class="boundary-grid">
-          <article class="boundary-use-card">
-            <h3>样本边界</h3>
-            <p class="use-fit"><span>适合用于</span>理解当前公开平衡样本中的问题结构与相对分布。</p>
-            <p class="use-unfit"><span>不适合用于</span>推断全体玩家或自然舆情的声量占比。</p>
-          </article>
-          <article class="boundary-use-card">
-            <h3>方法边界</h3>
-            <p class="use-fit"><span>适合用于</span>展示证据链与解释框架，说明结论如何一步步成立。</p>
-            <p class="use-unfit"><span>不适合用于</span>当作心理测量或因果机制的证明。</p>
-          </article>
-          <article class="boundary-use-card">
-            <h3>AI 辅助边界</h3>
-            <p class="use-fit"><span>适合用于</span>说明 AI 辅助能显著提高整理与分类效率。</p>
-            <p class="use-unfit"><span>不适合用于</span>把 AI 输出直接当作真值；约 11 条洞察已标注需人工复核。</p>
-          </article>
-          <article class="boundary-use-card">
-            <h3>产品建议边界</h3>
-            <p class="use-fit"><span>适合用于</span>从证据出发形成有依据的产品假设与讨论起点。</p>
-            <p class="use-unfit"><span>不适合用于</span>当作企业内部决策，或视为已验证有效、已上线的结论。</p>
-          </article>
-        </div>
-        <p class="source-note">
-          复现边界见<a href="https://github.com/sherlock0717/PsyLens/blob/main/REPRODUCIBILITY.md" target="_blank" rel="noopener noreferrer">复现说明</a>，
-          方法与标签边界见<a href="https://github.com/sherlock0717/PsyLens/blob/main/METHODOLOGY.md" target="_blank" rel="noopener noreferrer">方法说明</a>。
-        </p>
-      </div>
-    </section>
-
-    <section class="section" id="materials">
-      <div class="container">
-        <div class="section-head section-head-strong">
-          <p class="section-kicker">核验路径</p>
-          <h2>想验证页面结论，可以这样读</h2>
-          <p class="section-lead">
-            如果想验证页面结论，建议按"项目说明 → 方法说明 → 证据表 → 验证洞察 → 行动建议矩阵"的顺序阅读。下面按用途分成三组。
-          </p>
-        </div>
-
-        <div class="verification-path">
-          <article class="material-group">
-            <p class="material-group-kicker">① 先读项目</p>
-            <ul class="link-list">
-              <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/README.md" target="_blank" rel="noopener noreferrer">项目入口 README</a></li>
-              <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/PROJECT_BRIEF.md" target="_blank" rel="noopener noreferrer">项目说明 PROJECT_BRIEF</a></li>
-              <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/METHODOLOGY.md" target="_blank" rel="noopener noreferrer">方法说明 METHODOLOGY</a></li>
-              <li><a href="files/PsyLens_enterprise_project_brief_v3.docx">项目说明（可下载 DOCX）</a></li>
-            </ul>
-          </article>
-          <article class="material-group">
-            <p class="material-group-kicker">② 核验数据</p>
-            <ul class="link-list">
-              <li><a href="files/input_feedback_phase2_multiplatform_clean.csv">整洁样本</a></li>
-              <li><a href="files/final_evidence_table.csv">证据表</a></li>
-              <li><a href="files/04_validated_insights.jsonl">验证洞察</a></li>
-              <li><a href="files/05_action_matrix.json">行动建议矩阵</a></li>
-            </ul>
-          </article>
-          <article class="material-group">
-            <p class="material-group-kicker">③ 复现与脚本</p>
-            <ul class="link-list">
-              <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/DATA_DICTIONARY.md" target="_blank" rel="noopener noreferrer">数据字典 DATA_DICTIONARY</a></li>
-              <li><a href="https://github.com/sherlock0717/PsyLens/blob/main/REPRODUCIBILITY.md" target="_blank" rel="noopener noreferrer">复现说明 REPRODUCIBILITY</a></li>
-              <li><a href="https://github.com/sherlock0717/PsyLens/tree/main/scripts_public" target="_blank" rel="noopener noreferrer">公开脚本 scripts_public</a></li>
-            </ul>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <footer class="page-footer">
-      <div class="container footer-inner">
-        <div class="footer-brand">
-          <img src="assets/psylens-wordmark.svg" alt="PsyLens" class="footer-wordmark">
-          <p>多平台游戏社区反馈洞察工作流</p>
-        </div>
-        <p class="footer-note">当前公开案例：《英雄联盟》海克斯大乱斗模式 · 个人研究 / 作品集案例</p>
-      </div>
-    </footer>
   </main>
 
+  <footer class="site-footer">
+    <img src="assets/psylens-wordmark.svg" alt="PsyLens" class="footer-mark">
+    <p>Copyright © 2026 Sherlock0717. All rights reserved.</p>
+  </footer>
+
   <script>
+    // 页面关键数字数据驱动；JS 失败时静态内容仍可阅读。
     (function () {
-      const body = document.body;
-      const gate = document.getElementById('gate');
-      const page = document.getElementById('page');
-      const enterButton = document.getElementById('enterButton');
-      let entered = false;
-
-      function syncViewportHeight() {
-        const vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--app-vh', `${vh}px`);
-      }
-
-      function enterPage() {
-        if (entered || !body.classList.contains('gate-locked')) return;
-        entered = true;
-        body.classList.remove('gate-locked');
-        body.classList.add('entered');
-        page.setAttribute('aria-hidden', 'false');
-        window.scrollTo({ top: 0, behavior: 'auto' });
-        setTimeout(() => {
-          gate.setAttribute('hidden', 'hidden');
-        }, 650);
-      }
-
-      syncViewportHeight();
-      window.addEventListener('resize', syncViewportHeight);
-      window.addEventListener('orientationchange', syncViewportHeight);
-
-      enterButton.addEventListener('click', enterPage);
-      enterButton.addEventListener('touchend', function (event) {
-        event.preventDefault();
-        enterPage();
-      }, { passive: false });
-
-      document.addEventListener('keydown', function (event) {
-        if (body.classList.contains('gate-locked') && (event.key === 'Enter' || event.key === ' ')) {
-          event.preventDefault();
-          enterPage();
+      fetch('assets/data/showcase.json').then(function (r) { return r.json(); }).then(function (s) {
+        var set = function (k, v) {
+          document.querySelectorAll('[data-showcase="' + k + '"]').forEach(function (el) {
+            if (v !== undefined && v !== null) el.textContent = v;
+          });
+        };
+        var c = s.counts || {};
+        set('samples', c.samples);
+        set('platforms', (s.hero_summary || {}).platform_count);
+        set('provisional_evidence', c.provisional_evidence);
+        set('eval_status', (s.hero_summary || {}).evaluation_status);
+        var grid = document.getElementById('metricGrid');
+        if (grid && s.plain_metrics) {
+          grid.innerHTML = '';
+          s.plain_metrics.forEach(function (m) {
+            var d = document.createElement('div');
+            d.className = 'metric';
+            d.innerHTML = '<h3>' + m.label + '</h3><p>' + m.plain + '</p>';
+            grid.appendChild(d);
+          });
         }
-      });
-
-      window.addEventListener('load', function () {
-        syncViewportHeight();
-        window.scrollTo({ top: 0, behavior: 'auto' });
-      });
+        var ex = s.evidence_example || {};
+        set('evidence_excerpt', ex.sample_excerpt);
+        set('evidence_meta', '当前标签来源：' + (ex.label_source || '') + '·' + (ex.platform || ''));
+      }).catch(function () { /* 静态内容已可阅读 */ });
     })();
   </script>
 </body>
