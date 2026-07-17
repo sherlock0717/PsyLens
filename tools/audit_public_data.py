@@ -45,6 +45,20 @@ EVIDENCE_CSV = FILES_DIR / "final_evidence_table.csv"
 INSIGHTS_JSONL = FILES_DIR / "04_validated_insights.jsonl"
 ACTION_JSON = FILES_DIR / "05_action_matrix.json"
 
+# v2 数据底座（Phase 1A）
+V2_DIR = REPO_ROOT / "data" / "v2"
+V2_SAMPLES = V2_DIR / "samples_v2.csv"
+V2_EVIDENCE = V2_DIR / "evidence_v2.csv"
+V2_AMBIGUOUS = V2_DIR / "ambiguous_evidence_queue.csv"
+V2_BILI_QUEUE = V2_DIR / "bili_evidence_queue.csv"
+V2_MIGRATION = V2_DIR / "id_migration.csv"
+V2_MANIFEST = V2_DIR / "v2_manifest.json"
+
+SAMPLE_ID_RE = re.compile(r"^(BILI|NGA|TIEBA)_\d{4}$")
+EVIDENCE_ID_RE = re.compile(r"^(BILI|NGA|TIEBA)_\d{4}_U\d{2}$")
+EXPECTED_MIGRATED_EVIDENCE = 695
+EXPECTED_AMBIGUOUS = 2
+
 # 合法取值集合（依据 METHODOLOGY.md §3 与 run_pipeline.py 的 allowed labels）
 ALLOWED_SURFACE_TOPIC = {
     "rewards", "matchmaking", "progression", "balance", "new_player_onboarding",
@@ -864,7 +878,191 @@ def run_audit():
     return result
 
 
-def write_linkage_csv(result, path: Path):
+# ---------------------------------------------------------------------------
+# v2 数据底座审计（Phase 1A）
+# ---------------------------------------------------------------------------
+def sha256_bytes(path: Path) -> str:
+    import hashlib
+    return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else ""
+
+
+def run_v2_audit():
+    """审计 data/v2 迁移底座。返回结果字典，含 v2_migration_status。"""
+    issues = []       # 阻断性问题
+    warnings = []     # 提示
+
+    for p, label in [(V2_SAMPLES, "samples_v2"), (V2_EVIDENCE, "evidence_v2"),
+                     (V2_AMBIGUOUS, "ambiguous_queue"), (V2_BILI_QUEUE, "bili_queue"),
+                     (V2_MIGRATION, "id_migration"), (V2_MANIFEST, "manifest")]:
+        if not p.exists():
+            issues.append(f"v2 文件缺失: {label} ({p.name})")
+    if issues:
+        return {"exists": False, "issues": issues, "warnings": warnings,
+                "v2_migration_status": "BLOCKED"}
+
+    _, samples = read_csv_rows(V2_SAMPLES)
+    _, evidence = read_csv_rows(V2_EVIDENCE)
+    _, ambiguous = read_csv_rows(V2_AMBIGUOUS)
+    _, bili = read_csv_rows(V2_BILI_QUEUE)
+    _, migration = read_csv_rows(V2_MIGRATION)
+    manifest = json.loads(V2_MANIFEST.read_text(encoding="utf-8"))
+
+    sample_ids = [r.get("sample_id", "") for r in samples]
+    sample_id_set = set(sample_ids)
+    sample_by_id = {r.get("sample_id"): r for r in samples}
+
+    # 样本检查
+    if len(samples) != EXPECTED_CLEAN_ROWS:
+        issues.append(f"samples_v2 行数 {len(samples)} != {EXPECTED_CLEAN_ROWS}")
+    if len(sample_id_set) != len(samples):
+        issues.append("sample_id 不唯一")
+    plat = Counter(r.get("platform_source", "") for r in samples)
+    if not (plat.get("Bili") == 120 and plat.get("NGA") == 120 and plat.get("Tieba") == 120):
+        issues.append(f"平台数量异常: {dict(plat)}")
+    bad_sample_id = [s for s in sample_ids if not SAMPLE_ID_RE.match(s)]
+    if bad_sample_id:
+        issues.append(f"非法 sample_id 格式: {bad_sample_id[:5]}")
+    legacy_clean_ids = [r.get("legacy_clean_id", "") for r in samples]
+    if len(set(legacy_clean_ids)) != len(legacy_clean_ids):
+        issues.append("legacy_clean_id 不唯一")
+
+    # 证据检查
+    ev_ids = [r.get("evidence_id", "") for r in evidence]
+    if len(evidence) != EXPECTED_MIGRATED_EVIDENCE:
+        issues.append(f"evidence_v2 迁移数量 {len(evidence)} != {EXPECTED_MIGRATED_EVIDENCE}")
+    if len(set(ev_ids)) != len(ev_ids):
+        issues.append("evidence_id 不唯一")
+    bad_ev_id = [e for e in ev_ids if not EVIDENCE_ID_RE.match(e)]
+    if bad_ev_id:
+        issues.append(f"非法 evidence_id 格式: {bad_ev_id[:5]}")
+    legacy_ev_ids = [r.get("legacy_evidence_id", "") for r in evidence]
+    if len(set(legacy_ev_ids)) != len(legacy_ev_ids):
+        issues.append("legacy_evidence_id 重复")
+
+    # sample_id 存在性 + 前缀一致 + unit_text 匹配 sample.raw_text
+    unmatched_text = 0
+    prefix_mismatch = 0
+    missing_sample = 0
+    for r in evidence:
+        sid = r.get("sample_id", "")
+        eid = r.get("evidence_id", "")
+        if sid not in sample_id_set:
+            missing_sample += 1
+            continue
+        if not eid.startswith(sid + "_U"):
+            prefix_mismatch += 1
+        nu = normalize_text(r.get("unit_text", ""))
+        nsamp = normalize_text(sample_by_id[sid].get("raw_text", ""))
+        if not (nu and nu in nsamp):
+            unmatched_text += 1
+    if missing_sample:
+        issues.append(f"evidence.sample_id 不存在于 samples_v2: {missing_sample} 条")
+    if prefix_mismatch:
+        issues.append(f"evidence_id 平台前缀与 sample_id 不一致: {prefix_mismatch} 条")
+    if unmatched_text:
+        issues.append(f"unit_text 无法匹配对应 sample.raw_text: {unmatched_text} 条")
+
+    # review_status 全为 legacy_ai_label_unreviewed，且不得出现「人工已复核」类状态
+    rs = Counter(r.get("review_status", "") for r in evidence)
+    if set(rs) != {"legacy_ai_label_unreviewed"}:
+        issues.append(f"review_status 非全为 legacy_ai_label_unreviewed: {dict(rs)}")
+    human_reviewed_like = [r.get("evidence_id") for r in evidence
+                           if r.get("review_status", "") in ("human_reviewed", "human_curated", "verified", "approved")]
+    if human_reviewed_like:
+        issues.append(f"存在被标为人工已复核的证据（不允许）: {human_reviewed_like[:5]}")
+
+    # 歧义队列
+    if len(ambiguous) != EXPECTED_AMBIGUOUS:
+        issues.append(f"歧义证据数量 {len(ambiguous)} != {EXPECTED_AMBIGUOUS}")
+    amb_pending = all(r.get("resolution_status") == "pending_human_resolution" for r in ambiguous)
+    if not amb_pending:
+        issues.append("歧义证据未全部标记 pending_human_resolution")
+    # 歧义证据不得出现在 evidence_v2（未自动迁移）
+    amb_legacy = {r.get("legacy_evidence_id") for r in ambiguous}
+    migrated_legacy = set(legacy_ev_ids)
+    if amb_legacy & migrated_legacy:
+        issues.append(f"歧义证据被自动迁移（不允许）: {amb_legacy & migrated_legacy}")
+
+    # B 站队列：覆盖 120 个 sample_id；不含最终机制标签
+    bili_sample_cover = {r.get("sample_id") for r in bili}
+    bili_samples_all = {r.get("sample_id") for r in samples if r.get("platform_source") == "Bili"}
+    if not bili_samples_all.issubset(bili_sample_cover):
+        missing_bili = sorted(bili_samples_all - bili_sample_cover)
+        issues.append(f"B 站队列未覆盖全部 120 个 sample_id，缺 {len(missing_bili)} 个: {missing_bili[:5]}")
+    bad_mech = [r.get("queue_id") for r in bili
+                if (r.get("mechanism_label_candidate", "") or "").strip() not in ("", "unassigned")]
+    if bad_mech:
+        issues.append(f"B 站队列含最终机制标签（不允许）: {bad_mech[:5]}")
+
+    # manifest 数量一致 + SHA-256 校验
+    if manifest.get("sample_count") != len(samples):
+        issues.append("manifest.sample_count 与实际不一致")
+    if manifest.get("migrated_evidence_count") != len(evidence):
+        issues.append("manifest.migrated_evidence_count 与实际不一致")
+    if manifest.get("ambiguous_evidence_count") != len(ambiguous):
+        issues.append("manifest.ambiguous_evidence_count 与实际不一致")
+    hash_mismatch = []
+    for name, expected in (manifest.get("hashes") or {}).items():
+        actual = sha256_bytes(V2_DIR / name)
+        if actual != expected:
+            hash_mismatch.append(name)
+    if hash_mismatch:
+        issues.append(f"manifest SHA-256 不匹配: {hash_mismatch}")
+
+    # 编码检查（v2 文件应为 UTF-8）
+    for p in [V2_SAMPLES, V2_EVIDENCE, V2_AMBIGUOUS, V2_BILI_QUEUE, V2_MIGRATION]:
+        enc = detect_encoding_report(p)
+        if not enc["utf8_decodable"]:
+            issues.append(f"{p.name} 非 UTF-8 可解码")
+
+    # id_migration：不存在无效新 ID（迁移状态为 migrated 的 evidence 必须有合法 new_id）
+    bad_new_id = []
+    for r in migration:
+        if r.get("migration_status") == "migrated" and r.get("new_entity_type") == "evidence":
+            if not EVIDENCE_ID_RE.match(r.get("new_id", "")):
+                bad_new_id.append(r.get("legacy_id"))
+    if bad_new_id:
+        issues.append(f"id_migration 存在无效 evidence new_id: {bad_new_id[:5]}")
+
+    status = "PASS" if not issues else "BLOCKED"
+    return {
+        "exists": True,
+        "sample_count": len(samples),
+        "platform_counts": dict(plat),
+        "migrated_evidence_count": len(evidence),
+        "ambiguous_evidence_count": len(ambiguous),
+        "bili_samples_covered": len(bili_sample_cover),
+        "bili_candidate_unit_count": len(bili),
+        "review_status_distribution": dict(rs),
+        "manifest_hash_ok": not hash_mismatch,
+        "issues": issues,
+        "warnings": warnings,
+        "v2_migration_status": status,
+    }
+
+
+def run_combined_audit(dataset="both"):
+    """按 dataset 组合 legacy / v2 审计，输出分层状态。"""
+    out = {"dataset": dataset}
+    legacy = None
+    v2 = None
+    if dataset in ("legacy", "both"):
+        legacy = run_audit()
+        out["legacy"] = legacy
+        out["legacy_status"] = legacy["phase0_status"]
+    if dataset in ("v2", "both"):
+        v2 = run_v2_audit()
+        out["v2"] = v2
+        out["v2_migration_status"] = v2["v2_migration_status"]
+
+    # 发布就绪：需 legacy 无阻断 且 v2 迁移 PASS 且 B 站证据层已建成（本阶段必为 BLOCKED）
+    # Phase 1A：B 站仍在待处理队列 -> 未形成最终证据层 -> 不允许发布
+    pub = "BLOCKED"
+    out["publication_readiness"] = pub
+    out["publication_readiness_reason"] = (
+        "legacy 证据链错位未修复；B 站证据仍在待处理队列，未形成最终证据层；"
+        "结构化洞察与行动建议尚未重建。")
+    return out
     rows = result["evidence_audit"]["linkage_rows"]
     path.parent.mkdir(parents=True, exist_ok=True)
     cols = ["evidence_id", "parent_id", "linkage_status", "substring_match",
@@ -908,9 +1106,11 @@ def write_mismatch_csv(result, path: Path):
 
 def build_arg_parser():
     ap = argparse.ArgumentParser(description="PsyLens 公开数据审计（离线 / 确定性 / 只读）")
+    ap.add_argument("--dataset", choices=["legacy", "v2", "both"], default="both",
+                    help="审计数据集：legacy（历史公开数据）/ v2（迁移底座）/ both（默认）")
     ap.add_argument("--json-out", default="", help="输出完整审计结果 JSON 的路径")
-    ap.add_argument("--csv-out", default="", help="输出证据单元逐行关联表 CSV 的路径")
-    ap.add_argument("--mismatch-out", default="", help="输出 ID 不匹配报告 CSV 的路径")
+    ap.add_argument("--csv-out", default="", help="输出证据单元逐行关联表 CSV 的路径（legacy）")
+    ap.add_argument("--mismatch-out", default="", help="输出 ID 不匹配报告 CSV 的路径（legacy）")
     ap.add_argument("--quiet", action="store_true", help="仅输出关键摘要")
     return ap
 
@@ -956,7 +1156,7 @@ def print_summary(result):
           f"(实际出处平台: {rc['example_1_u2'].get('actual_source_platform')}, "
           f"候选数: {rc['example_1_u2'].get('candidate_count')})")
     print("-" * 60)
-    print(f"审计状态: {result['phase0_status']}")
+    print(f"legacy 审计状态: {result['phase0_status']}")
     if result["blockers"]:
         print("阻断项:")
         for b in result["blockers"]:
@@ -964,23 +1164,66 @@ def print_summary(result):
     print("=" * 60)
 
 
+def print_v2_summary(v2):
+    print("-" * 60)
+    print("v2 迁移底座审计")
+    print("-" * 60)
+    if not v2.get("exists"):
+        for i in v2["issues"]:
+            print(f"  - {i}")
+        print(f"v2_migration_status: {v2['v2_migration_status']}")
+        return
+    print(f"samples={v2['sample_count']} platform={v2['platform_counts']}")
+    print(f"migrated_evidence={v2['migrated_evidence_count']} ambiguous={v2['ambiguous_evidence_count']}")
+    print(f"bili_samples_covered={v2['bili_samples_covered']} bili_candidate_units={v2['bili_candidate_unit_count']}")
+    print(f"review_status 分布: {v2['review_status_distribution']}")
+    print(f"manifest 哈希校验: {'OK' if v2['manifest_hash_ok'] else 'FAIL'}")
+    if v2["issues"]:
+        print("v2 阻断项:")
+        for i in v2["issues"]:
+            print(f"  - {i}")
+    print(f"v2_migration_status: {v2['v2_migration_status']}")
+
+
 def main(argv=None):
     args = build_arg_parser().parse_args(argv)
-    result = run_audit()
+    combined = run_combined_audit(args.dataset)
 
+    # JSON 输出：dataset=legacy 时输出 legacy 全量；否则输出组合结果
     if args.json_out:
         p = Path(args.json_out)
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
-    if args.csv_out:
-        write_linkage_csv(result, Path(args.csv_out))
-    if args.mismatch_out:
-        write_mismatch_csv(result, Path(args.mismatch_out))
+        payload = combined.get("legacy") if args.dataset == "legacy" else combined
+        p.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    if args.csv_out and "legacy" in combined:
+        write_linkage_csv(combined["legacy"], Path(args.csv_out))
+    if args.mismatch_out and "legacy" in combined:
+        write_mismatch_csv(combined["legacy"], Path(args.mismatch_out))
 
     if not args.quiet:
-        print_summary(result)
+        if "legacy" in combined:
+            print_summary(combined["legacy"])
+        if "v2" in combined:
+            print_v2_summary(combined["v2"])
+        print("=" * 60)
+        print(f"数据集: {args.dataset}")
+        if "legacy_status" in combined:
+            print(f"legacy_status: {combined['legacy_status']}")
+        if "v2_migration_status" in combined:
+            print(f"v2_migration_status: {combined['v2_migration_status']}")
+        print(f"publication_readiness: {combined['publication_readiness']}")
+        print(f"  原因: {combined['publication_readiness_reason']}")
+        print("=" * 60)
 
-    return 1 if result["blockers"] else 0
+    # 退出码：
+    #  legacy -> legacy 有阻断则非零
+    #  v2     -> v2 迁移有阻断则非零（迁移 PASS 时返回 0）
+    #  both   -> 依 publication_readiness（BLOCKED 则非零）
+    if args.dataset == "legacy":
+        return 1 if combined["legacy_status"] == "BLOCKED" else 0
+    if args.dataset == "v2":
+        return 1 if combined["v2_migration_status"] == "BLOCKED" else 0
+    return 1 if combined["publication_readiness"] == "BLOCKED" else 0
 
 
 if __name__ == "__main__":
