@@ -1,0 +1,10 @@
+{
+  "schema_version": "action-eval-1.0",
+  "total_actions": 6,
+  "action_to_insight_linkage_rate": 1.0,
+  "action_to_evidence_linkage_rate": 1.0,
+  "validation_plan_coverage": 1.0,
+  "expected_effect_coverage": 1.0,
+  "human_curated_rate": 0.0,
+  "note": "全部为草稿，未人工整理。"
+}

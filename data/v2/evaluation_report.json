@@ -17,6 +17,14 @@
     "agent_proposal_coverage": 1.0,
     "human_review_coverage": 0.0,
     "human_override_rate": 0.0,
+    "support_resolution_rate": 1.0,
+    "low_support_claim_rate": 0.6071,
+    "single_platform_claim_rate": 0.4286,
+    "action_to_insight_linkage_rate": 1.0,
+    "action_to_evidence_linkage_rate": 1.0,
+    "validation_plan_coverage": 1.0,
+    "expected_effect_coverage": 1.0,
+    "human_curated_rate": 0.0,
     "parse_success_rate": 1.0,
     "output_hash_match_rate": 1.0,
     "manifest_completeness": 1.0
@@ -36,18 +44,27 @@
     "agent_proposal_coverage": "pass",
     "human_review_coverage": "pass",
     "human_override_rate": "n/a",
+    "support_resolution_rate": "pass",
+    "low_support_claim_rate": "warn",
+    "single_platform_claim_rate": "pass",
+    "action_to_insight_linkage_rate": "pass",
+    "action_to_evidence_linkage_rate": "pass",
+    "validation_plan_coverage": "pass",
+    "expected_effect_coverage": "pass",
+    "human_curated_rate": "n/a",
     "parse_success_rate": "pass",
     "output_hash_match_rate": "pass",
     "manifest_completeness": "n/a"
   },
-  "insight_metrics_available": false,
-  "action_metrics_available": false,
+  "insight_metrics_available": true,
+  "action_metrics_available": true,
   "blockers": [],
   "warnings": [
-    "parent_semantic_linkage_rate=0.0 低于建议阈值"
+    "parent_semantic_linkage_rate=0.0 低于建议阈值",
+    "low_support_claim_rate=0.6071 低于建议阈值"
   ],
   "failure_type_counts": {
-    "warn": 1
+    "warn": 2
   },
   "evaluation_status": "PASS",
   "note": "evidence_text_match_rate 只说明证据可在公开样本中定位，不等于采集/来源/标签/人工复核真实性。"

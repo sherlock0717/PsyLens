@@ -1,0 +1,150 @@
+{
+  "schema_version": "action-draft-1.0",
+  "note": "待验证产品假设草稿；author_type=agent_compiled；默认 hidden_pending_review；未人工整理/复核。",
+  "actions": [
+    {
+      "action_id": "ACTION_001",
+      "title": "平衡与数值 × 能力挫败 待验证产品假设",
+      "summary": "针对能力挫败：评估是否存在难度/投入回报失衡，考虑分层难度或进度补偿的待验证方案",
+      "source_insight_ids": [
+        "INSIGHT_001"
+      ],
+      "source_evidence_ids": [
+        "NGA_0001_U02",
+        "NGA_0002_U02",
+        "NGA_0002_U03",
+        "NGA_0003_U02",
+        "NGA_0003_U04"
+      ],
+      "evidence_summary": "基于结构化洞察 INSIGHT_001（135 条证据，平台 Bili、NGA、Tieba）",
+      "expected_effect": "目标群体的挫败类反馈占比下降、留存/完成率上升",
+      "validation_method": "选取相关任务/对局做 A/B，对照组与实验组比较完成率与挫败类反馈占比",
+      "success_metric": "目标群体的挫败类反馈占比下降、留存/完成率上升",
+      "risk": "样本为公开社区反馈、非随机抽样；标签未人工复核；结论为草稿假设",
+      "priority_basis": "支撑证据数 135，多平台",
+      "author_type": "agent_compiled",
+      "review_status": "agent_compiled_draft",
+      "publication_status": "hidden_pending_review"
+    },
+    {
+      "action_id": "ACTION_002",
+      "title": "其他 × 能力挫败 待验证产品假设",
+      "summary": "针对能力挫败：评估是否存在难度/投入回报失衡，考虑分层难度或进度补偿的待验证方案",
+      "source_insight_ids": [
+        "INSIGHT_002"
+      ],
+      "source_evidence_ids": [
+        "NGA_0001_U04",
+        "NGA_0002_U04",
+        "NGA_0003_U01",
+        "NGA_0003_U03",
+        "NGA_0003_U07"
+      ],
+      "evidence_summary": "基于结构化洞察 INSIGHT_002（132 条证据，平台 NGA、Tieba）",
+      "expected_effect": "目标群体的挫败类反馈占比下降、留存/完成率上升",
+      "validation_method": "选取相关任务/对局做 A/B，对照组与实验组比较完成率与挫败类反馈占比",
+      "success_metric": "目标群体的挫败类反馈占比下降、留存/完成率上升",
+      "risk": "样本为公开社区反馈、非随机抽样；标签未人工复核；结论为草稿假设",
+      "priority_basis": "支撑证据数 132，多平台",
+      "author_type": "agent_compiled",
+      "review_status": "agent_compiled_draft",
+      "publication_status": "hidden_pending_review"
+    },
+    {
+      "action_id": "ACTION_003",
+      "title": "平衡与数值 × 公平受损 待验证产品假设",
+      "summary": "针对公平受损：核查被质疑的机制/数值是否存在系统性偏向，评估透明化或平衡调整的待验证方案",
+      "source_insight_ids": [
+        "INSIGHT_003"
+      ],
+      "source_evidence_ids": [
+        "NGA_0001_U01",
+        "NGA_0008_U01",
+        "NGA_0024_U06",
+        "NGA_0026_U04",
+        "NGA_0027_U03"
+      ],
+      "evidence_summary": "基于结构化洞察 INSIGHT_003（34 条证据，平台 Bili、NGA、Tieba）",
+      "expected_effect": "公平质疑类反馈占比下降、对局结果分布更均衡",
+      "validation_method": "调整前后对比公平质疑反馈占比与结果分布指标",
+      "success_metric": "公平质疑类反馈占比下降、对局结果分布更均衡",
+      "risk": "样本为公开社区反馈、非随机抽样；标签未人工复核；结论为草稿假设",
+      "priority_basis": "支撑证据数 34，多平台",
+      "author_type": "agent_compiled",
+      "review_status": "agent_compiled_draft",
+      "publication_status": "hidden_pending_review"
+    },
+    {
+      "action_id": "ACTION_004",
+      "title": "匹配与对局分配 × 能力挫败 待验证产品假设",
+      "summary": "针对能力挫败：评估是否存在难度/投入回报失衡，考虑分层难度或进度补偿的待验证方案",
+      "source_insight_ids": [
+        "INSIGHT_004"
+      ],
+      "source_evidence_ids": [
+        "NGA_0007_U03",
+        "NGA_0026_U05",
+        "NGA_0031_U02",
+        "NGA_0036_U03",
+        "NGA_0045_U01"
+      ],
+      "evidence_summary": "基于结构化洞察 INSIGHT_004（22 条证据，平台 Bili、NGA、Tieba）",
+      "expected_effect": "目标群体的挫败类反馈占比下降、留存/完成率上升",
+      "validation_method": "选取相关任务/对局做 A/B，对照组与实验组比较完成率与挫败类反馈占比",
+      "success_metric": "目标群体的挫败类反馈占比下降、留存/完成率上升",
+      "risk": "样本为公开社区反馈、非随机抽样；标签未人工复核；结论为草稿假设",
+      "priority_basis": "支撑证据数 22，多平台",
+      "author_type": "agent_compiled",
+      "review_status": "agent_compiled_draft",
+      "publication_status": "hidden_pending_review"
+    },
+    {
+      "action_id": "ACTION_005",
+      "title": "其他 × 公平受损 待验证产品假设",
+      "summary": "针对公平受损：核查被质疑的机制/数值是否存在系统性偏向，评估透明化或平衡调整的待验证方案",
+      "source_insight_ids": [
+        "INSIGHT_005"
+      ],
+      "source_evidence_ids": [
+        "NGA_0003_U05",
+        "NGA_0019_U02",
+        "NGA_0023_U02",
+        "NGA_0029_U07",
+        "NGA_0065_U01"
+      ],
+      "evidence_summary": "基于结构化洞察 INSIGHT_005（18 条证据，平台 NGA、Tieba）",
+      "expected_effect": "公平质疑类反馈占比下降、对局结果分布更均衡",
+      "validation_method": "调整前后对比公平质疑反馈占比与结果分布指标",
+      "success_metric": "公平质疑类反馈占比下降、对局结果分布更均衡",
+      "risk": "样本为公开社区反馈、非随机抽样；标签未人工复核；结论为草稿假设",
+      "priority_basis": "支撑证据数 18，多平台",
+      "author_type": "agent_compiled",
+      "review_status": "agent_compiled_draft",
+      "publication_status": "hidden_pending_review"
+    },
+    {
+      "action_id": "ACTION_006",
+      "title": "匹配与对局分配 × 公平受损 待验证产品假设",
+      "summary": "针对公平受损：核查被质疑的机制/数值是否存在系统性偏向，评估透明化或平衡调整的待验证方案",
+      "source_insight_ids": [
+        "INSIGHT_006"
+      ],
+      "source_evidence_ids": [
+        "NGA_0016_U01",
+        "NGA_0021_U01",
+        "NGA_0022_U01",
+        "NGA_0022_U02",
+        "NGA_0024_U01"
+      ],
+      "evidence_summary": "基于结构化洞察 INSIGHT_006（16 条证据，平台 Bili、NGA、Tieba）",
+      "expected_effect": "公平质疑类反馈占比下降、对局结果分布更均衡",
+      "validation_method": "调整前后对比公平质疑反馈占比与结果分布指标",
+      "success_metric": "公平质疑类反馈占比下降、对局结果分布更均衡",
+      "risk": "样本为公开社区反馈、非随机抽样；标签未人工复核；结论为草稿假设",
+      "priority_basis": "支撑证据数 16，多平台",
+      "author_type": "agent_compiled",
+      "review_status": "agent_compiled_draft",
+      "publication_status": "hidden_pending_review"
+    }
+  ]
+}
