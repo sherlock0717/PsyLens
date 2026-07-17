@@ -33,7 +33,7 @@
 | DOCX 结论 | **v4 为重写底稿，非可直接发布正式版** |
 | 隐私综合风险 | medium（含 2 项 requires_decision） |
 
-页面主张（共 22 条核对）：verified 12、partially_verified 5、unsupported 2、contradicted 1。C13/C14 由 verified 降为 partially_verified。详见 `PUBLIC_CLAIM_AUDIT.md`。
+页面主张（共 22 条核对，与 `PUBLIC_CLAIM_AUDIT.md` C01-C22 逐条状态一致）：verified 15、partially_verified 4、unsupported 2、contradicted 1（合计 22）。其中 partially_verified 为 C13/C14/C18/C19，unsupported 为 C16/C17，contradicted 为 C15。详见 `PUBLIC_CLAIM_AUDIT.md`。
 
 ## 2. 人工复核实际范围（section 9）
 

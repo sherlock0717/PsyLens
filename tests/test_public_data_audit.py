@@ -7,7 +7,9 @@
   - 覆盖纯函数、多候选匹配、指标拆分，以及对真实公开数据的端到端断言。
 """
 import importlib.util
+import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -193,3 +195,56 @@ def test_run_audit_deterministic():
     assert r1["blockers"] == r2["blockers"]
     assert r1["recompute"] == r2["recompute"]
     assert r1["evidence_audit"]["global_match_counts"] == r2["evidence_audit"]["global_match_counts"]
+
+
+# --------------------------- 报告一致性校验 ---------------------------
+DOCS_AUDIT = REPO_ROOT / "docs" / "audit"
+
+
+def _parse_claim_statuses():
+    """从 PUBLIC_CLAIM_AUDIT.md 的主张核对表逐行提取 (claim_id, status)。"""
+    text = (DOCS_AUDIT / "PUBLIC_CLAIM_AUDIT.md").read_text(encoding="utf-8")
+    statuses = {}
+    valid = {"verified", "partially_verified", "unsupported", "contradicted", "unclear"}
+    for line in text.splitlines():
+        m = re.match(r"^\|\s*(C\d{2})\s*\|", line)
+        if not m:
+            continue
+        cid = m.group(1)
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        # 状态列可能带 ** 强调，取第一个命中的合法状态词
+        found = None
+        for cell in cells:
+            token = cell.replace("*", "").strip()
+            if token in valid:
+                found = token
+                break
+        assert found is not None, f"{cid} 未找到合法状态: {line}"
+        statuses[cid] = found
+    return statuses
+
+
+def test_public_claim_status_totals_consistent():
+    """PHASE0_SUMMARY 的状态计数之和 == PUBLIC_CLAIM_AUDIT 的 claim_id 数量，
+    且各状态分项与逐条状态一致。"""
+    statuses = _parse_claim_statuses()
+    n_claims = len(statuses)
+    assert n_claims == 22  # C01-C22
+
+    counts = Counter(statuses.values())
+    # 逐条状态汇总
+    assert counts["verified"] == 15
+    assert counts["partially_verified"] == 4
+    assert counts["unsupported"] == 2
+    assert counts["contradicted"] == 1
+    # 各状态数量之和 == claim_id 数量
+    assert sum(counts.values()) == n_claims
+
+    # PHASE0_SUMMARY 中声明的合计必须与 claim_id 数量一致
+    summary = (DOCS_AUDIT / "PHASE0_SUMMARY.md").read_text(encoding="utf-8")
+    m = re.search(r"verified\s*(\d+)、partially_verified\s*(\d+)、unsupported\s*(\d+)、contradicted\s*(\d+)", summary)
+    assert m is not None, "PHASE0_SUMMARY 未找到状态计数声明"
+    declared = [int(x) for x in m.groups()]
+    assert declared == [counts["verified"], counts["partially_verified"],
+                        counts["unsupported"], counts["contradicted"]]
+    assert sum(declared) == n_claims
