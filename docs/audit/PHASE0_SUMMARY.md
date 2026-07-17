@@ -3,36 +3,37 @@
 > 只做审计、检测脚本与报告。未修复历史数据、未重写页面、未改 main、未调用真实 API、未运行真实抓取、未读取/创建任何真实 Cookie/Token/Key。
 > 全部数字由 `tools/audit_public_data.py` 离线、确定性重算。
 
-## 0. 结论：Phase 0 = **BLOCKED**
+## 0. 结论：审计状态 = **BLOCKED**（PSYLENS-AUDIT-002 修正口径后不变）
 
 阻断项（详见各专项报告）：
 
-1. **证据表 `parent_id` 与公开整洁样本 `id` 空间系统性错位**（695/697 偏移 +120），按声明 parent 回溯原文匹配率 = 0%。
-2. **页面示例证据 `1_u2` 证据链错误**：页面称 parent_id=1、平台 B 站；实际来自 clean id=121、平台 NGA。
+1. **证据表 `parent_id` 与公开整洁样本 `id` 空间系统性错位**：`parent_reference_exists_rate = 1.0` 但 `parent_semantic_linkage_rate = 0.0`。
+2. **页面示例证据 `1_u2` 证据链错误**：页面称 parent_id=1、平台 B 站；实际唯一命中 clean id=121、平台 NGA。
 
-其余为警告级（无人工复核记录、建议无可追溯字段、证据层平台覆盖与样本层不一致、页面下载链接指向较旧 DOCX、隐私两项 requires_decision）。
+其余为警告级（无人工复核记录、建议无可追溯字段、证据层平台覆盖与样本层不一致、页面下载链接指向较旧 DOCX、隐私两项 requires_decision）。修复方向已在各报告给出。
 
-阻断不要求本阶段自动修复，修复方向已在各报告给出。
+> **口径纪律**：本审计只声明「证据文本可在公开整洁样本中定位」，**不据此声称采集 / 来源 / 标签 / 人工复核真实性**。`needs_human_review` 是模型输出字段，不等于人工复核状态。
 
-## 1. 关键量化结果
+## 1. 关键量化结果（修正后）
 
 | 项 | 值 |
 | --- | --- |
 | clean 行数 / 唯一 id | 360 / 是（0 空、0 重复） |
 | evidence 行数 / 唯一 id | 697 / 是 |
-| parent_id 通过率（值存在） | 100%（缺失 0） |
-| exact / normalized / high_sim / partial / no_match | 0 / 0 / 0 / 0 / **697** |
-| 全域可定位（数据真实性） | 697/697（not_found 0） |
+| **parent_reference_exists_rate** | **1.0**（697/697 引用编号存在） |
+| **parent_semantic_linkage_rate** | **0.0**（0/697 文本匹配声明 parent） |
+| 全域匹配：unique / ambiguous / not_found | **695 / 2 / 0** |
+| 唯一命中偏移直方图 | **{+120: 695}**（纯 +120；旧 +56/-56/Bili1 实为歧义命中，已剔除） |
+| 实际出处平台（仅唯一命中） | NGA 394 / Tieba 301 / 歧义 2（不计平台） |
 | supporting_id 通过率 | 100%（缺失 0、空 0） |
-| 页面主张 verified / partially / unsupported / contradicted | 见下 |
-| `1_u2` 示例是否闭合 | **否**（平台错误 + parent 错位） |
+| `1_u2` 示例是否闭合 | **否**（候选数 1，实际 NGA；页面称 B 站错误） |
 | uncertain 比例（机制层） | 336/697 ≈ 48% |
-| needs_human_review true / false | 11 / 8 |
+| confidence=high / needs_human_review=false / 交集 | **7 / 8 / 7** |
 | 行动建议可追溯率 | 0（无 source_insight/evidence 字段） |
-| DOCX 推荐 | **v4**（v3 归档） |
+| DOCX 结论 | **v4 为重写底稿，非可直接发布正式版** |
 | 隐私综合风险 | medium（含 2 项 requires_decision） |
 
-页面主张（共 22 条核对）：verified 13、partially_verified 3、unsupported 2、contradicted 1、其余 privacy/reproducibility verified。详见 `PUBLIC_CLAIM_AUDIT.md`。
+页面主张（共 22 条核对）：verified 12、partially_verified 5、unsupported 2、contradicted 1。C13/C14 由 verified 降为 partially_verified。详见 `PUBLIC_CLAIM_AUDIT.md`。
 
 ## 2. 人工复核实际范围（section 9）
 
@@ -41,20 +42,30 @@
 - 页面「经人工复核 / 可以直接采信」**缺乏实际依据**，属需降级表述。
 - **不得**据描述文字推断人工复核已完成。
 
-## 3. 行动建议审计与建议 schema（section 10）
+## 3. 行动建议审计与建议 schema（section 10 / 修正）
 
 - `05_action_matrix.json`：纯 AI 生成；含 `insight_statements(3)`、`mechanism_hypotheses(3)`、`action_proposals{safe2,balanced2,bold2}`=6 条。
 - **无** `validation_method`、**无** `expected_effect`、**无** `source_insight_ids`/`source_evidence_ids`、**无**人工整理状态。
 - 页面 4 张卡为「人工整理」，页面已如实说明与 JSON 非一一对应；但仍无 insight/evidence 级可追溯。
-- 建议新增正式公开建议文件 `docs/files/public_action_hypotheses.json`（**本阶段仅设计 schema，不生成虚构建议**）：
+
+**ID 方案（Phase 1 决策前，不生成实际 `public_action_hypotheses.json`）**：本阶段**仅设计**两种候选方案，且**不写入任何不存在的 evidence_id**（上一轮示意的 `"121_u2"` 已删除；注意 `121_u2` 恰好是真实 id，但用它示意会误导——正式方案的 ID 应经修复后确定）。
+
+- **方案 A（最小改动）**：保留现有 `evidence_id`（如 `1_u2`），**单独修复 `parent_id`** 使其指向真实 clean 行；建议文件的 `source_evidence_ids` 引用修复后的现有 evidence_id。
+- **方案 B（稳定平台前缀 ID）**：重建一套带平台前缀、稳定可读的 ID 体系：
+  - sample：`BILI_0001` / `NGA_0001` / `TIEBA_0001`
+  - evidence：`NGA_0001_U02`
+  - insight：`INSIGHT_001`
+  - action：`ACTION_001`
+
+建议 schema（字段设计，占位符不代表真实数据）：
 
 ```json
 {
-  "action_id": "A01",
+  "action_id": "ACTION_001",
   "title": "...",
   "summary": "...",
-  "source_insight_ids": ["I01"],
-  "source_evidence_ids": ["121_u2"],
+  "source_insight_ids": ["INSIGHT_001"],
+  "source_evidence_ids": ["<修复/重建后的真实 evidence_id>"],
   "evidence_summary": "...",
   "expected_effect": "...",
   "validation_method": "...",
@@ -63,7 +74,7 @@
 }
 ```
 
-> 注：示例中 `source_evidence_ids` 使用**修复对齐后**的真实 id；在 parent 错位修复前不得据现有 id 生成建议。
+> 在 Phase 1 选定方案并完成 ID 修复/重建前，**不得**据现有错位数据生成 `public_action_hypotheses.json`。
 
 ## 4. 旧页面与文档审计（section 15，仅列位置与建议，不改文件）
 
@@ -84,12 +95,12 @@
 
 ## 6. 交付物
 
-- 脚本：`tools/audit_public_data.py`（离线/确定性/非零退出表示阻断）。
-- 测试：`tests/test_public_data_audit.py`（17 项，全部通过）。
-- 报告：`docs/audit/` 下 8 份 MD + `ID_MISMATCH_REPORT.csv`。
+- 脚本：`tools/audit_public_data.py`（离线/确定性/非零退出表示阻断；多候选感知、指标拆分）。
+- 测试：`tests/test_public_data_audit.py`（25 项，全部通过；含多候选、歧义不分配平台、唯一命中才算 offset、两个 parent 指标、confidence/review 分离、不伪造 id、不出现「真实性已证明」）。
+- 报告：`docs/audit/` 下 8 份审计 MD + `ID_MISMATCH_REPORT.csv`；另保留线上复核 `ONLINE_REVIEW_NOTES.md`（未修改）。
 - 临时产物（`artifacts/audit/`，已 gitignore，不提交）：完整 JSON、逐行 linkage CSV、DOCX 比较 JSON、运行日志。
 
 ## 7. 审计脚本运行结果
 
-- `python tools/audit_public_data.py` → 退出码 **1**（存在阻断项），摘要见 §1。
-- `python -m pytest tests/test_public_data_audit.py -q` → **17 passed**。
+- `python tools/audit_public_data.py` → 退出码 **1**（存在阻断项：`parent_semantic_linkage_rate=0.0`），摘要见 §1。
+- `python -m pytest -q` → **25 passed**。

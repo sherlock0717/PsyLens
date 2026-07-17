@@ -1,7 +1,9 @@
 # 数据关联审计（DATA_LINKAGE_AUDIT）
 
-> 任务：PSYLENS-AUDIT-001 / Phase 0。所有数字由 `tools/audit_public_data.py` 离线、确定性重算，未修改任何历史公开数据。
-> 结论先行：**Phase 0 = BLOCKED**。核心阻断为「证据表 `parent_id` 与公开整洁样本 `id` 空间系统性错位」。
+> 任务：PSYLENS-AUDIT-001 → 002（方法与口径修正）。所有数字由 `tools/audit_public_data.py` 离线、确定性重算，未修改任何历史公开数据。
+> 结论先行：**审计状态 = BLOCKED**。核心阻断为「证据表 `parent_id` 与公开整洁样本 `id` 空间系统性错位」。
+>
+> **口径说明**：本报告只声明「**证据文本可在公开整洁样本中定位**」，**不据此声称采集真实性 / 来源真实性 / 标签真实性 / 人工复核真实性**。
 
 ## 1. 数据规模与唯一性
 
@@ -26,44 +28,51 @@
 
 ## 3. 证据单元与 parent 关联（核心问题）
 
-对 697 条证据单元的 `unit_text` 与其**声明 `parent_id`** 对应的整洁样本 `raw_text` 做匹配（精确子串 / 归一化子串 / SequenceMatcher / 字符 3-gram overlap）：
+### 3.1 拆分两个指标（废止笼统的「parent_id 通过率」）
 
-| 关联状态（vs 声明 parent） | 数量 |
-| --- | --- |
-| exact_substring / normalized_substring / high_similarity / partial_overlap | 0 |
-| **no_match** | **697** |
-| missing_parent（parent_id 值不存在） | 0 |
-| empty_text | 0 |
+| 指标 | 定义 | 本轮值 |
+| --- | --- | --- |
+| **parent_reference_exists_rate** | `parent_id` 值能找到同编号 clean 行的比例 | **1.0**（697/697） |
+| **parent_semantic_linkage_rate** | `unit_text` 能匹配声明 parent `raw_text` 的比例 | **0.0**（0/697） |
 
-**`parent_id` 通过率（值存在）= 100%（0 缺失），但按声明 parent 回溯原文的文本匹配率 = 0%。**
+两指标必须**同时展示**：引用编号都存在，但没有任何一条证据文本真的来自它所声明的父样本。
 
-### 3.1 全域诊断：数据真实，只是 id 错位
+对声明 parent 的匹配状态（精确子串 / 归一化子串 / SequenceMatcher / 字符 3-gram overlap）：`no_match = 697`，其余状态 0。
 
-对每条 `unit_text` 在**任意**整洁样本中做归一化子串搜索：
+### 3.2 全域匹配（多候选感知）
 
-| 全域匹配 | 数量 |
+对每条 `unit_text` 在**任意**整洁样本中做归一化子串搜索，**收集所有候选**（`candidate_clean_ids` / `candidate_count`），并按候选数分类：
+
+| 全域匹配分类 | 数量 |
 | --- | --- |
 | found_in_declared_parent | 0 |
-| **found_in_other_id** | **697** |
+| **unique_match_in_other_id**（candidate_count==1，命中于其他 id） | **695** |
+| **ambiguous_match_in_other_ids**（candidate_count>1，来源不确定） | **2** |
 | not_found_anywhere | **0** |
 
-即：**全部 697 条证据文本都真实存在于整洁样本中**（数据不是伪造），但**都出现在与其 `parent_id` 不同的 `id` 上**。
+口径修正：**只有 `candidate_count == 1` 时**才认定 `actual_clean_id / actual_platform / actual_window / offset`；歧义命中**不指定平台、不计入平台分布、不计算确定 offset**。
 
-`parent_id` 偏移直方图：`{+120: 695, +56: 1, -56: 1}`。
+- **唯一命中偏移直方图：`{+120: 695}`**（纯 +120，无杂项）。
+- 上一轮出现的 `+56 / -56 / Bili 1` 三项，经多候选核查确认为**歧义命中**（下 §3.3），已从确定 offset 与平台分布中剔除。
 
-- 公开整洁样本排序为 `[Bili 1–120][NGA 121–240][Tieba 241–360]`。
-- 证据表 `parent_id` 仅覆盖 `1–240`，且 695/697 精确 `+120` → 实际对应 clean `121–360`（即 **NGA + Tieba**）。
-- 结论：证据表由一份**仅含 NGA+Tieba（240 条）**的输入生成并从 1 编号；公开整洁样本在前面追加了 Bili（120 条）并整体重编号，导致 `parent_id` 整体偏移 +120。
+歧义命中 2 例：
 
-### 3.2 证据单元「实际出处」平台分布
+| evidence_id | 声明 parent | candidate_count | 候选 clean id | 候选平台 |
+| --- | --- | --- | --- | --- |
+| `83_u2` | 83 | 2 | 139, 203 | NGA |
+| `96_u3` | 96 | 6 | 40,42,63,170,216,334 | Bili/NGA/Tieba（极短文本，跨平台散布） |
 
-| 平台 | 实际来源证据单元数 |
+结构结论：公开整洁样本排序为 `[Bili 1–120][NGA 121–240][Tieba 241–360]`；证据 `parent_id` 仅覆盖 `1–240`，695 条精确 `+120` → 实际对应 clean `121–360`（NGA+Tieba）。证据表由一份**仅含 NGA+Tieba（240 条）**的输入从 1 编号生成，公开整洁样本在前面追加 Bili（120）并整体重编号，导致 `parent_id` 整体偏移 +120。
+
+### 3.3 证据单元「实际出处」平台分布（仅唯一命中）
+
+| 平台 | 唯一命中证据单元数 |
 | --- | --- |
-| NGA | 395 |
+| NGA | 394 |
 | Tieba | 301 |
-| Bili | 1（±56 偏移的短文本偶然命中，非真实覆盖） |
+| （歧义命中 2 条不计入任何平台） | 2 |
 
-**证据层实际只覆盖 NGA 与 Tieba；B 站样本（clean 1–120）在证据层几乎无覆盖。** 这与样本层「三平台各 120」形成层级不一致。
+**证据层实际只覆盖 NGA 与 Tieba；B 站样本（clean 1–120）在证据层无确定覆盖**（上一轮「Bili 1」为歧义命中误计，已剔除）。这与样本层「三平台各 120」形成层级不一致，不得据此把 B 站计入证据层平台覆盖。
 
 ## 4. evidence_phrase 与标签
 
@@ -77,9 +86,9 @@
 - 19 条洞察全部可解析；`supporting_ids` 均非空。
 - **所有 supporting_ids 都存在于证据表 `id` 中（缺失 0）**，`supporting_id` 通过率 = 100%。
 - 洞察间证据**无重复使用**（reused_evidence_id_count = 0）。
-- `needs_human_review`：true 11 条 / false 8 条。
+- confidence 与 needs_human_review 是**不同字段**，分别统计：`confidence=high` **7 条**；`needs_human_review=false`（模型输出字段）**8 条**；两者交集 **7 条**。`needs_human_review` **不等于人工复核状态**。
 - topic / mechanism 与洞察文本一致性：逐条一致。
-- 平台覆盖（按**实际出处**重算）：19 条中 **12 条为单平台支撑**（含高置信主线 line 1 balance×competence，仅 NGA、仅 w1）。详见 `PUBLIC_CLAIM_AUDIT.md`。
+- 平台覆盖（按**唯一命中的实际出处**重算，歧义命中不计平台）：19 条中多条为单平台支撑（含高置信主线 line 1 balance×competence，仅 NGA、仅 w1）。详见 `PUBLIC_CLAIM_AUDIT.md`。
 
 ## 6. 逐单元明细
 
@@ -88,7 +97,8 @@
 
 ## 7. 修复方向（本阶段不执行）
 
-1. 重新对齐 `parent_id`：以 `unit_text` 全域匹配得到的真实 clean id 重写证据表 `parent_id`（或反向：为证据表补一列 `clean_id_resolved`）。
+1. 重新对齐 `parent_id`：对**唯一命中**的 695 条以真实 clean id 修复；对 2 条**歧义命中**需人工确认后再定，不得机械 +120。
 2. 明确证据层实际只覆盖 NGA+Tieba，并据此调整所有「三平台」层级的表述与统计。
 3. 决定是否为 Bili 样本补做证据抽取，使证据层与样本层平台一致。
-4. 修复后，`tools/audit_public_data.py` 应重跑至 `no_match = 0`。
+4. 建立稳定、带平台前缀的 ID 体系（见 `PHASE0_SUMMARY.md` 建议 schema）后再迁移。
+5. 修复后，`tools/audit_public_data.py` 应重跑至 `parent_semantic_linkage_rate = 1.0`。

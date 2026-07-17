@@ -342,13 +342,18 @@ def audit_evidence(evidence_rows, clean_rows):
     phrase_norm_only = 0
     parent_missing_ids = []
 
-    # 全域匹配诊断计数
-    global_counter = Counter()  # found_in_declared_parent / found_in_other_id / not_found_anywhere
-    offset_examples = []
-    offset_hist = Counter()
+    # 全域匹配诊断计数（多候选感知）
+    # 分类：found_in_declared_parent / unique_match_in_other_id
+    #      / ambiguous_match_in_other_ids / not_found_anywhere
+    global_counter = Counter()
+    offset_examples = []            # 仅收集 *唯一命中* 的偏移示例
+    ambiguous_examples = []         # 歧义命中示例（多候选）
+    unique_offset_hist = Counter()  # 仅唯一命中参与偏移直方图
     parent_ids_int = []
-    actual_platform_dist = Counter()  # 证据单元「实际出处」的平台分布
-    evidence_actual_source = {}       # evidence_id -> {actual_clean_id, actual_platform, actual_window}
+    parent_reference_exists = 0     # parent_id 值能找到同编号 clean 行
+    parent_semantic_linkage = 0     # unit_text 匹配声明 parent raw_text
+    actual_platform_dist = Counter()  # 仅唯一命中计入平台分布
+    evidence_actual_source = {}       # evidence_id -> {actual_clean_id, actual_platform, actual_window}（仅唯一命中）
 
     for r in evidence_rows:
         eid = str(r.get("id"))
@@ -375,28 +380,42 @@ def audit_evidence(evidence_rows, clean_rows):
 
         parent = clean_by_id.get(pid)
         parent_exists = parent is not None
+        if parent_exists:
+            parent_reference_exists += 1
         if not parent_exists and pid != "":
             parent_missing_ids.append({"evidence_id": eid, "parent_id": pid})
         parent_raw = parent.get("raw_text", "") if parent else ""
 
         status, ratio, ov = classify_linkage(unit, parent_raw, parent_exists)
         status_counter[status] += 1
+        # 语义关联：unit_text 精确/归一化匹配声明 parent 原文
+        if status in ("exact_substring", "normalized_substring", "high_similarity"):
+            parent_semantic_linkage += 1
 
-        # 全域诊断：unit_text 归一化后能否在任意整洁样本中定位
+        # 全域诊断（多候选）：收集 *所有* 包含 unit_text 的 clean id
         nu = normalize_text(unit)
-        global_match_id = None
-        global_status = "not_found_anywhere"
+        candidate_ids = []
         if nu:
-            if parent_exists and nu in clean_norm.get(pid, ""):
-                global_status = "found_in_declared_parent"
-                global_match_id = pid
-            else:
-                for cid, cn in clean_norm.items():
-                    if nu in cn:
-                        global_status = "found_in_other_id"
-                        global_match_id = cid
-                        break
+            candidate_ids = [cid for cid, cn in clean_norm.items() if nu in cn]
+        candidate_count = len(candidate_ids)
+
+        global_match_id = None       # 仅当唯一命中时才确定
+        if candidate_count == 0:
+            global_status = "not_found_anywhere"
+        elif parent_exists and pid in candidate_ids and candidate_count == 1:
+            global_status = "found_in_declared_parent"
+            global_match_id = pid
+        elif candidate_count == 1:
+            global_status = "unique_match_in_other_id"
+            global_match_id = candidate_ids[0]
+        else:
+            global_status = "ambiguous_match_in_other_ids"
         global_counter[global_status] += 1
+
+        if re.fullmatch(r"\d+", pid or ""):
+            parent_ids_int.append(int(pid))
+
+        # 仅唯一命中：计入平台分布、offset、实际出处
         if global_match_id is not None:
             gm_row = clean_by_id.get(global_match_id, {})
             actual_platform_dist[gm_row.get("platform_source", "")] += 1
@@ -405,25 +424,26 @@ def audit_evidence(evidence_rows, clean_rows):
                 "actual_platform": gm_row.get("platform_source", ""),
                 "actual_window": gm_row.get("window_tag", ""),
             }
-        if re.fullmatch(r"\d+", pid or ""):
-            parent_ids_int.append(int(pid))
-        if global_status == "found_in_other_id":
-            try:
-                off = int(global_match_id) - int(pid)
-            except (ValueError, TypeError):
-                off = None
-            offset_hist[off] += 1
-        if global_status == "found_in_other_id" and len(offset_examples) < 60:
-            try:
-                off = int(global_match_id) - int(pid)
-            except (ValueError, TypeError):
-                off = None
-            offset_examples.append({
+            if global_status == "unique_match_in_other_id":
+                try:
+                    off = int(global_match_id) - int(pid)
+                except (ValueError, TypeError):
+                    off = None
+                unique_offset_hist[off] += 1
+                if len(offset_examples) < 60:
+                    offset_examples.append({
+                        "evidence_id": eid, "declared_parent_id": pid,
+                        "actual_clean_id": global_match_id, "offset": off,
+                        "declared_platform": (clean_by_id.get(pid, {}).get("platform_source")
+                                              if parent_exists else None),
+                        "actual_platform": gm_row.get("platform_source"),
+                    })
+        elif global_status == "ambiguous_match_in_other_ids" and len(ambiguous_examples) < 60:
+            ambiguous_examples.append({
                 "evidence_id": eid, "declared_parent_id": pid,
-                "actual_clean_id": global_match_id, "offset": off,
-                "declared_platform": (clean_by_id.get(pid, {}).get("platform_source")
-                                      if parent_exists else None),
-                "actual_platform": clean_by_id.get(global_match_id, {}).get("platform_source"),
+                "candidate_count": candidate_count,
+                "candidate_clean_ids": candidate_ids[:10],
+                "candidate_platforms": sorted({clean_by_id.get(c, {}).get("platform_source", "") for c in candidate_ids}),
             })
 
         # evidence_phrase 是否在 unit_text 内
@@ -437,8 +457,10 @@ def audit_evidence(evidence_rows, clean_rows):
         excerpt = re.sub(r"\s+", " ", str(parent_raw))[:60]
         substr = status in ("exact_substring", "normalized_substring")
         note = ""
-        if global_status == "found_in_other_id":
-            note = f"unit_text 实际出现在 clean id={global_match_id}（parent_id 错位）"
+        if global_status == "unique_match_in_other_id":
+            note = f"unit_text 唯一命中 clean id={global_match_id}（parent_id 错位）"
+        elif global_status == "ambiguous_match_in_other_ids":
+            note = f"unit_text 命中多个 clean id（candidate_count={candidate_count}），来源不确定"
         elif global_status == "not_found_anywhere":
             note = "unit_text 在任何整洁样本中均未找到"
         linkage_rows.append({
@@ -461,7 +483,10 @@ def audit_evidence(evidence_rows, clean_rows):
         "unit_text_empty_count": unit_empty,
         "parent_missing_count": len(parent_missing_ids),
         "parent_missing_examples": parent_missing_ids[:50],
-        "parent_linkage_pass_count": n - len(parent_missing_ids) - parent_empty,
+        "parent_reference_exists_count": parent_reference_exists,
+        "parent_reference_exists_rate": round(parent_reference_exists / n, 4) if n else 0,
+        "parent_semantic_linkage_count": parent_semantic_linkage,
+        "parent_semantic_linkage_rate": round(parent_semantic_linkage / n, 4) if n else 0,
         "invalid_mechanism_labels": dict(bad_mechanism),
         "invalid_surface_topics": dict(bad_topic),
         "invalid_confidence_values": dict(bad_conf),
@@ -471,12 +496,17 @@ def audit_evidence(evidence_rows, clean_rows):
         "confidence_distribution": dict(confidence_dist),
         "linkage_status_counts": dict(status_counter),
         "global_match_counts": dict(global_counter),
-        "actual_source_platform_distribution": dict(actual_platform_dist),
-        "parent_id_offset_histogram": {str(k): v for k, v in sorted(offset_hist.items(), key=lambda x: (x[0] is None, x[0]))},
+        "unique_match_count": global_counter.get("unique_match_in_other_id", 0) + global_counter.get("found_in_declared_parent", 0),
+        "unique_match_in_other_id_count": global_counter.get("unique_match_in_other_id", 0),
+        "ambiguous_match_count": global_counter.get("ambiguous_match_in_other_ids", 0),
+        "not_found_count": global_counter.get("not_found_anywhere", 0),
+        "actual_source_platform_distribution_unique_only": dict(actual_platform_dist),
+        "unique_offset_histogram": {str(k): v for k, v in sorted(unique_offset_hist.items(), key=lambda x: (x[0] is None, x[0]))},
         "parent_id_min": min(parent_ids_int) if parent_ids_int else None,
         "parent_id_max": max(parent_ids_int) if parent_ids_int else None,
         "parent_id_distinct": len(set(parent_ids_int)),
-        "parent_id_offset_examples": offset_examples,
+        "unique_offset_examples": offset_examples,
+        "ambiguous_examples": ambiguous_examples,
         "evidence_phrase_total_nonempty": phrase_total_nonempty,
         "evidence_phrase_exact_in_unit": phrase_in_unit,
         "evidence_phrase_normalized_only": phrase_norm_only,
@@ -586,8 +616,17 @@ def audit_insights(jsonl_results, evidence_rows, clean_rows, evidence_actual_sou
     no_review_but_link_fail = [p["line"] for p in per_insight
                                if p["needs_human_review"] is False and p["missing_support_ids"]]
     single_platform_lines = [p["line"] for p in per_insight if p["single_platform"]]
-    needs_review_count = sum(1 for p in per_insight if p["needs_human_review"] is True)
-    no_review_count = sum(1 for p in per_insight if p["needs_human_review"] is False)
+
+    # 拆分：confidence 分布 与 needs_human_review 分布（两者是不同字段）
+    insight_confidence_distribution = dict(Counter(p["confidence"] for p in per_insight))
+    needs_human_review_distribution = dict(Counter(
+        {True: "true", False: "false"}.get(p["needs_human_review"], "null")
+        for p in per_insight))
+    high_confidence_count = sum(1 for p in per_insight if p["confidence"] == "high")
+    no_review_flag_count = sum(1 for p in per_insight if p["needs_human_review"] is False)
+    high_conf_and_no_review = [p["line"] for p in per_insight
+                               if p["confidence"] == "high" and p["needs_human_review"] is False]
+    high_confidence_lines = [p["line"] for p in per_insight if p["confidence"] == "high"]
 
     return {
         "total_lines_parsed": len(insights),
@@ -598,8 +637,14 @@ def audit_insights(jsonl_results, evidence_rows, clean_rows, evidence_actual_sou
         "missing_support_lines": any_missing,
         "reused_evidence_ids": reused_ids,
         "reused_evidence_id_count": len(reused_ids),
-        "needs_human_review_true_count": needs_review_count,
-        "needs_human_review_false_count": no_review_count,
+        # confidence 与 needs_human_review 分开统计（后者是模型输出字段，非人工复核状态）
+        "insight_confidence_distribution": insight_confidence_distribution,
+        "needs_human_review_distribution": needs_human_review_distribution,
+        "high_confidence_count": high_confidence_count,
+        "high_confidence_lines": high_confidence_lines,
+        "no_review_flag_count": no_review_flag_count,
+        "high_confidence_and_no_review_flag_count": len(high_conf_and_no_review),
+        "high_confidence_and_no_review_flag_lines": high_conf_and_no_review,
         "high_confidence_low_support_lines": high_conf_low_support,
         "no_review_but_link_failure_lines": no_review_but_link_fail,
         "single_platform_lines": single_platform_lines,
@@ -636,17 +681,17 @@ def audit_recompute(clean_rows, evidence_rows, insights_audit):
         nu = normalize_text(unit)
         # 声明 parent 的原文是否包含 unit_text
         declared_match = parent is not None and nu and nu in normalize_text(parent.get("raw_text", ""))
-        # 实际出处（全域搜索）
-        actual_id, actual_platform = None, None
-        for cid, r in clean_by_id.items():
-            if nu and nu in normalize_text(r.get("raw_text", "")):
-                actual_id, actual_platform = cid, r.get("platform_source", "")
-                break
+        # 实际出处（全域搜索，收集所有候选；只有唯一命中才认定）
+        candidates = [cid for cid, r in clean_by_id.items()
+                      if nu and nu in normalize_text(r.get("raw_text", ""))]
+        actual_id = candidates[0] if len(candidates) == 1 else None
+        actual_platform = clean_by_id.get(actual_id, {}).get("platform_source") if actual_id else None
         example.update({
             "declared_parent_id": pid,
             "declared_parent_exists": parent is not None,
             "declared_parent_platform": parent.get("platform_source", "") if parent else None,
             "unit_text_matches_declared_parent": bool(declared_match),
+            "candidate_count": len(candidates),
             "actual_source_clean_id": actual_id,
             "actual_source_platform": actual_platform,
             "mechanism_label": ex.get("mechanism_label"),
@@ -704,17 +749,17 @@ def determine_blocking(clean_audit, evidence_audit, insights_audit, recompute):
             f"存在 parent_id 无法在整洁样本中找到的证据单元: "
             f"{evidence_audit['parent_missing_count']} 条")
 
-    # evidence unit 无法匹配「声明的 parent 原文」（no_match / empty）
-    status = evidence_audit.get("linkage_status_counts", {})
-    nomatch = status.get("no_match", 0)
-    gm = evidence_audit.get("global_match_counts", {})
-    not_found = gm.get("not_found_anywhere", 0)
-    found_other = gm.get("found_in_other_id", 0)
-    if nomatch > 0:
+    # 语义关联缺失：unit_text 无法匹配「声明的 parent 原文」
+    psl = evidence_audit.get("parent_semantic_linkage_rate", 1.0)
+    unique_other = evidence_audit.get("unique_match_in_other_id_count", 0)
+    ambiguous = evidence_audit.get("ambiguous_match_count", 0)
+    not_found = evidence_audit.get("not_found_count", 0)
+    if psl < 0.98:
         blockers.append(
-            f"证据单元 unit_text 无法匹配其声明的 parent_id 对应整洁样本原文 (no_match): {nomatch} 条。"
-            f"其中 {found_other} 条实际出现在 *其他* id 的整洁样本中（parent_id 与公开 clean CSV 的 id 空间错位），"
-            f"{not_found} 条在任何整洁样本中均未找到。")
+            f"parent 语义关联缺失：parent_semantic_linkage_rate={psl}"
+            f"（parent_reference_exists_rate={evidence_audit.get('parent_reference_exists_rate')}）。"
+            f"证据文本可在公开整洁样本中定位，但 id 错位：唯一命中于其他 id {unique_other} 条、"
+            f"歧义命中 {ambiguous} 条、未找到 {not_found} 条。")
 
     # supporting_id 不存在
     if insights_audit.get("missing_support_lines"):
@@ -845,7 +890,7 @@ def write_mismatch_csv(result, path: Path):
             detail = f"sim={r['similarity_ratio']} ngram={r['ngram_overlap']}"
             if r.get("notes"):
                 detail = r["notes"] + f"; {detail}"
-            out.append({"issue_type": "evidence_unit_" + r["linkage_status"],
+            out.append({"issue_type": "evidence_unit_semantic_" + r["linkage_status"],
                         "source_id": r["evidence_id"], "referenced_id": r["parent_id"],
                         "detail": detail})
     for p in result["insights_audit"]["per_insight"]:
@@ -882,28 +927,36 @@ def print_summary(result):
     print(f"平台分布: {ca['platform_distribution']}")
     print(f"时间窗分布: {ca['window_distribution']}")
     print(f"证据单元行数: {ea['total_rows']} (期望 {EXPECTED_EVIDENCE_ROWS}), id 唯一: {ea['id_unique']}")
-    print(f"parent 缺失(值不存在): {ea['parent_missing_count']}")
-    print(f"linkage 状态(vs 声明 parent): {ea['linkage_status_counts']}")
+    print(f"parent_reference_exists_rate: {ea['parent_reference_exists_rate']} "
+          f"(值存在 {ea['parent_reference_exists_count']}/{ea['total_rows']})")
+    print(f"parent_semantic_linkage_rate: {ea['parent_semantic_linkage_rate']} "
+          f"(语义匹配 {ea['parent_semantic_linkage_count']}/{ea['total_rows']})")
     print(f"全域匹配诊断: {ea['global_match_counts']}")
-    print(f"parent_id 偏移直方图: {ea['parent_id_offset_histogram']} (范围 {ea['parent_id_min']}-{ea['parent_id_max']})")
-    print(f"证据单元实际出处平台分布: {ea['actual_source_platform_distribution']}")
+    print(f"  唯一命中={ea['unique_match_count']} 歧义命中={ea['ambiguous_match_count']} 未找到={ea['not_found_count']}")
+    print(f"唯一命中偏移直方图: {ea['unique_offset_histogram']} (parent_id 范围 {ea['parent_id_min']}-{ea['parent_id_max']})")
+    print(f"实际出处平台分布(仅唯一命中): {ea['actual_source_platform_distribution_unique_only']}")
     print(f"evidence_phrase 命中(精确/归一): "
           f"{ea['evidence_phrase_exact_in_unit']}+{ea['evidence_phrase_normalized_only']}"
           f"/{ea['evidence_phrase_total_nonempty']}")
     print(f"洞察数: {ia['total_lines_parsed']} (期望 {EXPECTED_INSIGHTS}), "
           f"解析失败: {len(ia['parse_failures'])}")
     print(f"supporting_id 缺失行: {ia['missing_support_lines']}")
-    print(f"needs_human_review: true={ia['needs_human_review_true_count']} "
-          f"false={ia['needs_human_review_false_count']}")
+    print(f"insight confidence 分布: {ia['insight_confidence_distribution']}")
+    print(f"needs_human_review 分布(模型字段): {ia['needs_human_review_distribution']}")
+    print(f"high_confidence={ia['high_confidence_count']} "
+          f"no_review_flag={ia['no_review_flag_count']} "
+          f"交集={ia['high_confidence_and_no_review_flag_count']}")
     print(f"机制计数: competence_frustration={rc['competence_frustration_count']} "
           f"fairness_threat={rc['fairness_threat_count']} uncertain={rc['uncertain_mechanism_count']}")
     print(f"theme_bucket=balance_mechanic 计数: "
           f"{rc['theme_bucket_counts'].get('balance_mechanic', 0)} "
           f"按平台 {rc['theme_balance_mechanic_by_platform']}")
     print(f"证据层 surface_topic=balance: {rc['surface_balance_count']}")
-    print(f"示例 1_u2 闭合: {rc['example_1_u2'].get('chain_closed')}")
+    print(f"示例 1_u2 闭合: {rc['example_1_u2'].get('chain_closed')} "
+          f"(实际出处平台: {rc['example_1_u2'].get('actual_source_platform')}, "
+          f"候选数: {rc['example_1_u2'].get('candidate_count')})")
     print("-" * 60)
-    print(f"Phase 0 状态: {result['phase0_status']}")
+    print(f"审计状态: {result['phase0_status']}")
     if result["blockers"]:
         print("阻断项:")
         for b in result["blockers"]:

@@ -20,9 +20,9 @@
 | C10 | index.html L295/602 | 剔除「暂不确定」336 | count | mechanism=uncertain | verified | 实测 336 |
 | C11 | index.html L631 | 玩法/机制三平台 84·81·71 | distribution | theme_bucket=balance_mechanic 按平台 | verified | Bili84/NGA81/Tieba71（样本层） |
 | C12 | index.html L624 | 放大器 10·8·3 | distribution | trust_communication_gap/belonging_drop/norm_safety_risk | verified | 实测 10/8/3 |
-| C13 | index.html L654 | 高置信主线「约 8 条」 | count | needs_human_review=false | verified | 实测 8 |
-| C14 | index.html L659/707 | 需复核补充「约 11 条」 | count | needs_human_review=true | verified | 实测 11 |
-| C15 | index.html L563 | 示例 `1_u2` 来源 parent_id=1，**平台 B 站** | mechanism_interpretation | evidence 1_u2 → clean | **contradicted** | 1_u2 实际来自 clean id=121，平台 **NGA**；见 §2 |
+| C13 | index.html L654 | 高置信主线「约 8 条」 | count | confidence / needs_human_review | **partially_verified** | 见 §5：`confidence=high`=**7**、`needs_human_review=false`=**8**、交集=**7**；「8」对应的是模型 review 标记而非置信度，且不等于人工确认 |
+| C14 | index.html L659/707 | 需复核补充「约 11 条」 | count | needs_human_review=true | partially_verified | `needs_human_review=true`=11（模型字段，非人工判定「需复核」的结论） |
+| C15 | index.html L563 | 示例 `1_u2` 来源 parent_id=1，**平台 B 站** | mechanism_interpretation | evidence 1_u2 → clean | **contradicted** | 1_u2 唯一命中 clean id=121（candidate_count=1），平台 **NGA**；见 §2 |
 | C16 | index.html L648/655 | 高置信主线「可以直接采信」 | human_review_claim | needs_human_review / 复核记录 | **unsupported** | needs_human_review 是模型字段，非人工确认；无复核记录，见 §3 |
 | C17 | index.html L588 | 机制标签「由 AI 辅助并**经人工复核**」 | human_review_claim | 仓库复核记录 | **unsupported** | 仓库无任何逐行/抽样人工复核日志 |
 | C18 | index.html L630-632 | 「三平台表达不同，主线一致」 | cross_platform_claim | evidence 实际出处平台 | **partially_verified** | 样本层为三平台；但**证据层实际只覆盖 NGA+Tieba**，机制主线（268/72）不含 Bili 证据 |
@@ -40,10 +40,10 @@
 - `1_u2` 存在于证据表，`mechanism_label=competence_frustration`，`confidence=high`，`surface_topic=balance`。
 - `1_u2` 被 line 1 洞察（balance×competence_frustration）引用 —— 该半环成立。
 - 但 `unit_text`（「说真的，你选就选了，让个金，还要让 3000 的经济去出个……心之钢。」）**不在** clean id=1（Bili，坦克海克斯话题）的 `raw_text` 中。
-- 该文本实际逐字出现在 **clean id=121（NGA）**。
+- 该文本在整洁样本中**唯一命中**（candidate_count=1）于 **clean id=121（NGA）**。
 - 因此页面「parent_id=1、平台 B 站」的溯源**指向错误行、错误平台**。`page_claim_correct = False`，`chain_closed = False`。
 
-**这是 Phase 0 阻断项之一（页面示例证据链错误）。**
+**这是审计阻断项之一（页面示例证据链错误）。**
 
 ## 3. 「可以直接采信 / 经人工复核」—— unsupported
 
@@ -57,4 +57,19 @@
 2. L588「经人工复核」→ 改为「AI 辅助标注，尚未完成系统人工复核」或补真实复核记录后再用。
 3. L648/655「可以直接采信」→ 「高频、跨证据稳定，但仍需人工确认」。
 4. L630-632「三平台……主线一致」→ 注明机制主线证据层实际仅覆盖 NGA+Tieba。
-5. 高置信主线中 line 1/2/3/11 实际为**单平台**支撑，不宜表述为跨平台共识。
+5. 高置信主线中多条实际为**单平台**支撑，不宜表述为跨平台共识。
+6. L654「高置信主线约 8 条」→ 改为「置信度为 high 的洞察 7 条」，并与「模型标记 needs_human_review=false 的 8 条」区分表述，避免混淆两个字段。
+
+## 5. C13 重新判定：confidence 与 needs_human_review 是两个字段
+
+页面 L654「高置信主线 · 约 8 条」。据实重算（`tools/audit_public_data.py`）：
+
+| 口径 | 数量 | 行号 |
+| --- | --- | --- |
+| `confidence == high` 的洞察 | **7** | 1, 2, 3, 6, 10, 11, 13 |
+| `needs_human_review == false`（模型输出字段） | **8** | 1, 2, 3, 6, 10, 11, 13, 16 |
+| 两者交集（high 且 no_review_flag） | **7** | 1, 2, 3, 6, 10, 11, 13 |
+
+- 页面的「约 8 条」实际对应的是**模型字段 `needs_human_review=false` 的数量（8）**，而不是「高置信度」的数量（7；line 16 为 `confidence=medium`）。
+- **不得仅因 `needs_human_review=false` 有 8 条即判 verified**：该字段是**模型输出**，既不等于 confidence，也不等于人工确认。
+- 结合「可以直接采信」这一人工复核暗示无任何复核记录支撑（§3），**C13 判定为 `partially_verified`**：计数口径可核（7 或 8，取决于字段），但「高置信 = 可直接采信」的结论**unsupported**。

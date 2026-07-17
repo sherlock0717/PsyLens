@@ -10,8 +10,9 @@
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | sample_id_unique_rate | 样本 id 唯一比例 | 唯一 id 数 | 样本总数 | =1.0 | 阻断 | 每条反馈有唯一编号 | 1.0 |
 | evidence_id_unique_rate | 证据 id 唯一比例 | 唯一 id 数 | 证据总数 | =1.0 | 阻断 | 每条证据有唯一编号 | 1.0 |
-| parent_linkage_rate | 证据能正确回到原始样本的比例 | unit_text 匹配**声明** parent 的证据数 | 证据总数 | ≥0.98 | 阻断 | 每条证据都能追到它的原话 | **0.0** |
-| evidence_text_match_rate | 证据文本能在整洁样本中定位的比例（不限 id） | 全域可定位数 | 证据总数 | ≥0.98 | 警告 | 证据确实来自真实反馈 | 1.0 |
+| parent_reference_exists_rate | `parent_id` 值能找到同编号 clean 行的比例 | 引用编号存在数 | 证据总数 | =1.0 | 警告 | 每条证据都写了一个存在的父样本编号 | **1.0** |
+| parent_semantic_linkage_rate | `unit_text` 匹配**声明** parent 原文的比例 | 语义匹配数 | 证据总数 | ≥0.98 | 阻断 | 每条证据的文字确实来自它声明的那条原话 | **0.0** |
+| evidence_text_locatable_rate | 证据文本能在整洁样本中**唯一**定位的比例 | 唯一命中数 | 证据总数 | ≥0.98 | 警告 | 证据文字能在公开样本中被唯一定位（≠证明采集/来源真实性） | 695/697≈0.997 |
 | source_url_coverage | 有来源 URL 的样本比例 | url 非空 | 样本总数 | ≥0.95 | 警告 | 每条反馈都能点回原帖 | 1.0 |
 
 ## B. 编码质量
@@ -56,6 +57,7 @@
 
 ## 使用说明
 
-- **阻断（block）**：任一为真即判 Phase BLOCKED；**警告（warn）**：记录并跟踪，不阻断。
-- 本轮阻断触发：`parent_linkage_rate=0`（B 组以外的核心阻断），以及若干「无人工复核 / 无建议可追溯」为警告。
+- **阻断（block）**：任一为真即判 BLOCKED；**警告（warn）**：记录并跟踪，不阻断。
+- 本轮阻断触发：`parent_semantic_linkage_rate=0`（核心阻断），以及页面示例证据链错误。
+- **口径纪律**：`evidence_text_locatable_rate` 只说明「文本可在公开样本中定位」，**不得**解读为「数据真实性 / 采集真实性 / 来源真实性 / 人工复核真实性」；`needs_human_review` 是模型字段，`human_review_coverage` 才反映真实人工复核。
 - 指标可直接由 `tools/audit_public_data.py` 扩展输出，作为后续每次运行的评测卡。
