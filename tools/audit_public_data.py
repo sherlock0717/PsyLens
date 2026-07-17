@@ -60,6 +60,14 @@ EXPECTED_MIGRATED_EVIDENCE = 695
 EXPECTED_AMBIGUOUS = 2
 EXPECTED_V2_CSV_NAMES = ["samples_v2.csv", "evidence_v2.csv", "ambiguous_evidence_queue.csv",
                          "bili_evidence_queue.csv", "id_migration.csv"]
+# 当前冻结 v2 快照的权威来源提交与来源文件（用于精确校验，非仅格式）
+EXPECTED_V2_SOURCE_DATA_COMMIT = "371d245a0ce82ed5d980472147b49568525e2986"
+EXPECTED_V2_SOURCE_FILES = {
+    "clean_csv": "docs/files/input_feedback_phase2_multiplatform_clean.csv",
+    "evidence_csv": "docs/files/final_evidence_table.csv",
+}
+# legacy evidence id 的 _uN 后缀解析
+LEGACY_UNIT_RE = re.compile(r"_u(\d+)$")
 
 # 合法取值集合（依据 METHODOLOGY.md §3 与 run_pipeline.py 的 allowed labels）
 ALLOWED_SURFACE_TOPIC = {
@@ -888,26 +896,37 @@ def sha256_bytes(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else ""
 
 
-def run_v2_audit():
-    """审计 data/v2 迁移底座。返回结果字典，含 v2_migration_status。"""
+def run_v2_audit(v2_dir=None):
+    """审计 v2 迁移底座（默认 data/v2；可传入其他目录以支持隔离测试）。
+
+    返回结果字典，含 v2_migration_status。
+    """
+    v2_dir = Path(v2_dir) if v2_dir else V2_DIR
+    samples_p = v2_dir / "samples_v2.csv"
+    evidence_p = v2_dir / "evidence_v2.csv"
+    ambiguous_p = v2_dir / "ambiguous_evidence_queue.csv"
+    bili_p = v2_dir / "bili_evidence_queue.csv"
+    migration_p = v2_dir / "id_migration.csv"
+    manifest_p = v2_dir / "v2_manifest.json"
+
     issues = []       # 阻断性问题
     warnings = []     # 提示
 
-    for p, label in [(V2_SAMPLES, "samples_v2"), (V2_EVIDENCE, "evidence_v2"),
-                     (V2_AMBIGUOUS, "ambiguous_queue"), (V2_BILI_QUEUE, "bili_queue"),
-                     (V2_MIGRATION, "id_migration"), (V2_MANIFEST, "manifest")]:
+    for p, label in [(samples_p, "samples_v2"), (evidence_p, "evidence_v2"),
+                     (ambiguous_p, "ambiguous_queue"), (bili_p, "bili_queue"),
+                     (migration_p, "id_migration"), (manifest_p, "manifest")]:
         if not p.exists():
             issues.append(f"v2 文件缺失: {label} ({p.name})")
     if issues:
         return {"exists": False, "issues": issues, "warnings": warnings,
                 "v2_migration_status": "BLOCKED"}
 
-    _, samples = read_csv_rows(V2_SAMPLES)
-    _, evidence = read_csv_rows(V2_EVIDENCE)
-    _, ambiguous = read_csv_rows(V2_AMBIGUOUS)
-    _, bili = read_csv_rows(V2_BILI_QUEUE)
-    _, migration = read_csv_rows(V2_MIGRATION)
-    manifest = json.loads(V2_MANIFEST.read_text(encoding="utf-8"))
+    _, samples = read_csv_rows(samples_p)
+    _, evidence = read_csv_rows(evidence_p)
+    _, ambiguous = read_csv_rows(ambiguous_p)
+    _, bili = read_csv_rows(bili_p)
+    _, migration = read_csv_rows(migration_p)
+    manifest = json.loads(manifest_p.read_text(encoding="utf-8"))
 
     sample_ids = [r.get("sample_id", "") for r in samples]
     sample_id_set = set(sample_ids)
@@ -992,6 +1011,41 @@ def run_v2_audit():
                            if r.get("review_status", "") in ("human_reviewed", "human_curated", "verified", "approved")]
     if human_reviewed_like:
         issues.append(f"存在被标为人工已复核的证据（不允许）: {human_reviewed_like[:5]}")
+
+    # unit_index 不变量（将稳定性检查纳入审计器；手动篡改 unit_index / ID 后缀会 BLOCKED）
+    unit_index_errors = {"legacy_unparseable": [], "unit_index_ne_legacy": [],
+                         "suffix_ne_unit_index": [], "id_format_mismatch": [], "duplicate_key": []}
+    seen_unit_keys = set()
+    for r in evidence:
+        eid = r.get("evidence_id", "")
+        sid = r.get("sample_id", "")
+        legacy_eid = r.get("legacy_evidence_id", "")
+        m = LEGACY_UNIT_RE.search(legacy_eid)
+        if not m:
+            unit_index_errors["legacy_unparseable"].append(eid)
+            continue
+        legacy_ui = int(m.group(1))
+        try:
+            ui = int(r.get("unit_index", ""))
+        except (ValueError, TypeError):
+            unit_index_errors["unit_index_ne_legacy"].append(eid)
+            continue
+        if ui != legacy_ui:
+            unit_index_errors["unit_index_ne_legacy"].append(eid)
+        # evidence_id 的 _Uxx 后缀
+        sm = re.search(r"_U(\d+)$", eid)
+        if not sm or int(sm.group(1)) != ui:
+            unit_index_errors["suffix_ne_unit_index"].append(eid)
+        # evidence_id == f"{sample_id}_U{unit_index:02d}"
+        if eid != f"{sid}_U{ui:02d}":
+            unit_index_errors["id_format_mismatch"].append(eid)
+        key = (sid, ui)
+        if key in seen_unit_keys:
+            unit_index_errors["duplicate_key"].append(f"{sid}_U{ui:02d}")
+        seen_unit_keys.add(key)
+    for kind, lst in unit_index_errors.items():
+        if lst:
+            issues.append(f"unit_index 不变量失败[{kind}]: {len(lst)} 条，例 {lst[:5]}")
 
     # 歧义队列
     if len(ambiguous) != EXPECTED_AMBIGUOUS:
@@ -1078,30 +1132,32 @@ def run_v2_audit():
     if manifest.get("bili_candidate_unit_count") != len(bili):
         issues.append(f"manifest.bili_candidate_unit_count 与实际队列行数不一致（不得写死）: "
                       f"{manifest.get('bili_candidate_unit_count')} vs {len(bili)}")
-    # source_data_commit 必须存在（正式快照显式传入）
-    if not (manifest.get("source_data_commit") or "").strip():
+    # source_data_commit 必须精确等于权威来源提交（非空 + 值正确）
+    actual_commit = (manifest.get("source_data_commit") or "").strip()
+    if not actual_commit:
         issues.append("manifest.source_data_commit 缺失（正式快照必须显式传入）")
-    # source_files 必须为仓库内 POSIX 相对路径（不得含反斜杠或绝对路径）
+    elif actual_commit != EXPECTED_V2_SOURCE_DATA_COMMIT:
+        issues.append(f"manifest.source_data_commit 与权威来源提交不一致: "
+                      f"{actual_commit} != {EXPECTED_V2_SOURCE_DATA_COMMIT}")
+    # source_files 必须精确等于权威来源文件映射（键集合 + 路径值都要正确，不只是 POSIX 格式）
     src_files = manifest.get("source_files") or {}
-    bad_paths = [v for v in src_files.values()
-                 if ("\\" in str(v)) or str(v).startswith("/") or (":" in str(v))]
-    if bad_paths:
-        issues.append(f"manifest.source_files 非 POSIX 相对路径: {bad_paths}")
     if not src_files:
         issues.append("manifest.source_files 缺失")
+    elif src_files != EXPECTED_V2_SOURCE_FILES:
+        issues.append(f"manifest.source_files 与权威来源文件不一致: {src_files} != {EXPECTED_V2_SOURCE_FILES}")
     hash_mismatch = []
     expected_hash_names = set(manifest.get("hashes") or {})
     if expected_hash_names != set(EXPECTED_V2_CSV_NAMES):
         issues.append(f"manifest.hashes 覆盖文件不完整: {sorted(expected_hash_names)}")
     for name, expected in (manifest.get("hashes") or {}).items():
-        actual = sha256_bytes(V2_DIR / name)
+        actual = sha256_bytes(v2_dir / name)
         if actual != expected:
             hash_mismatch.append(name)
     if hash_mismatch:
         issues.append(f"manifest SHA-256 不匹配: {hash_mismatch}")
 
     # 编码检查（v2 文件应为 UTF-8）
-    for p in [V2_SAMPLES, V2_EVIDENCE, V2_AMBIGUOUS, V2_BILI_QUEUE, V2_MIGRATION]:
+    for p in [samples_p, evidence_p, ambiguous_p, bili_p, migration_p]:
         enc = detect_encoding_report(p)
         if not enc["utf8_decodable"]:
             issues.append(f"{p.name} 非 UTF-8 可解码")
@@ -1193,6 +1249,10 @@ def run_combined_audit(dataset="both"):
         "legacy 证据链错位未修复；B 站证据仍在待处理队列，未形成最终证据层；"
         "结构化洞察与行动建议尚未重建。")
     return out
+
+
+def write_linkage_csv(result, path: Path):
+    """输出证据单元逐行关联表 CSV（legacy）。字段固定，供 --csv-out 使用。"""
     rows = result["evidence_audit"]["linkage_rows"]
     path.parent.mkdir(parents=True, exist_ok=True)
     cols = ["evidence_id", "parent_id", "linkage_status", "substring_match",

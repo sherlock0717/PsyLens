@@ -6,9 +6,12 @@
   - 测试为离线、确定性；不联网、不调用模型、不读取密钥。
   - 覆盖纯函数、多候选匹配、指标拆分，以及对真实公开数据的端到端断言。
 """
+import csv
+import hashlib
 import importlib.util
 import json
 import re
+import shutil
 import sys
 from collections import Counter
 from pathlib import Path
@@ -506,3 +509,143 @@ def test_legacy_phase0_still_blocked():
     # 原有 Phase 0 审计继续 BLOCKED（未因 v2 改动而放松）
     result = audit.run_audit()
     assert result["phase0_status"] == "BLOCKED"
+
+
+# --------------------------- CLI smoke tests（输出仅写 tmp_path）---------------------------
+def _read_committed_evidence_hash():
+    return _sha256(V2_DIR / "evidence_v2.csv")
+
+
+def _copy_v2(tmp_path):
+    """把已提交的 data/v2 复制到 tmp_path/v2，供改篡测试使用（不改写仓库文件）。"""
+    dst = tmp_path / "v2"
+    dst.mkdir(parents=True)
+    for name in V2_ALL_NAMES:
+        shutil.copy2(V2_DIR / name, dst / name)
+    return dst
+
+
+def _rewrite_evidence(dst, rows, fields):
+    """把改动后的 evidence_v2 写回 dst，并同步更新 manifest 中该文件的 SHA-256，
+    以隔离出 unit_index 不变量（避免仅因哈希不符而 BLOCKED）。"""
+    ev_path = dst / "evidence_v2.csv"
+    with ev_path.open("w", encoding="utf-8", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fields)
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: r.get(k, "") for k in fields})
+    manifest = json.loads((dst / "v2_manifest.json").read_text(encoding="utf-8"))
+    manifest["hashes"]["evidence_v2.csv"] = _sha256(ev_path)
+    (dst / "v2_manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def test_cli_csv_out_generates_linkage(tmp_path):
+    out = tmp_path / "linkage.csv"
+    rc = audit.main(["--dataset", "legacy", "--csv-out", str(out), "--quiet"])
+    assert rc == 1                     # legacy 仍 BLOCKED
+    assert out.exists()
+    with out.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        cols = reader.fieldnames
+        rows = list(reader)
+    assert cols == ["evidence_id", "parent_id", "linkage_status", "substring_match",
+                    "similarity_ratio", "ngram_overlap", "evidence_text",
+                    "parent_text_excerpt", "notes"]
+    assert len(rows) == 697
+
+
+def test_cli_mismatch_out_generates_file(tmp_path):
+    out = tmp_path / "mismatch.csv"
+    rc = audit.main(["--dataset", "legacy", "--mismatch-out", str(out), "--quiet"])
+    assert rc == 1
+    assert out.exists()
+    with out.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        assert reader.fieldnames == ["issue_type", "source_id", "referenced_id", "detail"]
+        assert len(list(reader)) > 0
+
+
+def test_cli_json_out_v2_pass(tmp_path):
+    out = tmp_path / "v2.json"
+    rc = audit.main(["--dataset", "v2", "--json-out", str(out), "--quiet"])
+    assert rc == 0
+    assert out.exists()
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["v2_migration_status"] == "PASS"
+    assert data["v2"]["v2_migration_status"] == "PASS"
+
+
+def test_cli_outputs_do_not_touch_repo(tmp_path):
+    before = _hashes(V2_DIR, V2_ALL_NAMES)
+    audit.main(["--dataset", "legacy", "--csv-out", str(tmp_path / "a.csv"), "--quiet"])
+    audit.main(["--dataset", "legacy", "--mismatch-out", str(tmp_path / "b.csv"), "--quiet"])
+    audit.main(["--dataset", "v2", "--json-out", str(tmp_path / "c.json"), "--quiet"])
+    after = _hashes(V2_DIR, V2_ALL_NAMES)
+    assert before == after
+
+
+# ---- v2 审计能独立阻断错误来源提交 / 错误来源路径 / unit index 漂移 ----
+def test_v2_audit_blocks_wrong_source_data_commit(tmp_path):
+    dst = _copy_v2(tmp_path)
+    manifest = json.loads((dst / "v2_manifest.json").read_text(encoding="utf-8"))
+    manifest["source_data_commit"] = "0000000000000000000000000000000000000000"  # 非空但错误
+    (dst / "v2_manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    v2 = audit.run_v2_audit(dst)
+    assert v2["v2_migration_status"] == "BLOCKED"
+    assert any("source_data_commit" in i for i in v2["issues"])
+
+
+def test_v2_audit_blocks_wrong_source_files(tmp_path):
+    dst = _copy_v2(tmp_path)
+    manifest = json.loads((dst / "v2_manifest.json").read_text(encoding="utf-8"))
+    # 格式合法（POSIX 相对路径）但值错误
+    manifest["source_files"] = {"clean_csv": "docs/files/wrong_input.csv",
+                                "evidence_csv": "docs/files/final_evidence_table.csv"}
+    (dst / "v2_manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    v2 = audit.run_v2_audit(dst)
+    assert v2["v2_migration_status"] == "BLOCKED"
+    assert any("source_files" in i for i in v2["issues"])
+
+
+def test_v2_audit_blocks_unit_index_drift(tmp_path):
+    fields, _ = audit.read_csv_rows(V2_DIR / "evidence_v2.csv")
+
+    # 场景 A：篡改 unit_index（与 legacy _uN、后缀均不符）
+    dst = _copy_v2(tmp_path / "A")
+    _, rows = audit.read_csv_rows(dst / "evidence_v2.csv")
+    rows[0]["unit_index"] = "99"
+    _rewrite_evidence(dst, rows, fields)
+    vA = audit.run_v2_audit(dst)
+    assert vA["v2_migration_status"] == "BLOCKED"
+    assert any("unit_index 不变量" in i for i in vA["issues"])
+
+    # 场景 B：篡改 legacy_evidence_id 的 _uN
+    dst = _copy_v2(tmp_path / "B")
+    _, rows = audit.read_csv_rows(dst / "evidence_v2.csv")
+    base = rows[0]["legacy_evidence_id"]
+    rows[0]["legacy_evidence_id"] = re.sub(r"_u\d+$", "_u77", base)
+    _rewrite_evidence(dst, rows, fields)
+    vB = audit.run_v2_audit(dst)
+    assert vB["v2_migration_status"] == "BLOCKED"
+    assert any("unit_index 不变量" in i for i in vB["issues"])
+
+    # 场景 C：篡改 evidence_id 的 _Uxx 后缀
+    dst = _copy_v2(tmp_path / "C")
+    _, rows = audit.read_csv_rows(dst / "evidence_v2.csv")
+    eid = rows[0]["evidence_id"]
+    rows[0]["evidence_id"] = re.sub(r"_U\d+$", "_U88", eid)
+    _rewrite_evidence(dst, rows, fields)
+    vC = audit.run_v2_audit(dst)
+    assert vC["v2_migration_status"] == "BLOCKED"
+    assert any("unit_index 不变量" in i for i in vC["issues"])
+
+
+def test_v2_audit_committed_snapshot_still_pass():
+    # 已提交快照本身仍应 PASS（新增精确校验后不误伤）
+    v2 = audit.run_v2_audit()
+    assert v2["v2_migration_status"] == "PASS"
+    assert v2["issues"] == []
+    assert v2["manifest_source_data_commit"] == audit.EXPECTED_V2_SOURCE_DATA_COMMIT
