@@ -1,0 +1,33 @@
+{
+  "schema_version": "provisional-1.0",
+  "generated_at": "2026-07-17T16:56:33.578346+08:00",
+  "source_data_commit": "371d245a0ce82ed5d980472147b49568525e2986",
+  "candidate_count": 976,
+  "provisional_evidence_count": 927,
+  "exclusion_count": 212,
+  "platform_distribution": {
+    "NGA": 394,
+    "Tieba": 301,
+    "Bili": 232
+  },
+  "analysis_inclusion_distribution": {
+    "included": 764,
+    "included_flagged_uncertain": 163
+  },
+  "label_source_distribution": {
+    "legacy_ai": 695,
+    "agent_proposed": 232
+  },
+  "review_status_note": "全部为 legacy_ai_label_unreviewed 或 agent_proposed_unreviewed；无人工复核",
+  "hashes": {
+    "evidence_candidates_v2.csv": "1dc94dd772c776cde2c2ad99a55f00908b103cdd209684f398d780d2ebe3f1d7",
+    "evidence_provisional_v2.csv": "fb70bd88e5beb8fdcb3db42583a6732e88d35e784ab660bfd646884dc7a74728",
+    "evidence_exclusion_log.csv": "34dd861df401daa763504b41702f521a30ef5f92975e17c6dce202db75763c87"
+  },
+  "limitations": [
+    "provisional 证据含 legacy AI 标签与 B 站 Agent 提案，均未人工复核",
+    "uncertain 的 B 站提案以 included_flagged_uncertain 单独标记，默认不计入正式分子",
+    "2 条歧义证据未进入 provisional",
+    "结构化洞察与行动建议为草稿，默认不公开"
+  ]
+}

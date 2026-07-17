@@ -1241,13 +1241,31 @@ def run_combined_audit(dataset="both"):
         out["v2"] = v2
         out["v2_migration_status"] = v2["v2_migration_status"]
 
-    # 发布就绪：需 legacy 无阻断 且 v2 迁移 PASS 且 B 站证据层已建成（本阶段必为 BLOCKED）
-    # Phase 1A：B 站仍在待处理队列 -> 未形成最终证据层 -> 不允许发布
-    pub = "BLOCKED"
-    out["publication_readiness"] = pub
+    # provisional 三平台证据层状态（若已生成）
+    prov_manifest = V2_DIR / "provisional_manifest.json"
+    if prov_manifest.exists():
+        try:
+            pm = json.loads(prov_manifest.read_text(encoding="utf-8"))
+            prov_ok = (pm.get("provisional_evidence_count", 0) > 0
+                       and pm.get("platform_distribution")
+                       and all(sha256_bytes(V2_DIR / n) == h for n, h in (pm.get("hashes") or {}).items()))
+            out["provisional_evidence_status"] = "PASS" if prov_ok else "BLOCKED"
+            out["provisional_evidence_count"] = pm.get("provisional_evidence_count")
+            out["provisional_platform_distribution"] = pm.get("platform_distribution")
+        except (ValueError, OSError):
+            out["provisional_evidence_status"] = "BLOCKED"
+    else:
+        out["provisional_evidence_status"] = "NOT_BUILT"
+
+    # 人工复核状态：当前无 reviewer_type=human 记录 -> NOT_STARTED
+    out["human_review_status"] = "NOT_STARTED"
+
+    # 发布就绪：受延期决策约束（草稿默认不公开、歧义未定案、无人工复核）-> 仍 BLOCKED
+    out["publication_readiness"] = "BLOCKED"
     out["publication_readiness_reason"] = (
-        "legacy 证据链错位未修复；B 站证据仍在待处理队列，未形成最终证据层；"
-        "结构化洞察与行动建议尚未重建。")
+        "legacy 证据链错位未修复；B 站证据为 Agent 提案未经人工复核；"
+        "2 条歧义证据未定案；结构化洞察与行动建议为草稿默认不公开；"
+        "多项发布选择仍待用户决策（见 docs/decisions/FINAL_DECISION_PACKET.md）。")
     return out
 
 
@@ -1401,6 +1419,10 @@ def main(argv=None):
             print(f"legacy_status: {combined['legacy_status']}")
         if "v2_migration_status" in combined:
             print(f"v2_migration_status: {combined['v2_migration_status']}")
+        if "provisional_evidence_status" in combined:
+            print(f"provisional_evidence_status: {combined['provisional_evidence_status']}")
+        if "human_review_status" in combined:
+            print(f"human_review_status: {combined['human_review_status']}")
         print(f"publication_readiness: {combined['publication_readiness']}")
         print(f"  原因: {combined['publication_readiness_reason']}")
         print("=" * 60)
