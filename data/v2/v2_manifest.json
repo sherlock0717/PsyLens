@@ -1,10 +1,11 @@
 {
   "schema_version": "v2.0",
   "generated_at": "2026-07-17T16:56:33.578346+08:00",
-  "source_commit": "371d245a0ce82ed5d980472147b49568525e2986",
+  "source_data_commit": "371d245a0ce82ed5d980472147b49568525e2986",
+  "generator_commit": null,
   "source_files": {
-    "clean_csv": "docs\\files\\input_feedback_phase2_multiplatform_clean.csv",
-    "evidence_csv": "docs\\files\\final_evidence_table.csv"
+    "clean_csv": "docs/files/input_feedback_phase2_multiplatform_clean.csv",
+    "evidence_csv": "docs/files/final_evidence_table.csv"
   },
   "sample_count": 360,
   "platform_counts": {
@@ -17,8 +18,8 @@
   "bili_samples_pending": 120,
   "bili_candidate_unit_count": 279,
   "id_scheme": {
-    "sample_id": "<PLATFORM>_<0001-0120>（平台内出现顺序，稳定）",
-    "evidence_id": "<sample_id>_U<两位单元序号>",
+    "sample_id": "<PLATFORM>_<0001-0120>（平台内按 numeric legacy id 稳定排序）",
+    "evidence_id": "<sample_id>_U<两位单元序号，保留 legacy _uN>",
     "insight_id": "INSIGHT_001（本阶段仅格式，不生成实体）",
     "action_id": "ACTION_001（本阶段仅格式，不生成实体）"
   },

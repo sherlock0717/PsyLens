@@ -1,7 +1,9 @@
 # 迁移报告（MIGRATION_REPORT）
 
-> PSYLENS-PHASE1A-001。由 `tools/build_v2_dataset.py` 确定性生成，`tools/audit_public_data.py --dataset v2` 校验。
+> PSYLENS-PHASE1A-001 → 002。由 `tools/build_v2_dataset.py` 生成，`tools/audit_public_data.py --dataset v2` 校验。
 > 未覆盖任何历史公开数据；unit_text 与 source_url 均未修改。
+>
+> **确定性口径**：五个 CSV 由固定输入确定性生成；只有在**固定 `generated_at` 与固定 `source_data_commit`** 时，完整 v2 快照（含 `v2_manifest.json`）才字节级可重复生成。临时交互运行使用当前时间，会改变 manifest 运行元数据，届时整包非字节级确定。
 
 ## 1. 样本迁移（samples_v2.csv）
 
@@ -40,8 +42,8 @@
 
 ## 6. manifest
 
-- `data/v2/v2_manifest.json` 记录 schema_version、generated_at（真实当前时间）、source_commit（本地 HEAD）、各数量、SHA-256 哈希与 limitations。
-- 审计已校验 manifest 数量与 SHA-256 一致。
+- `data/v2/v2_manifest.json` 记录 schema_version、generated_at（显式传入）、`source_data_commit`（显式传入的来源快照 `371d245...`，不再从当前 HEAD 推断）、可选 `generator_commit`、`source_files`（POSIX 相对路径）、各数量、SHA-256 哈希与 limitations。
+- 审计已校验 manifest 的数量、`platform_counts`、`bili_samples_pending`、`bili_candidate_unit_count`（与实际队列行数一致，非写死）、`source_data_commit`、`source_files` 路径格式与 SHA-256 一致。
 
 ## 7. 当前状态
 

@@ -259,12 +259,13 @@ sys.modules["build_v2_dataset"] = build_v2
 _v2spec.loader.exec_module(build_v2)
 
 V2_DIR = REPO_ROOT / "data" / "v2"
+V2_CSV_NAMES = ["samples_v2.csv", "evidence_v2.csv", "ambiguous_evidence_queue.csv",
+                "bili_evidence_queue.csv", "id_migration.csv"]
+V2_ALL_NAMES = V2_CSV_NAMES + ["v2_manifest.json"]
 
-
-def _ensure_v2_built():
-    """确保 v2 数据存在（确定性生成）。测试只读校验，不覆盖历史公开数据。"""
-    if not (V2_DIR / "v2_manifest.json").exists():
-        build_v2.main()
+# 正式快照的固定参数（用于确定性测试；与已提交 data/v2 一致）
+FIXED_GENERATED_AT = "2026-07-17T16:56:33.578346+08:00"
+FIXED_SOURCE_COMMIT = "371d245a0ce82ed5d980472147b49568525e2986"
 
 
 def _read_csv(path):
@@ -273,21 +274,94 @@ def _read_csv(path):
         return list(_csv.DictReader(f))
 
 
-def test_v2_build_is_deterministic():
-    # 连续两次生成，关键 CSV 内容一致（哈希稳定）
-    build_v2.main()
+def _sha256(path):
     import hashlib
-    h1 = {n: hashlib.sha256((V2_DIR / n).read_bytes()).hexdigest()
-          for n in ["samples_v2.csv", "evidence_v2.csv", "ambiguous_evidence_queue.csv",
-                    "bili_evidence_queue.csv", "id_migration.csv"]}
-    build_v2.main()
-    h2 = {n: hashlib.sha256((V2_DIR / n).read_bytes()).hexdigest()
-          for n in h1}
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _hashes(dir_path, names):
+    return {n: _sha256(dir_path / n) for n in names}
+
+
+# ---- 生成器：隔离到 tmp_path，不写入 tracked data/v2 ----
+def test_v2_generator_deterministic_full_snapshot(tmp_path):
+    """固定 generated_at/source_data_commit，连续生成两次，六个输出文件 SHA-256 全部一致。"""
+    out1 = tmp_path / "v2a"
+    out2 = tmp_path / "v2b"
+    build_v2.build_v2_dataset(out1, FIXED_GENERATED_AT, FIXED_SOURCE_COMMIT)
+    build_v2.build_v2_dataset(out2, FIXED_GENERATED_AT, FIXED_SOURCE_COMMIT)
+    h1 = _hashes(out1, V2_ALL_NAMES)
+    h2 = _hashes(out2, V2_ALL_NAMES)
     assert h1 == h2
+    assert set(h1) == set(V2_ALL_NAMES)  # 六个文件齐全（含 manifest）
 
 
+def test_v2_generator_does_not_touch_tracked_dir(tmp_path):
+    """生成器测试运行前后，仓库 data/v2/ 的文件哈希保持不变（不修改 tracked 文件）。"""
+    before = _hashes(V2_DIR, V2_ALL_NAMES)
+    build_v2.build_v2_dataset(tmp_path / "v2", FIXED_GENERATED_AT, FIXED_SOURCE_COMMIT)
+    after = _hashes(V2_DIR, V2_ALL_NAMES)
+    assert before == after
+
+
+def test_v2_generator_snapshot_matches_committed(tmp_path):
+    """固定参数生成的六个文件应与已提交 data/v2 快照字节一致。"""
+    out = tmp_path / "v2"
+    build_v2.build_v2_dataset(out, FIXED_GENERATED_AT, FIXED_SOURCE_COMMIT)
+    assert _hashes(out, V2_ALL_NAMES) == _hashes(V2_DIR, V2_ALL_NAMES)
+
+
+def test_v2_manifest_uses_passed_source_commit_and_posix(tmp_path):
+    out = tmp_path / "v2"
+    manifest = build_v2.build_v2_dataset(out, FIXED_GENERATED_AT, "DEADBEEF_TEST_COMMIT")
+    assert manifest["source_data_commit"] == "DEADBEEF_TEST_COMMIT"
+    assert manifest["generated_at"] == FIXED_GENERATED_AT
+    # source_files 路径均为 POSIX（无反斜杠、非绝对路径）
+    for v in manifest["source_files"].values():
+        assert "\\" not in v
+        assert not v.startswith("/")
+        assert "/" in v
+    on_disk = json.loads((out / "v2_manifest.json").read_text(encoding="utf-8"))
+    assert on_disk["source_data_commit"] == "DEADBEEF_TEST_COMMIT"
+    assert on_disk["source_files"] == manifest["source_files"]
+
+
+# ---- sample ID 稳定性：打乱输入行顺序，映射不变 ----
+def test_v2_sample_id_mapping_stable_under_shuffle():
+    import random
+    _, clean_rows = audit.read_csv_rows(audit.CLEAN_CSV)
+    _, map1 = build_v2.build_sample_ids(list(clean_rows))
+    shuffled = list(clean_rows)
+    random.Random(20260717).shuffle(shuffled)
+    _, map2 = build_v2.build_sample_ids(shuffled)
+    assert map1 == map2
+    # 且与已提交快照一致
+    committed = {r["legacy_clean_id"]: r["sample_id"] for r in _read_csv(V2_DIR / "samples_v2.csv")}
+    assert map1 == committed
+
+
+# ---- evidence unit_index 保留 legacy _uN 后缀（不压缩计数器）----
+def test_v2_unit_index_preserves_legacy_suffix():
+    ev = _read_csv(V2_DIR / "evidence_v2.csv")
+    for r in ev:
+        legacy_ui = build_v2.parse_legacy_unit_index(r["legacy_evidence_id"])
+        assert legacy_ui is not None
+        assert int(r["unit_index"]) == legacy_ui
+        u_suffix = int(r["evidence_id"].rsplit("_U", 1)[1])
+        assert u_suffix == legacy_ui
+
+
+def test_v2_no_unit_index_conflict():
+    ev = _read_csv(V2_DIR / "evidence_v2.csv")
+    seen = set()
+    for r in ev:
+        key = (r["sample_id"], r["unit_index"])
+        assert key not in seen, f"unit_index 冲突: {key}"
+        seen.add(key)
+
+
+# ---- 只读校验：直接读取已提交 data/v2 快照 ----
 def test_v2_samples_count_and_platforms():
-    _ensure_v2_built()
     rows = _read_csv(V2_DIR / "samples_v2.csv")
     assert len(rows) == 360
     plat = Counter(r["platform_source"] for r in rows)
@@ -295,33 +369,39 @@ def test_v2_samples_count_and_platforms():
 
 
 def test_v2_sample_id_unique_and_format():
-    _ensure_v2_built()
     rows = _read_csv(V2_DIR / "samples_v2.csv")
     ids = [r["sample_id"] for r in rows]
     assert len(set(ids)) == len(ids)
     assert all(re.match(r"^(BILI|NGA|TIEBA)_\d{4}$", i) for i in ids)
 
 
+def test_v2_samples_fields_match_legacy_clean():
+    """samples_v2 的 legacy_clean_id / raw_text / source_url / platform_source 与 legacy clean 逐行一致。"""
+    _, legacy = audit.read_csv_rows(audit.CLEAN_CSV)
+    legacy_by_id = {str(r.get("id")): r for r in legacy}
+    for r in _read_csv(V2_DIR / "samples_v2.csv"):
+        lrow = legacy_by_id[r["legacy_clean_id"]]
+        assert r["raw_text"] == lrow.get("raw_text", "")
+        assert r["source_url"] == lrow.get("url", "")
+        assert r["platform_source"] == lrow.get("platform_source", "")
+
+
 def test_v2_migrated_evidence_count_695():
-    _ensure_v2_built()
     rows = _read_csv(V2_DIR / "evidence_v2.csv")
     assert len(rows) == 695
 
 
 def test_v2_ambiguous_not_auto_migrated():
-    _ensure_v2_built()
     amb = _read_csv(V2_DIR / "ambiguous_evidence_queue.csv")
     assert len(amb) == 2
     ev = _read_csv(V2_DIR / "evidence_v2.csv")
     migrated_legacy = {r["legacy_evidence_id"] for r in ev}
     amb_legacy = {r["legacy_evidence_id"] for r in amb}
-    # 歧义证据不得出现在已迁移证据中
     assert amb_legacy.isdisjoint(migrated_legacy)
     assert all(r["resolution_status"] == "pending_human_resolution" for r in amb)
 
 
 def test_v2_evidence_id_unique_and_prefix_matches_sample():
-    _ensure_v2_built()
     ev = _read_csv(V2_DIR / "evidence_v2.csv")
     ids = [r["evidence_id"] for r in ev]
     assert len(set(ids)) == len(ids)
@@ -331,7 +411,6 @@ def test_v2_evidence_id_unique_and_prefix_matches_sample():
 
 
 def test_v2_unit_text_matches_sample_rawtext():
-    _ensure_v2_built()
     samples = {r["sample_id"]: r for r in _read_csv(V2_DIR / "samples_v2.csv")}
     ev = _read_csv(V2_DIR / "evidence_v2.csv")
     for r in ev:
@@ -341,14 +420,12 @@ def test_v2_unit_text_matches_sample_rawtext():
 
 
 def test_v2_legacy_evidence_id_no_duplicate():
-    _ensure_v2_built()
     ev = _read_csv(V2_DIR / "evidence_v2.csv")
     legacy = [r["legacy_evidence_id"] for r in ev]
     assert len(set(legacy)) == len(legacy)
 
 
 def test_v2_review_status_all_unreviewed_no_human_reviewed():
-    _ensure_v2_built()
     ev = _read_csv(V2_DIR / "evidence_v2.csv")
     statuses = {r["review_status"] for r in ev}
     assert statuses == {"legacy_ai_label_unreviewed"}
@@ -356,35 +433,63 @@ def test_v2_review_status_all_unreviewed_no_human_reviewed():
     assert not (statuses & forbidden)
 
 
-def test_v2_bili_queue_covers_120_samples_no_final_mechanism():
-    _ensure_v2_built()
+def test_v2_bili_queue_full_integrity():
     samples = _read_csv(V2_DIR / "samples_v2.csv")
     bili_samples = {r["sample_id"] for r in samples if r["platform_source"] == "Bili"}
+    sample_raw = {r["sample_id"]: r["raw_text"] for r in samples}
     bili = _read_csv(V2_DIR / "bili_evidence_queue.csv")
     covered = {r["sample_id"] for r in bili}
-    assert bili_samples.issubset(covered)
+    # 集合完全相等（不只是子集），不混入非 Bili
+    assert covered == bili_samples
     assert len(bili_samples) == 120
-    # 不含最终机制标签
+    # queue_id 唯一
+    qids = [r["queue_id"] for r in bili]
+    assert len(set(qids)) == len(qids)
+    # 每个 sample 内 candidate_unit_index 连续且唯一
+    per_sample = {}
     for r in bili:
+        per_sample.setdefault(r["sample_id"], []).append(int(r["candidate_unit_index"]))
+    for sid, idxs in per_sample.items():
+        assert sorted(idxs) == list(range(1, len(idxs) + 1)), sid
+    # candidate_unit_text 可在 sample.raw_text 定位；queue raw_text 与 samples_v2 一致
+    for r in bili:
+        assert r["raw_text"] == sample_raw[r["sample_id"]]
+        ncand = audit.normalize_text(r["candidate_unit_text"])
+        nsamp = audit.normalize_text(sample_raw[r["sample_id"]])
+        assert ncand and ncand in nsamp
         assert (r["mechanism_label_candidate"] or "").strip() in ("", "unassigned")
         assert r["candidate_status"] == "pending_review"
         assert r["human_review_status"] == "not_reviewed"
 
 
 def test_v2_manifest_counts_and_sha256():
-    _ensure_v2_built()
-    import hashlib
     manifest = json.loads((V2_DIR / "v2_manifest.json").read_text(encoding="utf-8"))
     assert manifest["sample_count"] == 360
     assert manifest["migrated_evidence_count"] == 695
     assert manifest["ambiguous_evidence_count"] == 2
+    assert manifest["source_data_commit"] == FIXED_SOURCE_COMMIT
+    # bili_candidate_unit_count 必须与实际队列行数一致（不写死）
+    bili = _read_csv(V2_DIR / "bili_evidence_queue.csv")
+    assert manifest["bili_candidate_unit_count"] == len(bili)
+    assert manifest["bili_samples_pending"] == 120
+    # source_files 为 POSIX 相对路径
+    for v in manifest["source_files"].values():
+        assert "\\" not in v and not v.startswith("/")
     for name, expected in manifest["hashes"].items():
-        actual = hashlib.sha256((V2_DIR / name).read_bytes()).hexdigest()
-        assert actual == expected, f"{name} SHA-256 不一致"
+        assert _sha256(V2_DIR / name) == expected, f"{name} SHA-256 不一致"
+
+
+def test_v2_id_migration_breakdown():
+    v2 = audit.run_v2_audit()
+    bd = v2["id_migration_breakdown"]
+    assert bd["clean_sample_migrated"] == 360
+    assert bd["evidence_migrated"] == 695
+    assert bd["evidence_pending"] == 2
+    assert bd["insight_deferred"] == 1
+    assert bd["action_deferred"] == 1
 
 
 def test_v2_audit_layered_status():
-    _ensure_v2_built()
     combined = audit.run_combined_audit("both")
     assert combined["legacy_status"] == "BLOCKED"
     assert combined["v2_migration_status"] == "PASS"
@@ -392,7 +497,6 @@ def test_v2_audit_layered_status():
 
 
 def test_v2_audit_no_invalid_new_ids():
-    _ensure_v2_built()
     v2 = audit.run_v2_audit()
     assert v2["v2_migration_status"] == "PASS"
     assert v2["issues"] == []

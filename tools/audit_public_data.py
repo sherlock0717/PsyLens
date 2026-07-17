@@ -58,6 +58,8 @@ SAMPLE_ID_RE = re.compile(r"^(BILI|NGA|TIEBA)_\d{4}$")
 EVIDENCE_ID_RE = re.compile(r"^(BILI|NGA|TIEBA)_\d{4}_U\d{2}$")
 EXPECTED_MIGRATED_EVIDENCE = 695
 EXPECTED_AMBIGUOUS = 2
+EXPECTED_V2_CSV_NAMES = ["samples_v2.csv", "evidence_v2.csv", "ambiguous_evidence_queue.csv",
+                         "bili_evidence_queue.csv", "id_migration.csv"]
 
 # 合法取值集合（依据 METHODOLOGY.md §3 与 run_pipeline.py 的 allowed labels）
 ALLOWED_SURFACE_TOPIC = {
@@ -926,6 +928,26 @@ def run_v2_audit():
     if len(set(legacy_clean_ids)) != len(legacy_clean_ids):
         issues.append("legacy_clean_id 不唯一")
 
+    # samples_v2 与 legacy clean 逐行字段一致（legacy_clean_id / raw_text / source_url / platform_source）
+    _, legacy_clean = read_csv_rows(CLEAN_CSV)
+    legacy_clean_by_id = {str(r.get("id")): r for r in legacy_clean}
+    field_mismatch = {"raw_text": 0, "source_url": 0, "platform_source": 0, "missing_legacy": 0}
+    for r in samples:
+        lid = str(r.get("legacy_clean_id", ""))
+        lrow = legacy_clean_by_id.get(lid)
+        if lrow is None:
+            field_mismatch["missing_legacy"] += 1
+            continue
+        if r.get("raw_text", "") != lrow.get("raw_text", ""):
+            field_mismatch["raw_text"] += 1
+        if r.get("source_url", "") != lrow.get("url", ""):
+            field_mismatch["source_url"] += 1
+        if r.get("platform_source", "") != lrow.get("platform_source", ""):
+            field_mismatch["platform_source"] += 1
+    for fld, cnt in field_mismatch.items():
+        if cnt:
+            issues.append(f"samples_v2 与 legacy clean 字段不一致: {fld}={cnt} 条")
+
     # 证据检查
     ev_ids = [r.get("evidence_id", "") for r in evidence]
     if len(evidence) != EXPECTED_MIGRATED_EVIDENCE:
@@ -983,25 +1005,94 @@ def run_v2_audit():
     if amb_legacy & migrated_legacy:
         issues.append(f"歧义证据被自动迁移（不允许）: {amb_legacy & migrated_legacy}")
 
-    # B 站队列：覆盖 120 个 sample_id；不含最终机制标签
+    # B 站队列完整性
     bili_sample_cover = {r.get("sample_id") for r in bili}
     bili_samples_all = {r.get("sample_id") for r in samples if r.get("platform_source") == "Bili"}
-    if not bili_samples_all.issubset(bili_sample_cover):
-        missing_bili = sorted(bili_samples_all - bili_sample_cover)
-        issues.append(f"B 站队列未覆盖全部 120 个 sample_id，缺 {len(missing_bili)} 个: {missing_bili[:5]}")
+    # queue sample 集合与 Bili sample 集合完全相等（不只是子集），且不允许混入非 Bili sample
+    if bili_sample_cover != bili_samples_all:
+        only_queue = sorted(bili_sample_cover - bili_samples_all)   # 混入的非 Bili / 未知 sample
+        only_bili = sorted(bili_samples_all - bili_sample_cover)    # 未被覆盖的 Bili sample
+        if only_queue:
+            issues.append(f"B 站队列混入非 Bili sample_id: {only_queue[:5]}（共 {len(only_queue)}）")
+        if only_bili:
+            issues.append(f"B 站队列未覆盖 Bili sample_id: {only_bili[:5]}（共 {len(only_bili)}）")
+    # queue_id 唯一
+    queue_ids = [r.get("queue_id", "") for r in bili]
+    if len(set(queue_ids)) != len(queue_ids):
+        issues.append("B 站队列 queue_id 不唯一")
+    # 每个 sample 内 candidate_unit_index 连续且唯一；candidate_unit_text 与 queue raw_text 均匹配 sample.raw_text
+    per_sample_idx = {}
+    bili_text_unmatch = 0
+    bili_rawtext_mismatch = 0
+    for r in bili:
+        sid = r.get("sample_id", "")
+        per_sample_idx.setdefault(sid, []).append(r.get("candidate_unit_index", ""))
+        samp = sample_by_id.get(sid)
+        if samp is not None:
+            nsamp = normalize_text(samp.get("raw_text", ""))
+            ncand = normalize_text(r.get("candidate_unit_text", ""))
+            if not (ncand and ncand in nsamp):
+                bili_text_unmatch += 1
+            # 队列 raw_text 必须与 samples_v2 完全一致（未修改）
+            if r.get("raw_text", "") != samp.get("raw_text", ""):
+                bili_rawtext_mismatch += 1
+    idx_bad = []
+    for sid, idxs in per_sample_idx.items():
+        try:
+            nums = [int(x) for x in idxs]
+        except (ValueError, TypeError):
+            idx_bad.append(sid)
+            continue
+        if sorted(nums) != list(range(1, len(nums) + 1)):
+            idx_bad.append(sid)
+    if idx_bad:
+        issues.append(f"B 站队列 candidate_unit_index 非连续/唯一: {idx_bad[:5]}（共 {len(idx_bad)}）")
+    if bili_text_unmatch:
+        issues.append(f"B 站候选 candidate_unit_text 无法匹配 sample.raw_text: {bili_text_unmatch} 条")
+    if bili_rawtext_mismatch:
+        issues.append(f"B 站队列 raw_text 与 samples_v2 不一致: {bili_rawtext_mismatch} 条")
+    # 机制标签必须为空或 unassigned；状态字段全量检查
     bad_mech = [r.get("queue_id") for r in bili
                 if (r.get("mechanism_label_candidate", "") or "").strip() not in ("", "unassigned")]
     if bad_mech:
         issues.append(f"B 站队列含最终机制标签（不允许）: {bad_mech[:5]}")
+    bad_cand_status = [r.get("queue_id") for r in bili if r.get("candidate_status") != "pending_review"]
+    if bad_cand_status:
+        issues.append(f"B 站队列 candidate_status 非 pending_review: {bad_cand_status[:5]}")
+    bad_hr_status = [r.get("queue_id") for r in bili if r.get("human_review_status") != "not_reviewed"]
+    if bad_hr_status:
+        issues.append(f"B 站队列 human_review_status 非 not_reviewed: {bad_hr_status[:5]}")
 
-    # manifest 数量一致 + SHA-256 校验
+    # manifest 数量一致 + SHA-256 校验（数值必须与实际队列一致，不得写死）
     if manifest.get("sample_count") != len(samples):
         issues.append("manifest.sample_count 与实际不一致")
     if manifest.get("migrated_evidence_count") != len(evidence):
         issues.append("manifest.migrated_evidence_count 与实际不一致")
     if manifest.get("ambiguous_evidence_count") != len(ambiguous):
         issues.append("manifest.ambiguous_evidence_count 与实际不一致")
+    if manifest.get("platform_counts") != dict(plat):
+        issues.append(f"manifest.platform_counts 与实际不一致: {manifest.get('platform_counts')} vs {dict(plat)}")
+    if manifest.get("bili_samples_pending") != len(bili_sample_cover):
+        issues.append(f"manifest.bili_samples_pending 与实际不一致: "
+                      f"{manifest.get('bili_samples_pending')} vs {len(bili_sample_cover)}")
+    if manifest.get("bili_candidate_unit_count") != len(bili):
+        issues.append(f"manifest.bili_candidate_unit_count 与实际队列行数不一致（不得写死）: "
+                      f"{manifest.get('bili_candidate_unit_count')} vs {len(bili)}")
+    # source_data_commit 必须存在（正式快照显式传入）
+    if not (manifest.get("source_data_commit") or "").strip():
+        issues.append("manifest.source_data_commit 缺失（正式快照必须显式传入）")
+    # source_files 必须为仓库内 POSIX 相对路径（不得含反斜杠或绝对路径）
+    src_files = manifest.get("source_files") or {}
+    bad_paths = [v for v in src_files.values()
+                 if ("\\" in str(v)) or str(v).startswith("/") or (":" in str(v))]
+    if bad_paths:
+        issues.append(f"manifest.source_files 非 POSIX 相对路径: {bad_paths}")
+    if not src_files:
+        issues.append("manifest.source_files 缺失")
     hash_mismatch = []
+    expected_hash_names = set(manifest.get("hashes") or {})
+    if expected_hash_names != set(EXPECTED_V2_CSV_NAMES):
+        issues.append(f"manifest.hashes 覆盖文件不完整: {sorted(expected_hash_names)}")
     for name, expected in (manifest.get("hashes") or {}).items():
         actual = sha256_bytes(V2_DIR / name)
         if actual != expected:
@@ -1015,7 +1106,25 @@ def run_v2_audit():
         if not enc["utf8_decodable"]:
             issues.append(f"{p.name} 非 UTF-8 可解码")
 
-    # id_migration：不存在无效新 ID（迁移状态为 migrated 的 evidence 必须有合法 new_id）
+    # id_migration 分项校验
+    mig_by = Counter((r.get("legacy_entity_type", ""), r.get("new_entity_type", ""),
+                      r.get("migration_status", "")) for r in migration)
+    clean_migrated = mig_by.get(("clean_sample", "sample", "migrated"), 0)
+    ev_migrated = mig_by.get(("evidence_unit", "evidence", "migrated"), 0)
+    ev_pending = mig_by.get(("evidence_unit", "evidence", "pending_human_resolution"), 0)
+    insight_deferred = mig_by.get(("insight_set", "insight", "deferred_until_evidence_rebuild"), 0)
+    action_deferred = mig_by.get(("action_matrix", "action", "deferred_until_evidence_rebuild"), 0)
+    if clean_migrated != EXPECTED_CLEAN_ROWS:
+        issues.append(f"id_migration clean_sample migrated {clean_migrated} != {EXPECTED_CLEAN_ROWS}")
+    if ev_migrated != EXPECTED_MIGRATED_EVIDENCE:
+        issues.append(f"id_migration evidence migrated {ev_migrated} != {EXPECTED_MIGRATED_EVIDENCE}")
+    if ev_pending != EXPECTED_AMBIGUOUS:
+        issues.append(f"id_migration evidence pending {ev_pending} != {EXPECTED_AMBIGUOUS}")
+    if insight_deferred != 1:
+        issues.append(f"id_migration insight deferred {insight_deferred} != 1")
+    if action_deferred != 1:
+        issues.append(f"id_migration action deferred {action_deferred} != 1")
+    # 不存在无效新 ID（迁移状态为 migrated 的 evidence 必须有合法 new_id）
     bad_new_id = []
     for r in migration:
         if r.get("migration_status") == "migrated" and r.get("new_entity_type") == "evidence":
@@ -1023,6 +1132,17 @@ def run_v2_audit():
                 bad_new_id.append(r.get("legacy_id"))
     if bad_new_id:
         issues.append(f"id_migration 存在无效 evidence new_id: {bad_new_id[:5]}")
+    # legacy id 与 new id 一一对应（sample + evidence 已迁移部分）
+    sample_pairs = [(r.get("legacy_clean_id"), r.get("sample_id")) for r in samples]
+    ev_pairs = [(r.get("legacy_evidence_id"), r.get("evidence_id")) for r in evidence]
+    mig_sample_pairs = [(r.get("legacy_id"), r.get("new_id")) for r in migration
+                        if r.get("new_entity_type") == "sample" and r.get("migration_status") == "migrated"]
+    mig_ev_pairs = [(r.get("legacy_id"), r.get("new_id")) for r in migration
+                    if r.get("new_entity_type") == "evidence" and r.get("migration_status") == "migrated"]
+    if sorted(sample_pairs) != sorted(mig_sample_pairs):
+        issues.append("id_migration sample 映射与 samples_v2 不一一对应")
+    if sorted(ev_pairs) != sorted(mig_ev_pairs):
+        issues.append("id_migration evidence 映射与 evidence_v2 不一一对应")
 
     status = "PASS" if not issues else "BLOCKED"
     return {
@@ -1032,9 +1152,19 @@ def run_v2_audit():
         "migrated_evidence_count": len(evidence),
         "ambiguous_evidence_count": len(ambiguous),
         "bili_samples_covered": len(bili_sample_cover),
+        "bili_sample_set_equals_bili_samples": bili_sample_cover == bili_samples_all,
         "bili_candidate_unit_count": len(bili),
         "review_status_distribution": dict(rs),
         "manifest_hash_ok": not hash_mismatch,
+        "manifest_source_data_commit": manifest.get("source_data_commit"),
+        "id_migration_breakdown": {
+            "clean_sample_migrated": clean_migrated,
+            "evidence_migrated": ev_migrated,
+            "evidence_pending": ev_pending,
+            "insight_deferred": insight_deferred,
+            "action_deferred": action_deferred,
+        },
+        "samples_field_mismatch": field_mismatch,
         "issues": issues,
         "warnings": warnings,
         "v2_migration_status": status,

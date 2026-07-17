@@ -1,6 +1,6 @@
 # Phase 1A 总结（PHASE1A_SUMMARY）
 
-> PSYLENS-PHASE1A-001：稳定 ID、证据迁移与 B 站待处理队列。
+> PSYLENS-PHASE1A-001 → 002：稳定 ID、证据迁移与 B 站待处理队列（含生成器隔离与稳定性加固）。
 > 只完成数据底座与迁移设计；未生成最终洞察/建议；未修改页面、README、DOCX 与历史公开数据。
 
 ## 0. 分层状态
@@ -27,21 +27,25 @@
 
 ## 2. ID 格式
 
-- 样本：`<PLATFORM>_<0001-0120>`（`BILI_/NGA_/TIEBA_`，平台内出现顺序稳定）；
-- 证据：`<sample_id>_U<两位序号>`（如 `NGA_0001_U02`）；
+- 样本：`<PLATFORM>_<0001-0120>`（`BILI_/NGA_/TIEBA_`，按 `platform_source + numeric legacy id` 稳定排序，输入行重排不改变映射）；
+- 证据：`<sample_id>_U<两位序号>`（如 `NGA_0001_U02`，**保留 legacy `_uN` 后缀**，不压缩重编号）；
 - 洞察 / 行动：仅格式规范 `INSIGHT_001` / `ACTION_001`，本阶段不生成实体（`deferred_until_evidence_rebuild`）。
 
 ## 3. 数据文件（data/v2/）
 
 - `samples_v2.csv`、`evidence_v2.csv`、`ambiguous_evidence_queue.csv`、`bili_evidence_queue.csv`、`id_migration.csv`、`v2_manifest.json`。
-- 生成脚本：`tools/build_v2_dataset.py`（确定性，复用审计器归一化/匹配口径）。
+- 生成脚本：`tools/build_v2_dataset.py`（核心函数 `build_v2_dataset(output_dir, generated_at, source_data_commit, generator_commit)`，复用审计器归一化/匹配口径）。
+- **确定性口径**：五个 CSV 由固定输入确定性生成；固定 `generated_at` 与 `source_data_commit` 时完整快照（含 manifest）字节级可复现（测试在 `tmp_path` 中验证，不写入 tracked `data/v2/`）。
 - 未写入 `docs/files/`；未覆盖任何历史公开结果。
 
 ## 4. manifest SHA-256（节选）
 
-- source_commit：`371d245a0ce82ed5d980472147b49568525e2986`
+- `source_data_commit`：`371d245a0ce82ed5d980472147b49568525e2986`（显式传入的来源快照，非测试时 HEAD）
+- `generated_at`：`2026-07-17T16:56:33.578346+08:00`（显式传入）
+- `source_files`：POSIX 相对路径（`docs/files/...`）
 - `samples_v2.csv`：`211f7012ff091f19d249ff5654b2d7b64253aeb35ca154982567563ddb06f8b8`
 - `evidence_v2.csv`：`4616bceda1deb0e27d3b768557d080f0411b7f7d60d6b17a6366746480bee574`
+- `bili_candidate_unit_count`：279（与实际队列行数一致，非写死）
 - 审计已校验 manifest 全部哈希一致（`manifest_hash_ok = OK`）。
 
 ## 5. 审计命令与退出码

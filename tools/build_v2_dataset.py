@@ -1,30 +1,38 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""PSYLENS-PHASE1A-001：稳定 ID、证据迁移与 B 站待处理队列生成脚本。
+"""PSYLENS-PHASE1A：稳定 ID、证据迁移与 B 站待处理队列生成脚本。
 
-本脚本只做**确定性**的数据底座搭建与迁移设计：
+本脚本只做数据底座搭建与迁移设计：
   - 为 360 条公开样本建立稳定平台前缀 ID（方案 B）；
   - 将审计器判定为「唯一命中」的 legacy 证据迁移到正确样本；
-  - 单独隔离 2 条歧义证据，不自动定案；
-  - 为 B 站 120 条样本做**候选**文本切分（不生成最终机制标签）；
+  - 单独隔离歧义证据，不自动定案；
+  - 为 B 站样本做**候选**文本切分（不生成最终机制标签）；
   - 生成 id_migration.csv 与 v2_manifest.json。
+
+确定性口径（PSYLENS-PHASE1A-002 修正后）：
+  - 五个 CSV 由固定输入确定性生成，字节可复现；
+  - manifest 的 generated_at 与 source_data_commit **不再从当前时间/HEAD 自动推断**，
+    而是由调用方显式传入；只有在固定 generated_at + 固定 source_data_commit 时，
+    完整 v2 快照（含 manifest）才字节级可复现。
 
 严格约束：
   - 不联网、不调用模型/API、不读取任何 Cookie/Token/Key；
-  - 只读取 docs/files 历史数据，绝不覆盖；只写入 data/v2/；
-  - 相同输入产生相同结果（确定性）；unit_text / source_url 不修改；
+  - 只读取 docs/files 历史数据，绝不覆盖；输出目录由参数指定；
+  - unit_text / source_url 不修改；
   - 不把 legacy 标签写成已人工复核；不生成最终洞察/建议。
 
 复用 tools/audit_public_data.py 的归一化与匹配逻辑，保证与审计口径一致。
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import datetime
 import hashlib
 import importlib.util
 import json
 import re
+import sys
 from pathlib import Path
 
 TOOLS_DIR = Path(__file__).resolve().parent
@@ -38,6 +46,8 @@ _spec.loader.exec_module(audit)
 
 # 平台前缀映射（platform_source -> ID 前缀）
 PLATFORM_PREFIX = {"Bili": "BILI", "NGA": "NGA", "Tieba": "TIEBA"}
+# 平台固定排序（仅用于稳定遍历，不影响平台内独立编号）
+PLATFORM_ORDER = {"Bili": 0, "NGA": 1, "Tieba": 2}
 
 # B 站候选切分标点（句号/问号/感叹号/分号/换行）
 SPLIT_PATTERN = re.compile(r"[。！？；\n]+|[.!?;]+")
@@ -50,42 +60,26 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def read_head_commit() -> str | None:
-    """从 .git 读取当前 HEAD commit（只读本地元数据，不联网）。失败返回 None，不伪造。"""
-    git_dir = REPO_ROOT / ".git"
-    try:
-        # worktree 情形下 .git 可能是一个文件，指向真实 gitdir
-        if git_dir.is_file():
-            content = git_dir.read_text(encoding="utf-8").strip()
-            m = re.match(r"gitdir:\s*(.+)", content)
-            if m:
-                git_dir = Path(m.group(1))
-                if not git_dir.is_absolute():
-                    git_dir = (REPO_ROOT / git_dir).resolve()
-        head = (git_dir / "HEAD").read_text(encoding="utf-8").strip()
-        if head.startswith("ref:"):
-            ref = head.split(" ", 1)[1].strip()
-            # 先查 commondir 下的 packed/loose ref
-            commondir_file = git_dir / "commondir"
-            base = git_dir
-            if commondir_file.exists():
-                cd = commondir_file.read_text(encoding="utf-8").strip()
-                base = (git_dir / cd).resolve() if not Path(cd).is_absolute() else Path(cd)
-            ref_path = base / ref
-            if ref_path.exists():
-                return ref_path.read_text(encoding="utf-8").strip()
-            return None
-        return head  # detached HEAD 直接是 sha
-    except OSError:
-        return None
-
-
 def build_sample_ids(clean_rows):
-    """按平台内部出现顺序生成稳定 sample_id；返回 (sample_rows, legacy_to_sample)。"""
+    """按 platform_source + numeric legacy_clean_id 的稳定顺序生成 sample_id。
+
+    不依赖 clean_rows 当前遍历顺序：即使输入行被打乱，
+    legacy_clean_id -> sample_id 的映射也保持不变。
+    返回 (sample_rows, legacy_to_sample)。
+    """
+    def sort_key(r):
+        platform = r.get("platform_source", "")
+        try:
+            nid = int(str(r.get("id")))
+        except (ValueError, TypeError):
+            nid = 10 ** 9
+        return (PLATFORM_ORDER.get(platform, 99), nid)
+
+    ordered = sorted(clean_rows, key=sort_key)
     seq = {"BILI": 0, "NGA": 0, "TIEBA": 0}
     legacy_to_sample = {}
     sample_rows = []
-    for r in clean_rows:
+    for r in ordered:
         legacy_id = str(r.get("id"))
         platform = r.get("platform_source", "")
         prefix = PLATFORM_PREFIX.get(platform)
@@ -142,9 +136,13 @@ def parse_legacy_unit_index(legacy_evidence_id):
 
 
 def build_evidence_v2(evidence_rows, resolution, legacy_to_sample):
-    """迁移唯一命中证据（candidate_count==1）。返回 evidence_v2_rows。"""
+    """迁移唯一命中证据（candidate_count==1）。返回 evidence_v2_rows。
+
+    unit_index 直接**保留 legacy evidence id 的 _uN 后缀**，
+    不使用压缩连续计数器；同一 sample_id + unit_index 冲突时抛错（BLOCKED），
+    不静默重新编号。
+    """
     evidence_v2 = []
-    # 同一 sample 下按 legacy unit 序号稳定排序 -> 重新分配连续 unit_index
     resolved_items = []  # (sample_id, legacy_unit_index, legacy_eid, row, resolved_clean_id)
     for r in evidence_rows:
         eid = str(r.get("id"))
@@ -152,13 +150,22 @@ def build_evidence_v2(evidence_rows, resolution, legacy_to_sample):
         if res["candidate_count"] == 1:
             resolved_clean_id = res["resolved_clean_id"]
             sample_id = legacy_to_sample[resolved_clean_id]
-            resolved_items.append((sample_id, parse_legacy_unit_index(eid), eid, r, resolved_clean_id))
+            resolved_items.append(
+                (sample_id, parse_legacy_unit_index(eid), eid, r, resolved_clean_id))
     # 稳定排序：sample_id，然后 legacy unit 序号，再 legacy_eid
     resolved_items.sort(key=lambda x: (x[0], x[1] if x[1] is not None else 9999, x[2]))
-    unit_counter = {}
-    for sample_id, _legacy_ui, legacy_eid, r, resolved_clean_id in resolved_items:
-        unit_counter[sample_id] = unit_counter.get(sample_id, 0) + 1
-        unit_index = unit_counter[sample_id]
+
+    seen = {}  # (sample_id, unit_index) -> legacy_eid，用于冲突检测
+    for sample_id, legacy_ui, legacy_eid, r, resolved_clean_id in resolved_items:
+        if legacy_ui is None:
+            raise ValueError(f"无法解析 legacy unit 序号: {legacy_eid!r}；BLOCKED")
+        unit_index = legacy_ui                       # 保留 _uN 后缀，不压缩
+        key = (sample_id, unit_index)
+        if key in seen:
+            raise ValueError(
+                f"unit_index 冲突: sample={sample_id} unit_index={unit_index} "
+                f"（legacy {seen[key]} vs {legacy_eid}）；BLOCKED，不静默重新编号")
+        seen[key] = legacy_eid
         evidence_id = f"{sample_id}_U{unit_index:02d}"
         evidence_v2.append({
             "evidence_id": evidence_id,
@@ -325,8 +332,23 @@ BILI_COLS = ["queue_id", "sample_id", "legacy_clean_id", "raw_text",
 MIGRATION_COLS = ["legacy_entity_type", "legacy_id", "new_entity_type", "new_id",
                   "resolved_clean_id", "migration_status", "migration_method", "notes"]
 
+CSV_FILENAMES = ["samples_v2.csv", "evidence_v2.csv", "ambiguous_evidence_queue.csv",
+                 "bili_evidence_queue.csv", "id_migration.csv"]
 
-def main():
+
+def build_v2_dataset(output_dir, generated_at, source_data_commit, generator_commit=None):
+    """确定性生成 v2 数据底座到 output_dir。
+
+    参数：
+      output_dir           输出目录（核心函数不固定写入 data/v2/）。
+      generated_at         写入 manifest 的生成时间（由调用方显式传入，不自动取当前时间）。
+      source_data_commit   数据来源快照 commit（由调用方显式传入，不从当前 HEAD 推断覆盖）。
+      generator_commit     可选：生成器代码所在 commit（不得用测试时 HEAD 覆盖来源快照）。
+
+    返回生成的 manifest dict。
+    """
+    output_dir = Path(output_dir)
+
     _, clean_rows = audit.read_csv_rows(audit.CLEAN_CSV)
     _, evidence_rows = audit.read_csv_rows(audit.EVIDENCE_CSV)
     clean_by_id = {str(r.get("id")): r for r in clean_rows}
@@ -334,17 +356,16 @@ def main():
     sample_rows, legacy_to_sample = build_sample_ids(clean_rows)
     resolution = resolve_evidence(evidence_rows, clean_rows)
 
-    # 迁移唯一命中；隔离歧义
     evidence_v2 = build_evidence_v2(evidence_rows, resolution, legacy_to_sample)
     ambiguous = build_ambiguous(evidence_rows, resolution, legacy_to_sample, clean_by_id)
     bili_queue = build_bili_queue(sample_rows)
     id_migration = build_id_migration(sample_rows, evidence_v2, ambiguous)
 
-    write_csv(V2_DIR / "samples_v2.csv", SAMPLE_COLS, sample_rows)
-    write_csv(V2_DIR / "evidence_v2.csv", EVIDENCE_COLS, evidence_v2)
-    write_csv(V2_DIR / "ambiguous_evidence_queue.csv", AMBIGUOUS_COLS, ambiguous)
-    write_csv(V2_DIR / "bili_evidence_queue.csv", BILI_COLS, bili_queue)
-    write_csv(V2_DIR / "id_migration.csv", MIGRATION_COLS, id_migration)
+    write_csv(output_dir / "samples_v2.csv", SAMPLE_COLS, sample_rows)
+    write_csv(output_dir / "evidence_v2.csv", EVIDENCE_COLS, evidence_v2)
+    write_csv(output_dir / "ambiguous_evidence_queue.csv", AMBIGUOUS_COLS, ambiguous)
+    write_csv(output_dir / "bili_evidence_queue.csv", BILI_COLS, bili_queue)
+    write_csv(output_dir / "id_migration.csv", MIGRATION_COLS, id_migration)
 
     platform_counts = {}
     for s in sample_rows:
@@ -353,11 +374,12 @@ def main():
 
     manifest = {
         "schema_version": "v2.0",
-        "generated_at": datetime.datetime.now().astimezone().isoformat(),
-        "source_commit": read_head_commit(),  # 读取本地 HEAD；读不到则留 null，不伪造
+        "generated_at": generated_at,
+        "source_data_commit": source_data_commit,     # 显式传入，不自动推断
+        "generator_commit": generator_commit,         # 可选
         "source_files": {
-            "clean_csv": str(audit.CLEAN_CSV.relative_to(REPO_ROOT)),
-            "evidence_csv": str(audit.EVIDENCE_CSV.relative_to(REPO_ROOT)),
+            "clean_csv": audit.CLEAN_CSV.relative_to(REPO_ROOT).as_posix(),
+            "evidence_csv": audit.EVIDENCE_CSV.relative_to(REPO_ROOT).as_posix(),
         },
         "sample_count": len(sample_rows),
         "platform_counts": platform_counts,
@@ -366,8 +388,8 @@ def main():
         "bili_samples_pending": len(bili_samples),
         "bili_candidate_unit_count": len(bili_queue),
         "id_scheme": {
-            "sample_id": "<PLATFORM>_<0001-0120>（平台内出现顺序，稳定）",
-            "evidence_id": "<sample_id>_U<两位单元序号>",
+            "sample_id": "<PLATFORM>_<0001-0120>（平台内按 numeric legacy id 稳定排序）",
+            "evidence_id": "<sample_id>_U<两位单元序号，保留 legacy _uN>",
             "insight_id": "INSIGHT_001（本阶段仅格式，不生成实体）",
             "action_id": "ACTION_001（本阶段仅格式，不生成实体）",
         },
@@ -380,19 +402,50 @@ def main():
             "v2 尚不用于公开页面",
         ],
     }
-    # 计算已生成文件的 SHA-256
-    for name in ["samples_v2.csv", "evidence_v2.csv", "ambiguous_evidence_queue.csv",
-                 "bili_evidence_queue.csv", "id_migration.csv"]:
-        manifest["hashes"][name] = sha256_file(V2_DIR / name)
+    for name in CSV_FILENAMES:
+        manifest["hashes"][name] = sha256_file(output_dir / name)
 
-    (V2_DIR / "v2_manifest.json").write_text(
+    (output_dir / "v2_manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    return manifest
+
+
+def build_arg_parser():
+    ap = argparse.ArgumentParser(description="PsyLens v2 数据底座生成（离线 / 确定性 / 只读历史数据）")
+    ap.add_argument("--output-dir", default=str(V2_DIR),
+                    help="输出目录（默认 data/v2；测试应传入 tmp_path）")
+    ap.add_argument("--generated-at", default=None,
+                    help="写入 manifest 的生成时间（ISO 8601）；不传则用当前时间（交互运行，非字节级可复现）")
+    ap.add_argument("--source-data-commit", default=None,
+                    help="数据来源快照 commit（正式快照必须显式传入；不从 HEAD 推断）")
+    ap.add_argument("--generator-commit", default=None,
+                    help="可选：生成器代码所在 commit")
+    return ap
+
+
+def main(argv=None):
+    args = build_arg_parser().parse_args(argv)
+    generated_at = args.generated_at
+    if generated_at is None:
+        # 交互运行的兜底：使用当前时间；此时整包非字节级可复现（仅 CSV 确定）
+        generated_at = datetime.datetime.now().astimezone().isoformat()
+    manifest = build_v2_dataset(
+        output_dir=args.output_dir,
+        generated_at=generated_at,
+        source_data_commit=args.source_data_commit,
+        generator_commit=args.generator_commit,
+    )
     print("v2 生成完成：")
-    print(f"  samples={len(sample_rows)} platform_counts={platform_counts}")
-    print(f"  migrated_evidence={len(evidence_v2)} ambiguous={len(ambiguous)}")
-    print(f"  bili_samples_pending={len(bili_samples)} bili_candidate_units={len(bili_queue)}")
+    print(f"  output_dir={args.output_dir}")
+    print(f"  samples={manifest['sample_count']} platform_counts={manifest['platform_counts']}")
+    print(f"  migrated_evidence={manifest['migrated_evidence_count']} "
+          f"ambiguous={manifest['ambiguous_evidence_count']}")
+    print(f"  bili_samples_pending={manifest['bili_samples_pending']} "
+          f"bili_candidate_units={manifest['bili_candidate_unit_count']}")
+    print(f"  source_data_commit={manifest['source_data_commit']}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
