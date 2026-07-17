@@ -1,151 +1,94 @@
 # PsyLens
 
-PsyLens 是一个将多平台公开游戏社区反馈转化为可追溯证据链、心理机制解释与产品行动建议的分析工作流（analysis workflow）。当前公开案例以《英雄联盟》海克斯大乱斗模式为对象，整合 NGA、贴吧、B 站三个平台的公开反馈，展示从非结构化玩家表达到结构化洞察资产的完整过程。
+社区反馈分析与可靠性评测：把公开社区反馈整理成可回溯证据，并评估从编码到产品假设的每一步是否可靠。
 
-> 说明：本项目是个人研究与作品集性质的公开案例，用于展示方法与工作流，**不是任何企业的内部项目，也不代表 Riot Games 或任何公司的内部判断**。
+- 展示页：`docs/index.html`（GitHub Pages）
+- 当前状态：工程实现已完成；公开发布待用户决策（见 `docs/decisions/FINAL_DECISION_PACKET.md`）。
 
-GitHub Pages 展示页：`https://sherlock0717.github.io/PsyLens/`
+## 当前案例
 
----
+- 三个社区平台的公开反馈，共 **360** 条样本（每平台 120）。
+- 数据分两层：**样本层**（一条完整反馈）与**证据层**（从原文切出的证据单元）。
+- **legacy 与 v2**：早期 legacy 结果保留在 `docs/files/**` 作为中间产物；v2 在 `data/v2/**` 用稳定编号重建。
+- 已迁移：695 条唯一命中 legacy 证据迁移到正确样本；B 站 279 条候选已生成 Agent 提案。
+- 仍待人工确认：全部 v2 标签未经真人复核；2 条极短歧义证据未定案。
 
-## 1. Project Overview（项目概述）
+## 它评测什么
 
-- **PsyLens 是什么**：一套把「公开社区反馈 → 证据链 → 心理机制 → 行动建议」串起来的分析工作流，强调结论可追溯、边界可说明。
-- **当前案例**：《英雄联盟》海克斯大乱斗（Hex ARAM）模式的社区讨论。
-- **使用的数据**：NGA、贴吧、B 站三平台的**公开**社区反馈（评论、回复、热评等）。
-- **输出的结果**：三平台整洁样本、证据单元表（evidence unit）、验证洞察（validated insights）、行动建议矩阵（action matrix），以及一个可对外阅读的展示页。
-- **适合谁阅读**：用户研究（UXR）、游戏产品 / 模式策划、社区运营与发行、以及关注「AI 辅助分析工作流」的读者。
+- 证据文本能否回到对应原始反馈；
+- 标签覆盖与不确定比例；
+- 洞察是否有足够证据支撑；
+- 产品建议能否回到洞察与证据；
+- 运行是否可复现。
 
----
+指标定义见 `evaluation/metrics.yaml`，阈值见 `evaluation/thresholds.yaml`，方法见 `docs/evaluation/EVALUATION_METHOD.md`。
 
-## 2. Case Scope（案例范围）
+## 分析与评测流程
 
-| 维度 | 内容 |
-| --- | --- |
-| 案例对象 | 《英雄联盟》海克斯大乱斗模式 |
-| 数据来源 | NGA、贴吧、B 站公开反馈 |
-| 样本规模 | 360 条整洁样本，三平台各 120 条 |
-| 证据单元 | 697 个 evidence unit |
-| 验证洞察 | 19 条 validated insights |
-| 行动建议 | `docs/files/05_action_matrix.json`（AI 生成/辅助生成的行动建议矩阵） |
+反馈 → 证据 → 编码（主题 + 机制）→ 结构化洞察 → 产品假设 → 评测
 
-> 上述数字与仓库现有公开文件一致；如需逐行核验，请以 `docs/files/` 下实际文件为准。
+## 当前结果
 
----
+只列已能准确陈述的指标（普通语言）：
 
-## 3. Core Questions（核心问题）
+- 每条反馈都有唯一编号；
+- 每条展示证据都能回到对应的原始反馈；
+- 覆盖三个平台；
+- 证据都带机制标签（约一半为"暂判不准"，诚实标注）；
+- 尚无真人复核（当前为机器提案与历史标签）；
+- 离线 Demo 同输入同输出。
 
-（整理自 `docs/index.md` 的既有研究问题，未新增未经支持的问题）
+> 机器给出的标签是**提案**（`agent_proposed`），不是人工复核结论。草稿结构化洞察与产品假设默认不在页面展示。
 
-1. 玩家围绕海克斯大乱斗，主要在争议什么？（重点观察玩法/机制、队友互动、英雄体验、规则归因）
-2. 这些高频表达更稳定地指向哪类体验机制？（重点比较胜任受挫、公平威胁及其他补充机制）
-3. 不同平台语境下，主机制是否一致？（比较 NGA、贴吧、B 站的表达风格差异与结论一致性）
-4. 这些反馈如何转化为产品、社区与研究可用的行动建议？
+## 离线 Demo
 
----
-
-## 4. Method Framework（方法框架）
-
-```
-Public Feedback → Clean Input → Evidence Unit → Mechanism Label → Validated Insight → Action Matrix
-公开反馈        → 整洁输入    → 证据单元      → 机制标签        → 验证洞察          → 行动建议矩阵
+```bash
+python tools/run_demo.py
 ```
 
-| 步骤 | 输入 | 处理 | 产出 | 对应文件 |
-| --- | --- | --- | --- | --- |
-| Public Feedback → Clean Input | 三平台公开反馈 | 预清洗、AI 辅助精修、按平台平衡合并、字段标准化 | 整洁样本 | `docs/files/input_feedback_phase2_multiplatform_clean.csv` |
-| Clean Input → Evidence Unit | 整洁样本 | 将一条反馈拆成可独立判断的证据单元 | 证据单元表 | `docs/files/final_evidence_table.csv` |
-| Evidence Unit → Mechanism Label | 证据单元 | 标注 surface_topic 与心理机制标签、置信度 | 带机制标签的证据表 | `docs/files/final_evidence_table.csv` |
-| Mechanism Label → Validated Insight | 带标签证据 | 按共现频率/强度收束成洞察，并标注是否需人工复核 | 验证洞察 | `docs/files/04_validated_insights.jsonl` |
-| Validated Insight → Action Matrix | 验证洞察 | 生成分层行动建议（AI 辅助） | 行动建议矩阵 | `docs/files/05_action_matrix.json` |
+输入几条脱敏反馈，离线生成证据、草稿洞察、待验证产品假设与评测报告。默认不联网、不调用模型。详见 `demo/README.md`。
 
-方法细节见 [`METHODOLOGY.md`](METHODOLOGY.md)。
+## 完整抓取链
 
----
+真实抓取与真实模型调用默认关闭、需显式配置、CI 永不运行。完整流程与安全说明见 `docs/pipeline/FULL_PIPELINE.md`。
 
-## 5. Key Public Outputs（关键公开产物）
+## 数据与文件
 
-- [`docs/files/input_feedback_phase2_multiplatform_clean.csv`](docs/files/input_feedback_phase2_multiplatform_clean.csv)：三平台整洁样本（360 条，三平台各 120）。
-- [`docs/files/final_evidence_table.csv`](docs/files/final_evidence_table.csv)：证据单元表（697 个 evidence unit），含 surface_topic、mechanism_label、confidence 等字段。
-- [`docs/files/04_validated_insights.jsonl`](docs/files/04_validated_insights.jsonl)：19 条验证洞察，含 supporting_ids 与 needs_human_review 标记。
-- [`docs/files/05_action_matrix.json`](docs/files/05_action_matrix.json)：行动建议矩阵，含 safe / balanced / bold 三层建议（AI 生成/辅助生成，需配合人工判断）。
-- `docs/files/PsyLens_enterprise_project_brief_v3.docx`：项目说明文档（当前展示页下载入口指向此版本）。
-- `docs/files/PsyLens_enterprise_project_brief_v4.docx`：项目说明文档的另一版本。**仓库中同时保留 v3 与 v4 文件，后续需确认展示页应指向哪一版**；本仓库不擅自删除或改名任何一版。
+- 脱敏示例：`demo/examples/sample_feedback.csv`
+- 编码手册：`docs/methodology/MECHANISM_CODEBOOK.md`、`SURFACE_TOPIC_CODEBOOK.md`
+- 评测方法与结果：`docs/evaluation/`
+- 离线 Demo：`demo/`
 
-字段级说明见 [`DATA_DICTIONARY.md`](DATA_DICTIONARY.md)。
+完整数据下载默认不开放（见 `docs/decisions/FINAL_DECISION_PACKET.md` D-001）。
 
----
+## 方法与边界
 
-## 6. Repository Structure（仓库结构）
+- 人工复核覆盖：当前为 0（`data/v2/human_review_log.csv` 无 `reviewer_type=human`）；
+- Agent 提案：B 站标签为机器提案，未经人工确认；
+- legacy 历史结果：作为中间产物保留，正用 v2 证据层重新复核；
+- 发布状态：`PENDING_USER_DECISIONS`。
+
+## 仓库结构
 
 ```
-PsyLens/
-├── README.md                 # 项目入口（本文件）
-├── PROJECT_BRIEF.md          # Markdown 版项目说明
-├── METHODOLOGY.md            # 方法论：处理链路、标签体系、证据链、AI 边界
-├── DATA_DICTIONARY.md        # 数据字典：公开结果文件的字段说明
-├── REPRODUCIBILITY.md        # 复现边界：公开仓库能做什么、不能做什么
-├── 公开版文件清单.txt         # 公开/不公开文件清单
-├── scripts_public/           # 公开版关键脚本（用于理解流程与接口）
-└── docs/                     # GitHub Pages 根目录
-    ├── index.html            # 展示页
-    ├── index.md              # 展示页的 Markdown 版内容
-    ├── style.css             # 页面样式
-    ├── assets/               # 页面图表与展示素材（PNG / SVG）
-    └── files/                # 公开结果文件（CSV / JSONL / JSON / DOCX）
+data/v2/            v2 数据底座、迁移、提案、provisional 证据、评测报告
+evaluation/         指标 / 阈值 / 失败类型定义
+tools/              审计、生成、评测、Demo、页面数据脚本
+demo/               离线可运行 Demo
+docs/methodology/   编码手册与证据切分指南
+docs/review/        复核指南与状态定义、歧义决策包
+docs/evaluation/    评测方法与结果草稿
+docs/pipeline/      完整抓取链与安全说明
+docs/phase1/        迁移与阶段报告
+docs/audit/         审计报告
+docs/decisions/     延期决策与最终决策包
+docs/index.html     展示页
 ```
 
----
+## CI 与复现
 
-## 7. How to Read This Repository（建议阅读顺序）
+`.github/workflows/ci.yml` 在 Ubuntu 与 Windows 上运行：编译、静态检查、pytest、v2 审计、Demo smoke、页面静态校验、历史文件保护。分层状态：`legacy_status=BLOCKED`、`v2_migration_status=PASS`、`publication_readiness` 受延期决策约束。
 
-1. 先看 GitHub Pages 展示页，建立整体印象。
-2. 再看 [`PROJECT_BRIEF.md`](PROJECT_BRIEF.md)，理解背景、范围与结论。
-3. 再看 [`METHODOLOGY.md`](METHODOLOGY.md)，理解方法链路与判断边界。
-4. 再看 [`DATA_DICTIONARY.md`](DATA_DICTIONARY.md)，理解字段含义。
-5. 再看 `docs/files/` 下公开结果文件，核对数据与洞察。
-6. 最后看 `scripts_public/`，理解处理流程与接口实现。
+## 许可
 
----
-
-## 8. Reproducibility Boundary（复现边界）
-
-- 当前公开仓库适合：**阅读项目、审查项目结构、理解方法、查看公开结果**。
-- 公开仓库**不等于**完整本地执行包。
-- 公开仓库当前**缺少**完整重跑所需的：prompts、config、完整原始抓取数据、私有环境变量。
-- `scripts_public/` 主要用于**理解流程和接口**，**不承诺一键复现完整结果**。
-- 详细说明见 [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md)。
-
----
-
-## 9. AI Assistance and Human Review Boundary（AI 辅助与人工复核边界）
-
-- 部分清洗、分类、洞察收束和行动建议**包含 AI 辅助**。
-- AI 产物**不应被理解为完全人工的研究结论**。
-- 页面与文档中的结论，需要与证据表（`final_evidence_table.csv`）、验证洞察（`04_validated_insights.jsonl`）以及人工复核边界**一起阅读**。
-- `docs/files/05_action_matrix.json` 是 **AI 生成/辅助生成**的行动建议矩阵，使用时需配合人工判断。
-- 部分洞察在 `04_validated_insights.jsonl` 中带有 `needs_human_review: true` 标记，表示证据有限、需人工复核。
-
----
-
-## 10. Limitations（局限性）
-
-- 数据来自**公开社区**，不代表所有玩家。
-- 三平台各 120 条是公开案例中的**平衡样本**，不等于自然舆情分布。
-- 心理机制标签是**解释性框架**，不是临床测量。
-- AI 辅助分类**存在误差**，需人工复核。
-- 行动建议是基于公开反馈形成的**产品假设**，**不代表 Riot 或任何企业的内部判断**。
-
----
-
-## 11. Public Page（公开页面）
-
-GitHub Pages: `https://sherlock0717.github.io/PsyLens/`
-
----
-
-## 12. License / Usage Note（许可与使用说明）
-
-当前仓库用于作品集展示、公开结果说明与方法结构参考。使用或引用时请保留项目来源说明。
-
-本仓库当前**没有正式的开源 License 文件**；如后续补充，将以仓库根目录的 `LICENSE` 为准。
+Copyright © 2026 Sherlock0717. All rights reserved. 详见 `RIGHTS_AND_USAGE.md`。
