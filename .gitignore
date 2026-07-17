@@ -1,0 +1,21 @@
+# PsyLens 审计临时产物（不提交大型中间文件 / 完整文本 diff / 日志）
+artifacts/
+!artifacts/.gitkeep
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 环境与凭据（严禁提交）
+.env
+*.env
+*cookie*.txt
+*cookies*.txt
+*.key
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
