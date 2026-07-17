@@ -1,0 +1,64 @@
+name: Deploy Pages
+
+# 本 workflow 在分支内准备，供后续线上复核决定是否启用（见决策 D-007）。
+# 默认不改动仓库 Pages 设置；不合并 main；不调用真实 API；不运行抓取。
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: 单元测试
+        run: python -m pytest -q
+
+      - name: v2 审计（打印）
+        run: python tools/audit_public_data.py --dataset v2 || true
+
+      - name: Demo smoke
+        run: python tools/run_demo.py --provider mock --output artifacts/demo/ci
+
+      - name: 构建页面数据
+        run: python tools/build_showcase_data.py
+
+      - name: 页面静态校验
+        run: python -m pytest tests/test_site_static.py -q
+
+      - name: 上传站点（docs/）
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
