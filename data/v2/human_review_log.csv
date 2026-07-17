@@ -1,0 +1,2 @@
+review_event_id,entity_type,entity_id,source_sample_id,original_label,proposed_label,final_label,reviewer_type,review_status,decision_reason,reviewed_at,notes
+RE_00001,dataset,evidence_v2,,,,,system_migration,migrated,系统迁移 695 条 legacy 证据，标签保持 legacy_ai_label_unreviewed,2026-07-17T16:56:33.578346+08:00,非人工复核事件；当前无 reviewer_type=human 记录
