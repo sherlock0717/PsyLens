@@ -50,8 +50,17 @@ jobs:
       - name: Demo tests
         run: python -m pytest demo/tests -q
 
-      - name: Public release tests
-        run: python -m pytest tests -q
+      - name: Public files and counts
+        run: python -m pytest tests/test_public_release.py::test_required_public_files_exist tests/test_public_release.py::test_public_data_counts_and_fields -q
+
+      - name: Public URL and manifest checks
+        run: python -m pytest tests/test_public_release.py::test_public_data_contains_no_external_urls tests/test_public_release.py::test_public_manifest_matches_files -q
+
+      - name: Page and showcase checks
+        run: python -m pytest tests/test_public_release.py::test_page_copy_is_public_facing tests/test_public_release.py::test_showcase_is_main_ready_and_clean -q
+
+      - name: README and DOCX checks
+        run: python -m pytest tests/test_public_release.py::test_readme_uses_public_release_paths tests/test_public_release.py::test_project_brief_is_readable_docx -q
 
       - name: Demo smoke
         run: python tools/run_demo.py --provider mock --output artifacts/demo/ci
