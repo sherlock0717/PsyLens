@@ -34,8 +34,8 @@
     }
   },
   "transformations": {
-    "redundant_raw_text_column_removed": 360,
-    "blank_surface_topic_normalized_to_other_uncertain": 47,
+    "redundant_raw_text_column_removed": 0,
+    "blank_surface_topic_normalized_to_other_uncertain": 0,
     "empty_date_count": 240
   },
   "sanitization_policy": [
