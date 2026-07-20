@@ -31,11 +31,14 @@
         "analysis_inclusion_status"
       ],
       "sha256": "acc8967e43a705aa55669e08d6886f41928971f045f7bad259acc6bcd467cb55"
+    },
+    "migration_history.json": {
+      "sha256": "d05b5088345e8f361107b4540bf29274779c9ea72dc50a1248254e0a01ef5150"
     }
   },
   "transformations": {
-    "redundant_raw_text_column_removed": 0,
-    "blank_surface_topic_normalized_to_other_uncertain": 0,
+    "redundant_raw_text_column_removed": 360,
+    "blank_surface_topic_normalized_to_other_uncertain": 47,
     "empty_date_count": 240
   },
   "sanitization_policy": [
