@@ -1,3 +1,0 @@
-legacy_evidence_id,unit_text,candidate_count,candidate_platforms,recommended_resolution,recommended_action,resolution_status,rationale
-83_u2,没啥用,2,NGA,exclude_as_too_short,从正式证据排除并保留在 review queue,pending_human_resolution,极短通用评价，脱离上下文无独立判断价值；两候选同为 NGA 但指向对象不同
-96_u3,没了,6,Bili|NGA|Tieba,exclude_as_too_short,从正式证据排除并保留在 review queue,pending_human_resolution,纯口语尾词，跨三平台 6 处偶然命中，无法确定真实出处，强行归属会污染平台覆盖
