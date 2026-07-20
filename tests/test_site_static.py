@@ -92,12 +92,15 @@ def test_body_no_hardcoded_project_counts():
 
 
 def test_hero_and_case_counts_injected():
-    """样本数、平台数、每平台数量均以 data-showcase 注入，静态回退不含数字。"""
+    """案例名、样本数、平台数、每平台数量均以 data-showcase 注入，静态回退不含固定数量。"""
     h = _html()
-    for key in ["samples", "platforms", "per_platform"]:
+    for key in ["case", "samples", "platforms", "per_platform_text"]:
         assert f'data-showcase="{key}"' in h, key
-    # JS 注入 per_platform
-    assert "setText('per_platform'" in h
+    assert "setText('case'" in h
+    assert "setText('per_platform_text'" in h
+    # 案例名回退不写死平台数量（无"三平台"等固定数量表述）
+    v = _visible(h)
+    assert "三平台社区反馈" not in v
 
 
 def test_js_uses_textcontent_not_innerhtml():

@@ -22,11 +22,13 @@ import argparse
 import importlib.util
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = TOOLS_DIR.parent
 V2_DIR = REPO_ROOT / "data" / "v2"
+PUBLIC_DIR = REPO_ROOT / "data" / "public"
 OUT = REPO_ROOT / "docs" / "assets" / "data" / "showcase.json"
 DEFAULT_REPO_REF = "phase1/rebuild-evidence-and-demo"
 REPO_URL = "https://github.com/sherlock0717/PsyLens"
@@ -34,6 +36,11 @@ REPO_URL = "https://github.com/sherlock0717/PsyLens"
 _spec = importlib.util.spec_from_file_location("audit_public_data", TOOLS_DIR / "audit_public_data.py")
 audit = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(audit)
+
+# 复用 public dataset 的脱敏函数：若证据示例来自 provisional，则用同一函数脱敏。
+_pubspec = importlib.util.spec_from_file_location("build_public_dataset", TOOLS_DIR / "build_public_dataset.py")
+build_pub = importlib.util.module_from_spec(_pubspec)
+_pubspec.loader.exec_module(build_pub)
 
 FEATURE_FLAGS = {
     "show_full_data_download": False,
@@ -80,32 +87,46 @@ def _platform_alias(samples):
     return {p: f"平台 {chr(ord('A') + i)}" for i, p in enumerate(plats)}
 
 
-def _pick_evidence_example(prov_rows, samples):
-    """从 provisional 证据中确定性选取一条 legacy AI 示例；文本截断、平台匿名化。"""
+def _pick_evidence_example(public_rows, prov_rows, samples):
+    """确定性选取一条 legacy AI 证据示例；文本截断、平台匿名化。
+
+    优先使用已脱敏的公开证据 data/public/evidence_public.csv；
+    若回退到 provisional 内部数据，则用与 public dataset 相同的脱敏函数处理，
+    避免公开页面出现未脱敏文本。
+    """
     alias = _platform_alias(samples)
-    row = next((r for r in prov_rows if r.get("label_source") == "legacy_ai"), None)
-    if row is None and prov_rows:
-        row = prov_rows[0]
+    default = {
+        "sample_excerpt": "",
+        "platform": "",
+        "label_source": "历史 AI 标签（未人工复核）",
+        "source": "none",
+        "note": "该示例的证据文本可在对应原始反馈中唯一定位；不展示原始链接与内部编号",
+    }
+    from_public = bool(public_rows)
+    rows = public_rows if from_public else (prov_rows or [])
+    row = next((r for r in rows if r.get("label_source") == "legacy_ai"), None)
+    if row is None and rows:
+        row = rows[0]
     if row is None:
-        return {
-            "sample_excerpt": "",
-            "platform": "",
-            "label_source": "历史 AI 标签（未人工复核）",
-            "note": "该示例的证据文本可在对应原始反馈中唯一定位；不展示原始链接与内部编号",
-        }
+        return default
     text = (row.get("unit_text", "") or "").strip()
+    if not from_public:
+        # 与 public dataset 相同的脱敏函数
+        text, _changed = build_pub.sanitize(text)
     excerpt = text if len(text) <= 60 else text[:60] + "……"
     return {
         "sample_excerpt": excerpt,
         "platform": alias.get((row.get("platform_source", "") or "").strip(), ""),
         "label_source": "历史 AI 标签（未人工复核）",
+        "source": "public_dataset" if from_public else "provisional_sanitized",
         "note": "该示例的证据文本可在对应原始反馈中唯一定位；不展示原始链接与内部编号",
     }
 
 
-def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path=None):
+def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path=None, public_dir=None):
     output = Path(output) if output else OUT
     input_dir = Path(input_dir) if input_dir else V2_DIR
+    public_dir = Path(public_dir) if public_dir else PUBLIC_DIR
     decisions_path = Path(decisions_path) if decisions_path else (REPO_ROOT / "data" / "decisions" / "decision_register.json")
     _, samples = audit.read_csv_rows(input_dir / "samples_v2.csv")
     _, evidence = audit.read_csv_rows(input_dir / "evidence_v2.csv")
@@ -113,14 +134,28 @@ def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path
     _, ambiguous = audit.read_csv_rows(input_dir / "ambiguous_evidence_queue.csv")
     _, prov_rows = audit.read_csv_rows(input_dir / "evidence_provisional_v2.csv")
     _, human_rows = audit.read_csv_rows(input_dir / "human_review_log.csv")
+    _, public_evidence_rows = audit.read_csv_rows(public_dir / "evidence_public.csv")
     prov = _read_json(input_dir / "provisional_manifest.json", {}) or {}
     ev = _read_json(input_dir / "evaluation_report.json", {}) or {}
     decisions = (_read_json(decisions_path, {}) or {}).get("decisions", [])
 
     # ---- 计数：全部从文件读取 ----
     sample_count = len(samples)
-    platform_count = len({r.get("platform_source") for r in samples})
-    per_platform = sample_count // platform_count if platform_count else 0
+    # 平台样本分布（匿名化）：不使用整数除法推定每平台数量
+    alias = _platform_alias(samples)
+    plat_counter = Counter((r.get("platform_source", "") or "").strip()
+                           for r in samples if (r.get("platform_source", "") or "").strip())
+    platform_count = len(plat_counter)
+    platform_distribution = {alias.get(p, p): plat_counter[p] for p in sorted(plat_counter)}
+    _uniq_counts = set(plat_counter.values())
+    all_platforms_equal = len(_uniq_counts) == 1
+    # 仅在各平台数量完全相等时输出 per_platform；否则为 None（不推定）
+    per_platform = next(iter(_uniq_counts)) if all_platforms_equal else None
+    if all_platforms_equal and per_platform is not None:
+        per_platform_text = f"每个平台各 {per_platform} 条"
+    else:
+        per_platform_text = "各平台样本量不等（分布见公开数据）"
+    case_name = f"{platform_count} 个平台的社区反馈案例" if platform_count else "社区反馈案例"
     migrated_evidence = len(evidence)
     bili_candidates = len(bili)
     unresolved_ambiguous = sum(1 for r in ambiguous
@@ -169,8 +204,8 @@ def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path
             "plain": mm.get("plain_explanation", ""),
         })
 
-    # ---- 证据示例：从稳定 v2 provisional 证据自动读取（平台匿名化，不硬编码）----
-    evidence_example = _pick_evidence_example(prov_rows, samples)
+    # ---- 证据示例：优先公开脱敏证据，回退 provisional 时用同一脱敏函数 ----
+    evidence_example = _pick_evidence_example(public_evidence_rows, prov_rows, samples)
 
     doc_links = {k: _doc_link(repo_ref, v) for k, v in DOC_PATHS.items()}
 
@@ -181,9 +216,10 @@ def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path
         "brand": "PsyLens",
         "tagline": "社区反馈分析与可靠性评测",
         "hero_summary": {
-            "case": "三平台社区反馈案例",
+            "case": case_name,
             "sample_count": sample_count,
             "platform_count": platform_count,
+            "per_platform_text": per_platform_text,
             "provisional_evidence_count": provisional_evidence,
         },
         "hero_status": hero_status,
@@ -193,6 +229,8 @@ def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path
         "counts": {
             "samples": sample_count,
             "per_platform": per_platform,
+            "platform_distribution": platform_distribution,
+            "all_platforms_equal": all_platforms_equal,
             "migrated_evidence": migrated_evidence,
             "bili_candidates": bili_candidates,
             "provisional_evidence": provisional_evidence,

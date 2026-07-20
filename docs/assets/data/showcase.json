@@ -5,9 +5,10 @@
   "brand": "PsyLens",
   "tagline": "社区反馈分析与可靠性评测",
   "hero_summary": {
-    "case": "三平台社区反馈案例",
+    "case": "3 个平台的社区反馈案例",
     "sample_count": 360,
     "platform_count": 3,
+    "per_platform_text": "每个平台各 120 条",
     "provisional_evidence_count": 927
   },
   "hero_status": [
@@ -72,11 +73,18 @@
     "sample_excerpt": "海克斯大乱斗最弱智的就是为了叠什么然后选个钢化你心，然后你妈的为了钢化你心又出个心之钢。",
     "platform": "平台 B",
     "label_source": "历史 AI 标签（未人工复核）",
+    "source": "public_dataset",
     "note": "该示例的证据文本可在对应原始反馈中唯一定位；不展示原始链接与内部编号"
   },
   "counts": {
     "samples": 360,
     "per_platform": 120,
+    "platform_distribution": {
+      "平台 A": 120,
+      "平台 B": 120,
+      "平台 C": 120
+    },
+    "all_platforms_equal": true,
     "migrated_evidence": 695,
     "bili_candidates": 279,
     "provisional_evidence": 927,

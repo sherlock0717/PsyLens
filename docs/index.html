@@ -28,7 +28,7 @@
         PsyLens 不只展示"分析出了什么"，更评估"样本 → 证据 → 编码 → 洞察 → 产品假设"这条链路是否站得住。
       </p>
       <dl class="hero-stats" id="heroStats" aria-label="当前案例概况">
-        <div><dt>当前案例</dt><dd>三平台社区反馈</dd></div>
+        <div><dt>当前案例</dt><dd data-showcase="case">社区反馈案例</dd></div>
         <div><dt>样本</dt><dd data-showcase="samples">—</dd></div>
         <div><dt>平台</dt><dd data-showcase="platforms">—</dd></div>
         <div><dt>provisional 证据</dt><dd data-showcase="provisional_evidence">—</dd></div>
@@ -62,10 +62,9 @@
 
     <section class="block" id="case">
       <h2>当前案例与数据组成</h2>
-      <p>案例整合多个社区平台的公开反馈。样本与每平台数量由页面数据动态载入：当前共
+      <p>案例整合多个社区平台的公开反馈。样本与平台数量由页面数据动态载入：当前共
         <span data-showcase="samples">若干</span> 条样本，覆盖
-        <span data-showcase="platforms">数个</span> 个平台，每个平台
-        <span data-showcase="per_platform">数量相近</span> 条。数据分两层：</p>
+        <span data-showcase="platforms">数个</span> 个平台，<span data-showcase="per_platform_text">各平台样本量相近</span>。数据分两层：</p>
       <ul class="clean-list">
         <li><strong>样本层</strong>：一条完整的反馈原文；</li>
         <li><strong>证据层</strong>：从原文中切出的、可单独判断的证据单元。</li>
@@ -159,9 +158,10 @@
         };
         var c = s.counts || {};
         var hero = s.hero_summary || {};
+        setText('case', hero.case);
         setText('samples', c.samples);
         setText('platforms', hero.platform_count);
-        setText('per_platform', c.per_platform);
+        setText('per_platform_text', hero.per_platform_text);
         setText('provisional_evidence', c.provisional_evidence);
 
         if (s.provisional_note) {
