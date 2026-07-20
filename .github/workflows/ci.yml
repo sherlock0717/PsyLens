@@ -2,7 +2,7 @@ name: Public Release CI
 
 on:
   push:
-    branches: ["release/public-v2", "main"]
+    branches: ["main", "revamp/analysis-methods-doc"]
   pull_request:
   workflow_dispatch:
 
@@ -27,43 +27,24 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest ruff python-docx
 
       - name: Compile Python files
-        run: python -m compileall demo/src pipeline tools/run_demo.py
+        run: python -m compileall demo/src pipeline tools tests demo/tests
 
-      - name: Ruff - Demo source
-        run: ruff check demo/src
+      - name: Ruff
+        run: ruff check demo/src demo/tests pipeline tools tests
 
-      - name: Ruff - Demo tests
-        run: ruff check demo/tests
+      - name: Test suite
+        run: python -m pytest demo/tests tests -q
 
-      - name: Ruff - Pipeline templates
-        run: ruff check pipeline
+      - name: Normalize public data smoke
+        run: python tools/normalize_public_dataset.py --source-dir data/public --output-dir artifacts/normalized_public
 
-      - name: Ruff - Demo entry
-        run: ruff check tools/run_demo.py
+      - name: Analysis summary smoke
+        run: python tools/summarize_public_analysis.py --public-dir data/public --output artifacts/public_analysis_summary.json
 
-      - name: Ruff - Public release tests
-        run: ruff check tests
-
-      - name: Demo tests
-        run: python -m pytest demo/tests -q
-
-      - name: Public files and counts
-        run: python -m pytest tests/test_public_release.py::test_required_public_files_exist tests/test_public_release.py::test_public_data_counts_and_fields -q
-
-      - name: Public URL scan
-        run: python -m pytest tests/test_public_release.py::test_public_data_contains_no_external_urls -q
-
-      - name: Public manifest hashes
-        run: python -m pytest tests/test_public_release.py::test_public_manifest_matches_files -q
-
-      - name: Page and showcase checks
-        run: python -m pytest tests/test_public_release.py::test_page_copy_is_public_facing tests/test_public_release.py::test_showcase_is_main_ready_and_clean -q
-
-      - name: README and DOCX checks
-        run: python -m pytest tests/test_public_release.py::test_readme_uses_public_release_paths tests/test_public_release.py::test_project_brief_is_readable_docx -q
+      - name: Project brief smoke
+        run: python tools/build_project_brief_docx.py --output artifacts/PsyLens_project_brief.docx
 
       - name: Demo smoke
         run: python tools/run_demo.py --provider mock --output artifacts/demo/ci
