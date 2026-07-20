@@ -1,0 +1,41 @@
+name: Public Analysis Artifacts
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "data/public/**"
+      - "tools/normalize_public_dataset.py"
+      - "tools/summarize_public_analysis.py"
+      - "tools/build_project_brief_docx.py"
+      - "docs/assets/data/**"
+      - "docs/files/PsyLens_project_brief.docx"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build normalized public package
+        run: python tools/normalize_public_dataset.py --source-dir data/public --output-dir artifacts/normalized_public
+      - name: Build analysis summary
+        run: python tools/summarize_public_analysis.py --public-dir data/public --output artifacts/public_analysis_summary.json
+      - name: Build formal project brief
+        run: python tools/build_project_brief_docx.py --output artifacts/PsyLens_project_brief.docx
+      - name: Upload public analysis artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: psylens-public-analysis
+          path: |
+            artifacts/normalized_public
+            artifacts/public_analysis_summary.json
+            artifacts/PsyLens_project_brief.docx
+          if-no-files-found: error

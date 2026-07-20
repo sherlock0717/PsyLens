@@ -1,0 +1,1028 @@
+{
+  "schema_version": "public-analysis-1.1",
+  "counts": {
+    "samples": 360,
+    "evidence": 927,
+    "platforms": 3,
+    "samples_without_evidence": 2,
+    "uncertain_mechanism": 486,
+    "uncertain_mechanism_rate": 0.524272,
+    "other_uncertain_topic": 486,
+    "inclusion_flagged_uncertain": 163,
+    "inclusion_flagged_uncertain_rate": 0.175836,
+    "assigned_mechanism_evidence": 441,
+    "specific_topic_evidence": 441
+  },
+  "sample_distributions": {
+    "platform": [
+      {
+        "key": "Bili",
+        "count": 120,
+        "rate": 0.333333
+      },
+      {
+        "key": "NGA",
+        "count": 120,
+        "rate": 0.333333
+      },
+      {
+        "key": "Tieba",
+        "count": 120,
+        "rate": 0.333333
+      }
+    ],
+    "window_tag": [
+      {
+        "key": "w1",
+        "count": 260,
+        "rate": 0.722222
+      },
+      {
+        "key": "w2",
+        "count": 100,
+        "rate": 0.277778
+      }
+    ],
+    "theme_bucket": [
+      {
+        "key": "balance_mechanic",
+        "count": 236,
+        "rate": 0.655556
+      },
+      {
+        "key": "team_interaction",
+        "count": 60,
+        "rate": 0.166667
+      },
+      {
+        "key": "hero_experience",
+        "count": 58,
+        "rate": 0.161111
+      },
+      {
+        "key": "fairness_attribution",
+        "count": 6,
+        "rate": 0.016667
+      }
+    ],
+    "reply_type": [
+      {
+        "key": "recent_reply",
+        "count": 318,
+        "rate": 0.883333
+      },
+      {
+        "key": "op_context",
+        "count": 42,
+        "rate": 0.116667
+      }
+    ],
+    "text_length": {
+      "min": 12,
+      "median": 61.0,
+      "mean": 84.03,
+      "p90": 164,
+      "max": 701
+    }
+  },
+  "evidence_distributions": {
+    "platform": [
+      {
+        "key": "NGA",
+        "count": 394,
+        "rate": 0.425027
+      },
+      {
+        "key": "Tieba",
+        "count": 301,
+        "rate": 0.324703
+      },
+      {
+        "key": "Bili",
+        "count": 232,
+        "rate": 0.25027
+      }
+    ],
+    "surface_topic": [
+      {
+        "key": "other_uncertain",
+        "count": 486,
+        "rate": 0.524272
+      },
+      {
+        "key": "balance",
+        "count": 270,
+        "rate": 0.291262
+      },
+      {
+        "key": "matchmaking",
+        "count": 82,
+        "rate": 0.088457
+      },
+      {
+        "key": "event_design",
+        "count": 24,
+        "rate": 0.02589
+      },
+      {
+        "key": "progression",
+        "count": 20,
+        "rate": 0.021575
+      },
+      {
+        "key": "community_conflict",
+        "count": 18,
+        "rate": 0.019417
+      },
+      {
+        "key": "communication_transparency",
+        "count": 13,
+        "rate": 0.014024
+      },
+      {
+        "key": "rewards",
+        "count": 9,
+        "rate": 0.009709
+      },
+      {
+        "key": "new_player_onboarding",
+        "count": 5,
+        "rate": 0.005394
+      }
+    ],
+    "specific_surface_topic": [
+      {
+        "key": "balance",
+        "count": 270,
+        "rate": 0.612245
+      },
+      {
+        "key": "matchmaking",
+        "count": 82,
+        "rate": 0.185941
+      },
+      {
+        "key": "event_design",
+        "count": 24,
+        "rate": 0.054422
+      },
+      {
+        "key": "progression",
+        "count": 20,
+        "rate": 0.045351
+      },
+      {
+        "key": "community_conflict",
+        "count": 18,
+        "rate": 0.040816
+      },
+      {
+        "key": "communication_transparency",
+        "count": 13,
+        "rate": 0.029478
+      },
+      {
+        "key": "rewards",
+        "count": 9,
+        "rate": 0.020408
+      },
+      {
+        "key": "new_player_onboarding",
+        "count": 5,
+        "rate": 0.011338
+      }
+    ],
+    "mechanism": [
+      {
+        "key": "uncertain",
+        "count": 486,
+        "rate": 0.524272
+      },
+      {
+        "key": "competence_frustration",
+        "count": 308,
+        "rate": 0.332255
+      },
+      {
+        "key": "fairness_threat",
+        "count": 88,
+        "rate": 0.09493
+      },
+      {
+        "key": "trust_communication_gap",
+        "count": 24,
+        "rate": 0.02589
+      },
+      {
+        "key": "belonging_drop",
+        "count": 11,
+        "rate": 0.011866
+      },
+      {
+        "key": "norm_safety_risk",
+        "count": 10,
+        "rate": 0.010787
+      }
+    ],
+    "assigned_mechanism": [
+      {
+        "key": "competence_frustration",
+        "count": 308,
+        "rate": 0.698413
+      },
+      {
+        "key": "fairness_threat",
+        "count": 88,
+        "rate": 0.199546
+      },
+      {
+        "key": "trust_communication_gap",
+        "count": 24,
+        "rate": 0.054422
+      },
+      {
+        "key": "belonging_drop",
+        "count": 11,
+        "rate": 0.024943
+      },
+      {
+        "key": "norm_safety_risk",
+        "count": 10,
+        "rate": 0.022676
+      }
+    ],
+    "label_source": [
+      {
+        "key": "legacy_ai",
+        "count": 695,
+        "rate": 0.74973
+      },
+      {
+        "key": "rule_based_proposal",
+        "count": 232,
+        "rate": 0.25027
+      }
+    ],
+    "review_status": [
+      {
+        "key": "legacy_ai_label_unreviewed",
+        "count": 695,
+        "rate": 0.74973
+      },
+      {
+        "key": "rule_based_proposed_unreviewed",
+        "count": 232,
+        "rate": 0.25027
+      }
+    ],
+    "analysis_inclusion_status": [
+      {
+        "key": "included",
+        "count": 764,
+        "rate": 0.824164
+      },
+      {
+        "key": "included_flagged_uncertain",
+        "count": 163,
+        "rate": 0.175836
+      }
+    ],
+    "text_length": {
+      "min": 3,
+      "median": 23,
+      "mean": 31.08,
+      "p90": 61,
+      "max": 220
+    },
+    "per_sample": {
+      "min": 0,
+      "median": 2.0,
+      "mean": 2.575,
+      "p90": 5,
+      "max": 21
+    }
+  },
+  "topic_mechanism_cross": [
+    {
+      "surface_topic": "other_uncertain",
+      "mechanism_label": "uncertain",
+      "count": 316,
+      "rate": 0.340885
+    },
+    {
+      "surface_topic": "balance",
+      "mechanism_label": "competence_frustration",
+      "count": 138,
+      "rate": 0.148867
+    },
+    {
+      "surface_topic": "other_uncertain",
+      "mechanism_label": "competence_frustration",
+      "count": 134,
+      "rate": 0.144552
+    },
+    {
+      "surface_topic": "balance",
+      "mechanism_label": "uncertain",
+      "count": 96,
+      "rate": 0.10356
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "uncertain",
+      "count": 37,
+      "rate": 0.039914
+    },
+    {
+      "surface_topic": "balance",
+      "mechanism_label": "fairness_threat",
+      "count": 35,
+      "rate": 0.037756
+    },
+    {
+      "surface_topic": "other_uncertain",
+      "mechanism_label": "fairness_threat",
+      "count": 23,
+      "rate": 0.024811
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "competence_frustration",
+      "count": 22,
+      "rate": 0.023732
+    },
+    {
+      "surface_topic": "event_design",
+      "mechanism_label": "uncertain",
+      "count": 18,
+      "rate": 0.019417
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "fairness_threat",
+      "count": 16,
+      "rate": 0.01726
+    },
+    {
+      "surface_topic": "communication_transparency",
+      "mechanism_label": "trust_communication_gap",
+      "count": 13,
+      "rate": 0.014024
+    },
+    {
+      "surface_topic": "progression",
+      "mechanism_label": "uncertain",
+      "count": 12,
+      "rate": 0.012945
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "fairness_threat",
+      "count": 8,
+      "rate": 0.00863
+    },
+    {
+      "surface_topic": "other_uncertain",
+      "mechanism_label": "trust_communication_gap",
+      "count": 6,
+      "rate": 0.006472
+    },
+    {
+      "surface_topic": "progression",
+      "mechanism_label": "competence_frustration",
+      "count": 6,
+      "rate": 0.006472
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "norm_safety_risk",
+      "count": 5,
+      "rate": 0.005394
+    },
+    {
+      "surface_topic": "other_uncertain",
+      "mechanism_label": "belonging_drop",
+      "count": 5,
+      "rate": 0.005394
+    },
+    {
+      "surface_topic": "rewards",
+      "mechanism_label": "uncertain",
+      "count": 5,
+      "rate": 0.005394
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "trust_communication_gap",
+      "count": 3,
+      "rate": 0.003236
+    },
+    {
+      "surface_topic": "new_player_onboarding",
+      "mechanism_label": "competence_frustration",
+      "count": 3,
+      "rate": 0.003236
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "belonging_drop",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "trust_communication_gap",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "event_design",
+      "mechanism_label": "competence_frustration",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "event_design",
+      "mechanism_label": "fairness_threat",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "belonging_drop",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "norm_safety_risk",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "new_player_onboarding",
+      "mechanism_label": "uncertain",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "other_uncertain",
+      "mechanism_label": "norm_safety_risk",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "progression",
+      "mechanism_label": "fairness_threat",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "rewards",
+      "mechanism_label": "competence_frustration",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "rewards",
+      "mechanism_label": "fairness_threat",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "balance",
+      "mechanism_label": "belonging_drop",
+      "count": 1,
+      "rate": 0.001079
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "competence_frustration",
+      "count": 1,
+      "rate": 0.001079
+    },
+    {
+      "surface_topic": "event_design",
+      "mechanism_label": "belonging_drop",
+      "count": 1,
+      "rate": 0.001079
+    },
+    {
+      "surface_topic": "event_design",
+      "mechanism_label": "norm_safety_risk",
+      "count": 1,
+      "rate": 0.001079
+    }
+  ],
+  "specific_topic_mechanism_cross": [
+    {
+      "surface_topic": "balance",
+      "mechanism_label": "competence_frustration",
+      "count": 138,
+      "rate": 0.148867
+    },
+    {
+      "surface_topic": "balance",
+      "mechanism_label": "fairness_threat",
+      "count": 35,
+      "rate": 0.037756
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "competence_frustration",
+      "count": 22,
+      "rate": 0.023732
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "fairness_threat",
+      "count": 16,
+      "rate": 0.01726
+    },
+    {
+      "surface_topic": "communication_transparency",
+      "mechanism_label": "trust_communication_gap",
+      "count": 13,
+      "rate": 0.014024
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "fairness_threat",
+      "count": 8,
+      "rate": 0.00863
+    },
+    {
+      "surface_topic": "progression",
+      "mechanism_label": "competence_frustration",
+      "count": 6,
+      "rate": 0.006472
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "norm_safety_risk",
+      "count": 5,
+      "rate": 0.005394
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "trust_communication_gap",
+      "count": 3,
+      "rate": 0.003236
+    },
+    {
+      "surface_topic": "new_player_onboarding",
+      "mechanism_label": "competence_frustration",
+      "count": 3,
+      "rate": 0.003236
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "belonging_drop",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "trust_communication_gap",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "event_design",
+      "mechanism_label": "competence_frustration",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "event_design",
+      "mechanism_label": "fairness_threat",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "belonging_drop",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "matchmaking",
+      "mechanism_label": "norm_safety_risk",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "progression",
+      "mechanism_label": "fairness_threat",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "rewards",
+      "mechanism_label": "competence_frustration",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "rewards",
+      "mechanism_label": "fairness_threat",
+      "count": 2,
+      "rate": 0.002157
+    },
+    {
+      "surface_topic": "balance",
+      "mechanism_label": "belonging_drop",
+      "count": 1,
+      "rate": 0.001079
+    },
+    {
+      "surface_topic": "community_conflict",
+      "mechanism_label": "competence_frustration",
+      "count": 1,
+      "rate": 0.001079
+    },
+    {
+      "surface_topic": "event_design",
+      "mechanism_label": "belonging_drop",
+      "count": 1,
+      "rate": 0.001079
+    },
+    {
+      "surface_topic": "event_design",
+      "mechanism_label": "norm_safety_risk",
+      "count": 1,
+      "rate": 0.001079
+    }
+  ],
+  "platform_breakdown": {
+    "Bili": {
+      "sample_count": 120,
+      "evidence_count": 232,
+      "evidence_per_sample": 1.933,
+      "surface_topics": [
+        {
+          "key": "balance",
+          "count": 78,
+          "rate": 0.336207
+        },
+        {
+          "key": "other_uncertain",
+          "count": 47,
+          "rate": 0.202586
+        },
+        {
+          "key": "matchmaking",
+          "count": 46,
+          "rate": 0.198276
+        },
+        {
+          "key": "event_design",
+          "count": 24,
+          "rate": 0.103448
+        },
+        {
+          "key": "communication_transparency",
+          "count": 13,
+          "rate": 0.056034
+        },
+        {
+          "key": "progression",
+          "count": 13,
+          "rate": 0.056034
+        },
+        {
+          "key": "rewards",
+          "count": 6,
+          "rate": 0.025862
+        },
+        {
+          "key": "community_conflict",
+          "count": 4,
+          "rate": 0.017241
+        },
+        {
+          "key": "new_player_onboarding",
+          "count": 1,
+          "rate": 0.00431
+        }
+      ],
+      "mechanisms": [
+        {
+          "key": "uncertain",
+          "count": 152,
+          "rate": 0.655172
+        },
+        {
+          "key": "competence_frustration",
+          "count": 40,
+          "rate": 0.172414
+        },
+        {
+          "key": "fairness_threat",
+          "count": 16,
+          "rate": 0.068966
+        },
+        {
+          "key": "trust_communication_gap",
+          "count": 14,
+          "rate": 0.060345
+        },
+        {
+          "key": "norm_safety_risk",
+          "count": 7,
+          "rate": 0.030172
+        },
+        {
+          "key": "belonging_drop",
+          "count": 3,
+          "rate": 0.012931
+        }
+      ],
+      "assigned_mechanisms": [
+        {
+          "key": "competence_frustration",
+          "count": 40,
+          "rate": 0.5
+        },
+        {
+          "key": "fairness_threat",
+          "count": 16,
+          "rate": 0.2
+        },
+        {
+          "key": "trust_communication_gap",
+          "count": 14,
+          "rate": 0.175
+        },
+        {
+          "key": "norm_safety_risk",
+          "count": 7,
+          "rate": 0.0875
+        },
+        {
+          "key": "belonging_drop",
+          "count": 3,
+          "rate": 0.0375
+        }
+      ]
+    },
+    "NGA": {
+      "sample_count": 120,
+      "evidence_count": 394,
+      "evidence_per_sample": 3.283,
+      "surface_topics": [
+        {
+          "key": "other_uncertain",
+          "count": 228,
+          "rate": 0.57868
+        },
+        {
+          "key": "balance",
+          "count": 131,
+          "rate": 0.332487
+        },
+        {
+          "key": "matchmaking",
+          "count": 23,
+          "rate": 0.058376
+        },
+        {
+          "key": "community_conflict",
+          "count": 8,
+          "rate": 0.020305
+        },
+        {
+          "key": "progression",
+          "count": 2,
+          "rate": 0.005076
+        },
+        {
+          "key": "new_player_onboarding",
+          "count": 1,
+          "rate": 0.002538
+        },
+        {
+          "key": "rewards",
+          "count": 1,
+          "rate": 0.002538
+        }
+      ],
+      "mechanisms": [
+        {
+          "key": "competence_frustration",
+          "count": 182,
+          "rate": 0.461929
+        },
+        {
+          "key": "uncertain",
+          "count": 167,
+          "rate": 0.423858
+        },
+        {
+          "key": "fairness_threat",
+          "count": 38,
+          "rate": 0.096447
+        },
+        {
+          "key": "trust_communication_gap",
+          "count": 4,
+          "rate": 0.010152
+        },
+        {
+          "key": "belonging_drop",
+          "count": 2,
+          "rate": 0.005076
+        },
+        {
+          "key": "norm_safety_risk",
+          "count": 1,
+          "rate": 0.002538
+        }
+      ],
+      "assigned_mechanisms": [
+        {
+          "key": "competence_frustration",
+          "count": 182,
+          "rate": 0.801762
+        },
+        {
+          "key": "fairness_threat",
+          "count": 38,
+          "rate": 0.167401
+        },
+        {
+          "key": "trust_communication_gap",
+          "count": 4,
+          "rate": 0.017621
+        },
+        {
+          "key": "belonging_drop",
+          "count": 2,
+          "rate": 0.008811
+        },
+        {
+          "key": "norm_safety_risk",
+          "count": 1,
+          "rate": 0.004405
+        }
+      ]
+    },
+    "Tieba": {
+      "sample_count": 120,
+      "evidence_count": 301,
+      "evidence_per_sample": 2.508,
+      "surface_topics": [
+        {
+          "key": "other_uncertain",
+          "count": 211,
+          "rate": 0.700997
+        },
+        {
+          "key": "balance",
+          "count": 61,
+          "rate": 0.202658
+        },
+        {
+          "key": "matchmaking",
+          "count": 13,
+          "rate": 0.043189
+        },
+        {
+          "key": "community_conflict",
+          "count": 6,
+          "rate": 0.019934
+        },
+        {
+          "key": "progression",
+          "count": 5,
+          "rate": 0.016611
+        },
+        {
+          "key": "new_player_onboarding",
+          "count": 3,
+          "rate": 0.009967
+        },
+        {
+          "key": "rewards",
+          "count": 2,
+          "rate": 0.006645
+        }
+      ],
+      "mechanisms": [
+        {
+          "key": "uncertain",
+          "count": 167,
+          "rate": 0.554817
+        },
+        {
+          "key": "competence_frustration",
+          "count": 86,
+          "rate": 0.285714
+        },
+        {
+          "key": "fairness_threat",
+          "count": 34,
+          "rate": 0.112957
+        },
+        {
+          "key": "belonging_drop",
+          "count": 6,
+          "rate": 0.019934
+        },
+        {
+          "key": "trust_communication_gap",
+          "count": 6,
+          "rate": 0.019934
+        },
+        {
+          "key": "norm_safety_risk",
+          "count": 2,
+          "rate": 0.006645
+        }
+      ],
+      "assigned_mechanisms": [
+        {
+          "key": "competence_frustration",
+          "count": 86,
+          "rate": 0.641791
+        },
+        {
+          "key": "fairness_threat",
+          "count": 34,
+          "rate": 0.253731
+        },
+        {
+          "key": "belonging_drop",
+          "count": 6,
+          "rate": 0.044776
+        },
+        {
+          "key": "trust_communication_gap",
+          "count": 6,
+          "rate": 0.044776
+        },
+        {
+          "key": "norm_safety_risk",
+          "count": 2,
+          "rate": 0.014925
+        }
+      ]
+    }
+  },
+  "integrity": {
+    "sample_id_unique": true,
+    "evidence_id_unique": true,
+    "orphan_evidence_count": 0,
+    "orphan_evidence_examples": [],
+    "platform_mismatch_count": 0,
+    "platform_mismatch_examples": [],
+    "evidence_text_mismatch_count": 0,
+    "evidence_text_match_rate": 1.0,
+    "url_hit_files": [],
+    "raw_text_column_present": false,
+    "raw_public_text_difference_count": null,
+    "sample_duplicates": {
+      "duplicate_group_count": 0,
+      "rows_in_duplicate_groups": 0,
+      "largest_group_size": 1,
+      "example_groups": []
+    },
+    "evidence_duplicates": {
+      "duplicate_group_count": 0,
+      "rows_in_duplicate_groups": 0,
+      "largest_group_size": 1,
+      "example_groups": []
+    },
+    "empty_fields": {
+      "samples": {
+        "sample_id": 0,
+        "platform_source": 0,
+        "platform_sequence": 0,
+        "window_tag": 0,
+        "theme_bucket": 0,
+        "reply_type": 0,
+        "date": 240,
+        "public_text": 0,
+        "migration_status": 0
+      },
+      "evidence": {
+        "evidence_id": 0,
+        "sample_id": 0,
+        "platform_source": 0,
+        "unit_index": 0,
+        "unit_text": 0,
+        "surface_topic": 0,
+        "mechanism_label": 0,
+        "label_source": 0,
+        "review_status": 0,
+        "analysis_inclusion_status": 0
+      }
+    }
+  },
+  "interpretation": {
+    "balanced_sampling": "三个平台各 120 条为分析设计，不能解释为平台真实讨论量相同。",
+    "segmentation_effect": "证据数量同时受原文长度和切分粒度影响，平台比较需结合每样本证据密度。",
+    "uncertainty_layers": "机制标签 uncertain 与 inclusion flagged uncertain 是两个字段，分别表示机制无法明确归类与证据纳入时需提醒。",
+    "coding_sources": "公开编码由历史 AI 结果与离线规则提案组成，分布用于方法审计和探索性描述。"
+  }
+}

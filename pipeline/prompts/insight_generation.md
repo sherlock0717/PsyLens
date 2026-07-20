@@ -1,25 +1,40 @@
-# Prompt 模板：洞察生成（insight_generation）
+# Prompt 模板：结构化观察生成
 
-> 状态：`reconstructed_template`。公开模板，不保证与历史运行逐字一致。
+> 状态：公开重构模板，用于定义外部 provider 的输入输出契约。
 
 ## 目标
 
-把同一 (话题 × 机制) 的证据聚合成**结构化洞察草稿**，每条洞察必须回到具体证据。
+将同一“表层话题 × 体验机制”的证据组合为可核查的结构化观察，并保留数量、平台与来源证据。
 
-## 指令（模板）
+## 指令模板
 
-```
-下面是一组同属 (话题, 机制) 的证据单元。请：
-1. 概括它们共同反映的问题（不夸大、不下因果结论）；
-2. 列出支撑的 source_evidence_ids；
-3. 标注平台覆盖与是否单平台；
-4. 明确这是草稿、未经人工复核。
-输出 JSON：{ "statement": "...", "source_evidence_ids": [...],
-            "platform_coverage": [...], "single_platform": true|false,
-            "limitations": "..." }
+```text
+下面是一组属于同一表层话题与体验机制的证据单元。请：
+
+1. 概括证据共同呈现的问题，不扩展到证据之外；
+2. 列出 source_evidence_ids；
+3. 记录 evidence_count、platform_coverage 与 single_platform；
+4. 说明统计分母和纳入规则；
+5. 把抽样、编码来源、上下文和因果解释限制集中写入 limitations。
+
+输出 JSON：
+{
+  "statement": "...",
+  "source_evidence_ids": ["..."],
+  "evidence_count": 0,
+  "platform_coverage": ["..."],
+  "single_platform": true,
+  "denominator": "...",
+  "limitations": "..."
+}
+
 证据组：{{evidence_group}}
 ```
 
 ## 约束
 
-至少 5 条证据才算高支持；不得把相关性表述成因果；不得把置信度写成证据强度。
+- 不把共现关系写成因果；
+- 不把模型置信度写成证据强度；
+- 单平台结果不扩展为跨平台结论；
+- `uncertain` 证据不强行归入具体机制；
+- 支持等级应同时考虑证据数量、平台覆盖和证据独立性，不能只设置固定数量门槛。

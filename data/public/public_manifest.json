@@ -1,6 +1,5 @@
 {
-  "schema_version": "public-1.1",
-  "generated_at": "2026-07-20T00:00:00+08:00",
+  "schema_version": "public-2.0",
   "files": {
     "samples_public.csv": {
       "row_count": 360,
@@ -12,10 +11,10 @@
         "theme_bucket",
         "reply_type",
         "date",
-        "raw_text",
         "public_text",
         "migration_status"
-      ]
+      ],
+      "sha256": "550a1783e97d12077fe77e76a8df5e6cebf5ee606cf8bd36d329f7a8c5bc0697"
     },
     "evidence_public.csv": {
       "row_count": 927,
@@ -30,25 +29,26 @@
         "label_source",
         "review_status",
         "analysis_inclusion_status"
-      ]
+      ],
+      "sha256": "acc8967e43a705aa55669e08d6886f41928971f045f7bad259acc6bcd467cb55"
+    },
+    "migration_history.json": {
+      "sha256": "d05b5088345e8f361107b4540bf29274779c9ea72dc50a1248254e0a01ef5150"
     }
   },
-  "sanitization_policy": [
-    "移除来源链接、平台内部标题、账号与 UID 等定位字段",
-    "屏蔽文本中的 URL、邮箱、手机号、@用户名、QQ 与微信号",
-    "公开文件只保留分析、复现与字段说明所需内容"
-  ],
-  "sanitized_sample_count": 0,
-  "contains_source_url": false,
-  "human_review_coverage": 0.0,
-  "human_review_note": "当前公开数据没有真人复核记录。",
-  "integrity": {
-    "algorithm": "git-blob-sha1",
-    "samples_public.csv": "03b9787e4e2e188c394c4904ac8055a0429ea0e3",
-    "evidence_public.csv": "2341d8d4a3e3ff0e76adeb3c59ba7fd546882fe1"
+  "transformations": {
+    "redundant_raw_text_column_removed": 360,
+    "blank_surface_topic_normalized_to_other_uncertain": 47,
+    "empty_date_count": 240
   },
-  "limitations": [
-    "公开数据不包含原始来源链接。",
-    "证据标签保留生成方式与复核状态，当前未经过真人复核。"
+  "sanitization_policy": [
+    "不包含原始来源链接、账号标识和平台内部定位字段",
+    "文本字段使用公开脱敏版本 public_text",
+    "公开表层话题缺失值统一写为 other_uncertain"
+  ],
+  "interpretation_notes": [
+    "平台各 120 条属于平衡采样设计，不能据此推断各平台真实讨论量",
+    "证据数量受文本长度与切分粒度影响，跨平台比较应结合每样本证据密度",
+    "analysis_inclusion_status 与 mechanism_label 表示不同层面的不确定性"
   ]
 }

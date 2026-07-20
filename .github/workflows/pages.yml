@@ -28,12 +28,15 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest ruff python-docx
 
       - name: Validate public release
         run: |
-          ruff check demo/src demo/tests pipeline tools/run_demo.py tests
+          python -m compileall demo/src pipeline tools tests demo/tests
+          ruff check demo/src demo/tests pipeline tools tests
           python -m pytest demo/tests tests -q
+          python tools/normalize_public_dataset.py --source-dir data/public --output-dir artifacts/normalized_public
+          python tools/summarize_public_analysis.py --public-dir data/public --output artifacts/public_analysis_summary.json
+          python tools/build_project_brief_docx.py --output artifacts/PsyLens_project_brief.docx
           python tools/run_demo.py --provider mock --output artifacts/demo/pages
 
       - name: Upload site

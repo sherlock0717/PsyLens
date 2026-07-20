@@ -1,13 +1,16 @@
-# Prompt 参考：洞察生成（insight_generation）
+# Prompt 参考：结构化观察生成
 
-> 仅供真实 provider 参考；Demo 默认 mock 不使用。
+> 仅供接入外部 provider 时参考；离线 Demo 使用确定性 mock，不调用本提示词。
 
-任务：把同一 (话题, 机制) 的多条证据聚合为一条结构化洞察。
+任务：将同一“表层话题 × 体验机制”的多条证据聚合为一条结构化观察。
 
 要求：
-- 统一称"结构化洞察"，禁用"已验证洞察/可直接采信"；
-- 记录 source_evidence_ids、evidence_count、platform_coverage；
-- 单平台必须标明，不表述为跨平台共识；
-- 写明 limitations（标签未人工复核、共现非因果、uncertain 未纳入）。
 
-输出：结构化洞察 JSON（字段见 data/v2/structured_insights_draft.jsonl）。
+- 记录 `source_evidence_ids`、证据数量和平台覆盖；
+- 说明统计分母与证据纳入规则；
+- 单平台结果明确标注平台范围；
+- 共现关系不写成因果关系；
+- 不确定机制证据不应被强行并入具体机制；
+- `limitations` 集中记录抽样、编码来源和证据密度等解释边界。
+
+输出：结构化观察 JSON。字段契约可参考 `demo/src/pipeline.py` 生成的 `insights.jsonl`。

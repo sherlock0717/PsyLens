@@ -1,162 +1,110 @@
-# PsyLens 评测指标定义（metrics.yaml）
-# 每个指标：定义 / 分子 / 分母 / 阈值 / 阻断或警告 / 面向页面的普通语言解释。
-# 阈值与阻断级别集中在 thresholds.yaml；此处描述语义。
+# PsyLens 公开评测指标
+# 语义与公开数据、页面和离线 Demo 对齐。
 
 groups:
-  A_data_integrity:
-    title: 数据完整性
+  A_structure_integrity:
+    title: 结构完整性
     metrics:
       sample_id_unique_rate:
-        definition: 样本 ID 唯一的比例
+        definition: 样本 ID 唯一比例
         numerator: 唯一 sample_id 数
         denominator: 样本总数
-        plain: 每条反馈都有唯一编号
+        current: 1.0
       evidence_id_unique_rate:
-        definition: 证据 ID 唯一的比例
+        definition: 证据 ID 唯一比例
         numerator: 唯一 evidence_id 数
-        denominator: provisional 证据总数
-        plain: 每条证据都有唯一编号
-      parent_reference_exists_rate:
-        definition: legacy 证据 parent_id 值能找到同编号 clean 行的比例
-        numerator: 引用编号存在数
-        denominator: legacy 证据总数
-        plain: 每条迁移证据都写了一个存在的父样本编号
+        denominator: 证据总数
+        current: 1.0
+      parent_reference_rate:
+        definition: 证据能够找到父样本的比例
+        numerator: 父样本存在的证据数
+        denominator: 证据总数
+        current: 1.0
+      platform_match_rate:
+        definition: 证据与父样本平台字段一致的比例
+        numerator: 平台一致证据数
+        denominator: 证据总数
+        current: 1.0
       evidence_text_match_rate:
-        definition: provisional 证据 unit_text 能在对应 sample.raw_text 中定位的比例
-        numerator: 可定位数
-        denominator: provisional 证据总数
-        plain: 每条展示证据都能回到对应的原始反馈
-      source_url_coverage:
-        definition: 内部样本来源字段的非空率（仅字段存在性，不代表可追溯真实性；公开层不含来源字段）
-        numerator: source_url 非空样本数
-        denominator: 样本总数
-        plain: 仅统计内部来源字段是否非空，不等于能真实追溯原帖；公开层不展示、不包含该字段
-      platform_sample_coverage:
-        definition: 覆盖的平台数
-        numerator: 出现的平台数
-        denominator: 3
-        plain: 覆盖了几个平台
+        definition: 证据文本能够在父样本公开文本中定位的比例
+        numerator: 可定位证据数
+        denominator: 证据总数
+        current: 1.0
 
-  B_coding_quality:
-    title: 编码质量
+  B_cleaning_privacy:
+    title: 清洗与隐私
     metrics:
-      label_completion_rate:
-        definition: 具备机制标签（非空、非 unassigned）的 provisional 证据比例
-        numerator: 有机制标签的证据数
-        denominator: provisional 证据总数
-        plain: 有多少证据被打上了机制标签
-      uncertain_rate:
+      public_url_hit_count:
+        definition: 公开数据文件中检出的 URL 数量
+        current: 0
+      sample_duplicate_group_count:
+        definition: 规范化后样本文本重复组数量
+        current: 0
+      evidence_duplicate_group_count:
+        definition: 规范化后证据文本重复组数量
+        current: 0
+      required_field_completion_rate:
+        definition: 必填字段非空比例；日期等可选字段单独记录
+      manifest_hash_match_rate:
+        definition: 公开文件 SHA-256 与 manifest 记录一致的比例
+
+  C_coding_usability:
+    title: 编码可用性
+    metrics:
+      valid_surface_topic_rate:
+        definition: 表层话题属于 codebook 的比例
+      valid_mechanism_rate:
+        definition: 机制标签属于 codebook 的比例
+      explicit_topic_rate:
+        definition: 表层话题不为 other_uncertain 的比例
+        numerator: 能够分配具体话题的证据数
+        denominator: 证据总数
+        current: 0.475728
+      assigned_mechanism_rate:
+        definition: 机制标签不为 uncertain 的比例
+        numerator: 能够分配主要机制的证据数
+        denominator: 证据总数
+        current: 0.475728
+      mechanism_uncertain_rate:
         definition: 机制标签为 uncertain 的比例
         numerator: uncertain 证据数
-        denominator: provisional 证据总数
-        plain: 有多少证据的机制暂时判不准
-      invalid_label_rate:
-        definition: 机制标签超出 codebook 的比例
-        numerator: 非法标签数
-        denominator: provisional 证据总数
-        plain: 有没有出现规范外的标签（应为 0）
-      evidence_phrase_match_rate:
-        definition: evidence_phrase 能在 unit_text 中定位的比例
-        numerator: 可定位数
-        denominator: 有 evidence_phrase 的证据数
-        plain: 标注依据短语能否在证据文本中找到
-      rule_based_proposal_coverage:
-        definition: B 站候选中已生成离线规则基线提案的比例
-        numerator: 有提案的候选数
-        denominator: B 站候选总数
-        plain: B 站候选是否都给出了离线规则基线提案（不是模型/人工语义判断）
-      human_review_coverage:
-        definition: 经真实人工复核的证据比例
-        numerator: reviewer_type=human 的复核证据数
-        denominator: provisional 证据总数
-        plain: 有多少证据经过真人复核（当前为 0）
-      human_override_rate:
-        definition: 人工推翻 Agent/legacy 标签的比例
-        numerator: 人工修改/否决数
-        denominator: 人工复核总数
-        plain: 真人复核后改动了多少（当前无复核）
+        denominator: 证据总数
+        current: 0.524272
+      inclusion_flagged_uncertain_rate:
+        definition: 证据纳入状态为 included_flagged_uncertain 的比例
+        numerator: 纳入提醒证据数
+        denominator: 证据总数
+        current: 0.175836
+      samples_without_evidence_rate:
+        definition: 未切出可保留证据的样本比例
+        numerator: 无证据样本数
+        denominator: 样本总数
+        current: 0.005556
 
-  C_insight_precondition:
-    title: 洞察前置质量
+  D_analysis_support:
+    title: 分析支撑
     metrics:
-      support_resolution_rate:
-        definition: 草稿洞察 source_evidence_ids 能全部解析到 provisional 证据的比例
-        numerator: 全部可解析的洞察数
-        denominator: 草稿洞察总数
-        plain: 每条洞察引用的证据是否都真实存在
-      platform_coverage:
-        definition: 草稿洞察平均覆盖平台数
-        numerator: 各洞察覆盖平台数之和
-        denominator: 草稿洞察总数
-        plain: 洞察平均由几个平台的证据支撑
-      time_window_coverage:
-        definition: 草稿洞察平均覆盖时间窗数
-        numerator: 各洞察覆盖时间窗数之和
-        denominator: 草稿洞察总数
-        plain: 洞察平均跨几个时间段
-      low_support_claim_rate:
-        definition: 支撑证据少于阈值的洞察比例
-        numerator: 低支撑洞察数
-        denominator: 草稿洞察总数
-        plain: 有多少洞察证据偏少
-      single_platform_claim_rate:
-        definition: 仅由单平台支撑的洞察比例
-        numerator: 单平台洞察数
-        denominator: 草稿洞察总数
-        plain: 有多少洞察只来自一个平台
+      claim_has_source_dataset:
+        definition: 页面数量结论是否指向公开计算数据
+      claim_has_denominator:
+        definition: 比例结论是否明确分母
+      claim_has_scope:
+        definition: 结论是否说明平台、抽样与编码来源范围
+      platform_density_reported:
+        definition: 跨平台比较是否同时报告每样本证据密度
+      causal_language_check:
+        definition: 探索性分布是否避免直接因果表述
 
-  D_action_precondition:
-    title: 建议前置质量
-    metrics:
-      action_to_insight_linkage_rate:
-        definition: 行动假设 source_insight_ids 全部可解析的比例
-        numerator: 全部可解析的建议数
-        denominator: 草稿建议总数
-        plain: 每条建议能否回到具体洞察
-      action_to_evidence_linkage_rate:
-        definition: 行动假设 source_evidence_ids 全部可解析的比例
-        numerator: 全部可解析的建议数
-        denominator: 草稿建议总数
-        plain: 每条建议能否回到具体证据
-      validation_plan_coverage:
-        definition: 有 validation_method 的建议比例
-        numerator: 有验证方法的建议数
-        denominator: 草稿建议总数
-        plain: 每条建议是否给了验证办法
-      expected_effect_coverage:
-        definition: 有 expected_effect 的建议比例
-        numerator: 有预期效果的建议数
-        denominator: 草稿建议总数
-        plain: 每条建议是否写了预期效果
-
-  E_run_quality:
-    title: 运行质量
+  E_run_reproducibility:
+    title: 运行与复现
     metrics:
       parse_success_rate:
-        definition: 数据文件成功解析的比例
-        numerator: 成功解析文件数
-        denominator: 目标文件数
-        plain: 数据文件是否都能正常读取
-      stage_completion_rate:
-        definition: 流水线阶段完成比例
-        numerator: 完成阶段数
-        denominator: 计划阶段数
-        plain: 分析流程走完了多少步
-      failure_type_counts:
-        definition: 各类失败计数（诊断用）
-        plain: 出现了哪些类型的问题
-      repeatability_rate:
-        definition: 相同输入重复生成结果一致的比例
-        numerator: 一致的产物数
-        denominator: 产物总数
-        plain: 同样的输入是否每次都得到同样的结果
-      manifest_completeness:
-        definition: manifest 关键字段齐全的比例
-        numerator: 齐全字段数
-        denominator: 必需字段数
-        plain: 运行记录是否完整
-      output_hash_match_rate:
-        definition: 输出文件哈希与 manifest 记录一致的比例
-        numerator: 哈希一致文件数
-        denominator: 记录文件数
-        plain: 产出文件有没有被意外改动
+        definition: 目标 CSV、JSON、YAML 与 DOCX 成功解析的比例
+      deterministic_demo_rate:
+        definition: 相同输入与配置下 Demo 产物一致比例
+      generated_analysis_match:
+        definition: 提交的 analysis_summary 与公开数据重新生成结果一致
+      cross_platform_ci:
+        definition: Ubuntu 与 Windows 发布校验均通过
+      pages_validation:
+        definition: Pages 部署前完成公开数据、页面与文档测试

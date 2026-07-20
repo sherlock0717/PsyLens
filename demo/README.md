@@ -1,38 +1,50 @@
-# Demo
+# 离线 Demo
 
-输入几条脱敏反馈，Demo 会生成：候选证据单元 → 确定性标签 → 草稿结构化洞察 → 待验证产品假设 → 评测报告。
+输入少量脱敏反馈，Demo 会依次生成候选证据、确定性标签、草稿结构化洞察、待验证产品假设和评测报告。
 
 ## 默认设置
 
-- **离线**：不联网、不调用模型、不运行抓取；
-- **不读取** `.env` / Cookie / API Key；
-- **不覆盖** `data/v2` 与 `docs/files`；
-- **确定性**：同一输入与配置产生同样输出（测试保障）。
+- **离线运行**：不联网、不访问平台、不调用外部模型；
+- **无密钥依赖**：不读取 `.env`、Cookie 或 API Key；
+- **独立输出**：只写入用户指定的 `artifacts/` 目录，不修改公开数据与项目说明；
+- **确定性**：同一输入、配置和 run ID 产生相同输出。
 
 ## 运行
 
 ```bash
 python tools/run_demo.py
-# 或指定输入与输出
-python tools/run_demo.py --input demo/examples/sample_feedback.csv --output artifacts/demo/test_run
-# CI 使用 mock provider
-python tools/run_demo.py --provider mock --output artifacts/demo/ci
+
+python tools/run_demo.py \
+  --input demo/examples/sample_feedback.csv \
+  --output artifacts/demo/test_run
+
+python tools/run_demo.py \
+  --provider mock \
+  --output artifacts/demo/ci
 ```
 
-## 输出（写入 artifacts/demo/<run_id>/）
+## 输出
 
-`input_snapshot.json`、`evidence.jsonl`、`insights.jsonl`、`actions.json`、`evaluation.json`、`manifest.json`、`report.md`、`report.html`。
+运行目录包含：
 
-## 结构
+- `input_snapshot.json`：输入快照与运行参数；
+- `evidence.jsonl`：切分后的证据单元；
+- `insights.jsonl`：按话题与机制组合形成的草稿观察；
+- `actions.json`：带验证方法的产品假设；
+- `evaluation.json`：结构和标签检查；
+- `manifest.json`：产物数量与 SHA-256；
+- `report.md`、`report.html`：可阅读报告。
 
-```
+## 目录
+
+```text
 demo/
-  config/demo.yaml            配置（默认 mock、离线）
-  prompts/                    真实运行时的提示词参考（Demo mock 不使用）
-  examples/sample_feedback.csv 脱敏示例输入（无真实 URL/账号）
-  mock/deterministic_responses.json 确定性 mock 标签规则
-  src/                        pipeline / providers / validators / scoring / report
-  tests/                      Demo 测试
+  config/demo.yaml                  默认配置
+  examples/sample_feedback.csv      脱敏示例输入
+  mock/deterministic_responses.json 确定性规则
+  prompts/                          提示词参考
+  src/                              流程、校验、评分和报告
+  tests/                            确定性与完整性测试
 ```
 
-
+`src/` 包含 pipeline、providers、validators、scoring 与 report 模块。

@@ -1,62 +1,89 @@
-# 失败类型分类（failure_taxonomy.yaml）
+# PsyLens 公开评测失败类型
 failure_types:
-  data_integrity:
+  structure:
     - id: duplicate_id
       desc: 样本或证据 ID 重复
       severity: block
-    - id: evidence_text_not_locatable
-      desc: 证据文本无法在样本原文中定位
+    - id: orphan_evidence
+      desc: 证据引用的父样本不存在
       severity: block
-    - id: parent_semantic_link_missing
-      desc: legacy 证据无法回到声明父样本（历史遗留）
+    - id: platform_mismatch
+      desc: 证据与父样本的平台字段不一致
+      severity: block
+    - id: evidence_text_not_locatable
+      desc: 证据文本无法在父样本公开文本中定位
+      severity: block
+    - id: missing_required_field
+      desc: 公开数据必填字段为空
+      severity: block
+
+  privacy_cleaning:
+    - id: public_url_leak
+      desc: 公开文件包含来源 URL 或文本内链接
+      severity: block
+    - id: identity_field_leak
+      desc: 公开字段包含账号、UID 或平台内部定位信息
+      severity: block
+    - id: duplicate_text_group
+      desc: 规范化后存在重复样本或重复证据组
       severity: warn
+    - id: manifest_hash_mismatch
+      desc: 公开文件与 manifest 记录的 SHA-256 不一致
+      severity: block
+
   coding:
     - id: invalid_label
-      desc: 机制/话题标签超出 codebook
+      desc: 表层话题或机制标签超出 codebook
       severity: block
-    - id: evidence_phrase_not_locatable
-      desc: evidence_phrase 无法在证据文本中定位
+    - id: blank_topic
+      desc: 表层话题使用空值而未写为 other_uncertain
       severity: block
-    - id: over_labeling
-      desc: 为覆盖率强行分配机制（uncertain 被回避）
+    - id: uncertainty_conflation
+      desc: 将机制 uncertain 与证据纳入提醒合并为同一指标
+      severity: block
+    - id: label_collapse
+      desc: 大量证据集中到单一标签，可能反映规则或构念区分不足
       severity: warn
-  insight:
-    - id: unresolved_support_id
-      desc: 洞察引用的证据 ID 不存在
+    - id: context_overreach
+      desc: 文本信息不足时仍推断具体体验机制
+      severity: warn
+    - id: source_distribution_shift
+      desc: 不同编码来源产生明显分布差异但未说明
+      severity: warn
+
+  analysis:
+    - id: missing_denominator
+      desc: 比例结论未说明分母
       severity: block
-    - id: low_support
-      desc: 洞察支撑证据过少
+    - id: balanced_sample_as_prevalence
+      desc: 将等额抽样结果解释为平台真实讨论规模或总体占比
+      severity: block
+    - id: segmentation_as_intensity
+      desc: 将证据数量直接解释为问题强度，未考虑文本长度与切分粒度
       severity: warn
     - id: single_platform_overclaim
-      desc: 单平台洞察被表述为跨平台共识
+      desc: 单平台结果被表述为跨平台共识
       severity: warn
     - id: correlation_as_causation
-      desc: 相关性被表述为因果
-      severity: warn
-  action:
-    - id: unresolved_insight_id
-      desc: 建议引用的洞察 ID 不存在
+      desc: 探索性分布被表述为因果关系
       severity: block
-    - id: unresolved_evidence_id
-      desc: 建议引用的证据 ID 不存在
-      severity: block
-    - id: missing_validation
-      desc: 建议缺少验证方法或预期效果
+    - id: unsupported_product_claim
+      desc: 产品建议缺少证据、验证方法或成功指标
       severity: warn
+
   run:
     - id: parse_failure
-      desc: 数据文件无法解析
+      desc: CSV、JSON、YAML、HTML 或 DOCX 无法解析
       severity: block
-    - id: output_hash_mismatch
-      desc: 输出文件哈希与记录不一致
+    - id: generated_analysis_stale
+      desc: 提交的分析汇总与公开数据重新生成结果不一致
       severity: block
-    - id: nondeterministic
-      desc: 相同输入产生不同输出
-      severity: warn
-  claim:
-    - id: overclaim_human_review
-      desc: 无记录却声称已人工复核
+    - id: nondeterministic_demo
+      desc: 相同输入与配置产生不同 Demo 产物
       severity: block
-    - id: overclaim_certainty
-      desc: 使用"可直接采信/已验证/数据真实"等过强表述
+    - id: cross_platform_failure
+      desc: Ubuntu 或 Windows 发布校验失败
+      severity: block
+    - id: pages_validation_failure
+      desc: Pages 部署前的公开发布校验失败
       severity: block
