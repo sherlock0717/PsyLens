@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>PsyLens｜社区反馈分析与可靠性评测</title>
-  <meta name="description" content="PsyLens 以公开社区反馈为基础，建立从样本、证据单元到产品假设的可追溯分析链路，并提供离线评测 Demo。">
+  <meta name="description" content="PsyLens 展示多平台社区反馈的数据清洗、心理学编码、分析结果与可靠性评测方法。">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,98 +16,226 @@
         <img src="assets/psylens-wordmark.svg" alt="PsyLens" class="wordmark">
       </a>
       <div class="nav-links">
-        <a href="#overview">项目概览</a>
-        <a href="#evaluation">评测结果</a>
-        <a href="#demo">离线 Demo</a>
-        <a href="#resources">资料入口</a>
+        <a href="#design">研究设计</a>
+        <a href="#results">分析结果</a>
+        <a href="#psychology">心理框架</a>
+        <a href="#cleaning">数据处理</a>
+        <a href="#evaluation">评测</a>
       </div>
     </nav>
 
     <div class="hero-grid">
       <div class="hero-copy">
-        <p class="kicker">社区反馈分析 · 证据链 · 可靠性评测</p>
-        <h1>从社区反馈中提取<br>可核查的证据与产品线索</h1>
+        <p class="kicker">社区反馈分析 · 心理学编码 · 可靠性评测</p>
+        <h1>把分散的玩家表达<br>整理成可核查的产品线索</h1>
         <p class="lede">
-          PsyLens 以《英雄联盟》海克斯大乱斗社区讨论为案例，整理多平台公开反馈，
-          建立从样本、证据单元、主题编码到产品假设的可追溯链路，并用离线评测检查数据完整性与复现性。
+          PsyLens 以《英雄联盟》海克斯大乱斗讨论为案例，展示公开反馈如何经过清洗、证据切分、
+          话题与体验机制编码，形成分析结果，并接受结构、偏差和复现检查。
         </p>
         <div class="hero-actions">
-          <a class="btn primary" href="#overview">查看项目方法</a>
-          <a class="btn" href="#demo">运行离线 Demo</a>
-          <a class="btn ghost" data-doc="project_brief" href="files/PsyLens_project_brief.docx">项目说明</a>
+          <a class="btn primary" href="#results">查看分析结果</a>
+          <a class="btn" href="#cleaning">查看数据方法</a>
+          <a class="btn ghost" data-doc="project_brief" href="files/PsyLens_project_brief.docx">下载项目说明</a>
         </div>
       </div>
 
-      <aside class="summary-panel" aria-label="当前案例概况">
+      <aside class="summary-panel" aria-label="案例数据概况">
         <p class="panel-label">当前案例</p>
-        <h2 data-showcase="case">多平台社区反馈案例</h2>
+        <h2 data-showcase="case">海克斯大乱斗社区反馈</h2>
         <dl class="hero-stats">
-          <div><dt>公开样本</dt><dd data-showcase="samples">—</dd></div>
-          <div><dt>覆盖平台</dt><dd data-showcase="platforms">—</dd></div>
-          <div><dt>候选证据</dt><dd data-showcase="provisional_evidence">—</dd></div>
+          <div><dt>公开样本</dt><dd data-showcase="samples">360</dd></div>
+          <div><dt>证据单元</dt><dd data-showcase="evidence">927</dd></div>
+          <div><dt>平均证据密度</dt><dd data-showcase="density">2.58</dd></div>
+          <div><dt>文本回溯率</dt><dd data-showcase="match_rate">100%</dd></div>
         </dl>
-        <div class="status-list" id="heroStatus" aria-label="当前状态">
-          <div><span>证据关联</span><strong>完整</strong></div>
-          <div><span>标签状态</span><strong>待复核</strong></div>
-          <div><span>处理方式</span><strong>离线规则基线</strong></div>
+        <div class="status-list" id="heroStatus" aria-label="数据状态">
+          <div><span>平衡样本</span><strong>3 × 120</strong></div>
+          <div><span>孤立证据</span><strong>0</strong></div>
+          <div><span>重复文本组</span><strong>0</strong></div>
         </div>
       </aside>
     </div>
   </header>
 
   <main id="main">
-    <section class="section" id="overview">
-      <div class="section-heading">
-        <p class="section-label">项目概览</p>
-        <h2>一条从原始反馈延伸到产品假设的分析链路</h2>
-        <p>
-          项目同时保留样本层和证据层。样本层记录完整反馈，证据层将其中可单独判断的表达拆出并编码，
-          便于后续核对、统计和复盘。
-        </p>
+    <section class="section" id="design">
+      <div class="section-heading wide">
+        <p class="section-label">研究设计</p>
+        <h2>从完整反馈到双层编码，保留每一步的判断对象</h2>
+        <p>项目将“文本内容”和“体验解释”分开记录，使产品问题、心理机制与证据来源能够分别核对。</p>
       </div>
-
-      <div class="card-grid three">
+      <div class="card-grid four">
         <article class="info-card">
           <span class="card-index">01</span>
-          <h3>数据基础</h3>
-          <p>当前公开数据包含 <strong data-showcase="samples">若干</strong> 条样本，覆盖 <strong data-showcase="platforms">数个</strong> 个平台，<span data-showcase="per_platform_text">各平台样本量相近</span>。</p>
+          <h3>平台等额抽样</h3>
+          <p>NGA、贴吧、B 站各保留 120 条样本，用于保证跨平台分析具有基本覆盖。</p>
         </article>
         <article class="info-card">
           <span class="card-index">02</span>
-          <h3>证据结构</h3>
-          <p>每条证据都有稳定编号，并能关联到对应样本。证据数量可能多于样本数量，因为一条反馈可以包含多个独立观点。</p>
+          <h3>证据单元</h3>
+          <p>完整反馈被切成可以独立判断的片段，927 条证据全部保留父样本编号。</p>
         </article>
         <article class="info-card">
           <span class="card-index">03</span>
-          <h3>当前产物</h3>
-          <p>公开仓库提供脱敏数据、编码手册、评测方法、离线 Demo 与项目说明，方便查看方法和复现实例。</p>
+          <h3>双层编码</h3>
+          <p>表层话题回答“在谈什么”，体验机制回答“为什么形成负面体验”。</p>
+        </article>
+        <article class="info-card">
+          <span class="card-index">04</span>
+          <h3>质量评测</h3>
+          <p>同时检查编号、文本回溯、重复、字段缺失、平台差异与运行复现。</p>
         </article>
       </div>
     </section>
 
-    <section class="section section-soft" id="flow">
-      <div class="section-heading compact">
-        <p class="section-label">处理流程</p>
-        <h2>六个阶段，逐步收束分析范围</h2>
+    <section class="section section-soft" id="results">
+      <div class="section-heading wide">
+        <p class="section-label">分析结果</p>
+        <h2>平衡、胜任体验与匹配归因构成主要分析线索</h2>
+        <p>下列比例来自公开编码数据。具体话题与已分配机制分别以 441 条可明确分类的证据为分母。</p>
       </div>
-      <ol class="flow-grid">
-        <li><span>01</span><strong>反馈整理</strong><p>统一字段并保留必要上下文。</p></li>
-        <li><span>02</span><strong>证据拆分</strong><p>切出可以单独判断的表达。</p></li>
-        <li><span>03</span><strong>主题编码</strong><p>识别反馈讨论的具体问题。</p></li>
-        <li><span>04</span><strong>机制编码</strong><p>记录解释框架与不确定项。</p></li>
-        <li><span>05</span><strong>洞察汇总</strong><p>按证据组合形成结构化观察。</p></li>
-        <li><span>06</span><strong>可靠性评测</strong><p>核对关联、覆盖、复现与边界。</p></li>
+
+      <div class="finding-grid">
+        <article class="finding-card emphasis">
+          <span class="finding-value">61.2%</span>
+          <h3>具体话题集中于平衡与数值</h3>
+          <p>在 441 条具有具体话题的证据中，270 条指向英雄、装备、机制强度或数值改动。</p>
+        </article>
+        <article class="finding-card">
+          <span class="finding-value">69.8%</span>
+          <h3>已分配机制以胜任受挫为主</h3>
+          <p>在 441 条能够明确分配体验机制的证据中，308 条体现投入难以转化为有效表现或进步。</p>
+        </article>
+        <article class="finding-card">
+          <span class="finding-value">18.6%</span>
+          <h3>匹配是第二大具体话题</h3>
+          <p>82 条具体话题证据涉及队友质量、连胜连败、段位分配或对局匹配。</p>
+        </article>
+        <article class="finding-card caution">
+          <span class="finding-value">52.4%</span>
+          <h3>机制不确定率提示编码仍偏粗</h3>
+          <p>486 条证据无法明确归入某一体验机制，说明短文本、上下文依赖与标签边界仍是主要质量风险。</p>
+        </article>
+      </div>
+
+      <div class="analysis-grid">
+        <article class="analysis-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">具体话题</p><h3>排除 other_uncertain 后的分布</h3></div>
+            <span>n = 441</span>
+          </div>
+          <div class="bar-list" id="topicBars" aria-label="具体话题分布">
+            <p class="muted">数据加载中……</p>
+          </div>
+        </article>
+        <article class="analysis-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">体验机制</p><h3>排除 uncertain 后的分布</h3></div>
+            <span>n = 441</span>
+          </div>
+          <div class="bar-list" id="mechanismBars" aria-label="体验机制分布">
+            <p class="muted">数据加载中……</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="section-heading compact subsection-heading">
+        <p class="section-label">交叉观察</p>
+        <h2>话题与机制组合后，产品问题更具体</h2>
+      </div>
+      <div class="intersection-grid" id="intersectionGrid">
+        <article class="intersection-card"><strong>平衡 × 胜任受挫</strong><span>138 条</span><p>机制适配、数值和角色作用感是最集中的具体组合。</p></article>
+        <article class="intersection-card"><strong>平衡 × 公平受损</strong><span>35 条</span><p>部分反馈将强弱差异解释为规则或资源分配不合理。</p></article>
+        <article class="intersection-card"><strong>匹配 × 胜任受挫</strong><span>22 条</span><p>队友、对手与阵容分配会影响玩家对自身有效行动的判断。</p></article>
+        <article class="intersection-card"><strong>匹配 × 公平受损</strong><span>16 条</span><p>连胜连败和对局质量常被归因于系统控制或分配偏差。</p></article>
+        <article class="intersection-card"><strong>沟通透明 × 信任落差</strong><span>13 条</span><p>说明不足、回应缺失和改动透明度形成稳定对应。</p></article>
+      </div>
+
+      <div class="section-heading compact subsection-heading">
+        <p class="section-label">平台差异</p>
+        <h2>证据密度与编码来源会改变表面分布</h2>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>平台</th><th>样本</th><th>证据</th><th>每样本证据</th><th>主要具体话题</th><th>主要已分配机制</th></tr>
+          </thead>
+          <tbody id="platformTable">
+            <tr><td>B 站</td><td>120</td><td>232</td><td>1.93</td><td>平衡、匹配、活动设计</td><td>胜任受挫</td></tr>
+            <tr><td>NGA</td><td>120</td><td>394</td><td>3.28</td><td>平衡、匹配</td><td>胜任受挫</td></tr>
+            <tr><td>贴吧</td><td>120</td><td>301</td><td>2.51</td><td>平衡、匹配</td><td>胜任受挫</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="method-note">NGA 与贴吧主要保留历史 AI 编码，B 站采用离线规则提案；平台差异同时受到文本长度、切分粒度和编码来源影响。</p>
+    </section>
+
+    <section class="section" id="psychology">
+      <div class="section-heading wide">
+        <p class="section-label">心理学框架</p>
+        <h2>用有限构念描述体验方向，同时保留具体问题</h2>
+        <p>机制层参考自我决定理论、公平判断、组织信任、社群归属与规范安全研究。构念被转化为可观察的文本判据。</p>
+      </div>
+      <div class="construct-grid">
+        <article><h3>胜任受挫</h3><p>玩家感到难以理解、有效行动或看到投入结果。常见于角色适配、难度、任务和团队协作。</p><span>competence frustration</span></article>
+        <article><h3>公平受损</h3><p>玩家把负面结果归因于匹配、规则、数值或资源分配不合理。</p><span>fairness threat</span></article>
+        <article><h3>信任与沟通落差</h3><p>公告、解释、反馈回应或承诺执行不足，削弱玩家对运营方的信任。</p><span>trust & communication gap</span></article>
+        <article><h3>归属感下降</h3><p>玩家与游戏、社区或身份群体之间出现疏离和退出倾向。</p><span>belonging drop</span></article>
+        <article><h3>规范与安全风险</h3><p>外挂、辱骂、骚扰、误封和举报无效等问题影响参与秩序与安全感。</p><span>norm & safety risk</span></article>
+        <article><h3>显式不确定</h3><p>文本过短、依赖上下文或同时指向多个机制时保留 uncertain，避免牵强分类。</p><span>uncertain</span></article>
+      </div>
+      <div class="method-callout">
+        <strong>分析原则</strong>
+        <p>先判断证据是否独立，再分别编码具体话题与体验机制。交叉组合用于提出可验证的产品问题，不能替代问卷、访谈、行为日志或实验。</p>
+        <a data-doc="psychology" href="methodology/PSYCHOLOGY_FRAMEWORK.md">查看心理学框架与参考文献 →</a>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="cleaning">
+      <div class="section-heading wide">
+        <p class="section-label">数据清洗与编码</p>
+        <h2>每一步都对应明确的输入、操作和质量检查</h2>
+        <p>工程实现被整理成八个可理解的分析步骤，公开数据只保留复现与解释需要的字段。</p>
+      </div>
+      <ol class="process-list">
+        <li><span>01</span><div><h3>候选讨论登记</h3><p>按平台、主题和时间窗形成候选清单，避免只从单一热帖取样。</p></div><em>输出：候选帖子表</em></li>
+        <li><span>02</span><div><h3>页面与回复采集</h3><p>保存原始文本与必要上下文，缓存和登录信息留在本地环境。</p></div><em>输出：原始缓存</em></li>
+        <li><span>03</span><div><h3>规则预清洗</h3><p>删除回复头、引用残留、图片路径和多余空白，移除清洗后为空的记录。</p></div><em>检查：文本非空</em></li>
+        <li><span>04</span><div><h3>内容筛选</h3><p>排除纯标记、极短噪声、离题文本和缺少体验信息的纯攻击表达。</p></div><em>检查：可解释性</em></li>
+        <li><span>05</span><div><h3>平台等额抽样</h3><p>三个平台各保留 120 条，并记录时间窗、粗主题和回复类型。</p></div><em>检查：3 × 120</em></li>
+        <li><span>06</span><div><h3>公开脱敏</h3><p>移除来源链接、账号定位字段，屏蔽联系方式与文本内链接。</p></div><em>检查：URL 为 0</em></li>
+        <li><span>07</span><div><h3>证据切分与双层编码</h3><p>按标点切分独立片段，记录表层话题、体验机制、编码来源和纳入状态。</p></div><em>输出：927 条证据</em></li>
+        <li><span>08</span><div><h3>结构与分布审计</h3><p>检查编号、父样本、文本回溯、重复、缺失字段、证据密度与标签分布。</p></div><em>检查：回溯率 100%</em></li>
       </ol>
+      <div class="method-callout split-callout">
+        <div><strong>两种不确定性需要分开</strong><p>486 条 `mechanism_label=uncertain` 表示机制无法明确归类；163 条 `included_flagged_uncertain` 表示证据纳入时需要提醒。两者不能合并成同一“不确定率”。</p></div>
+        <a data-doc="data_cleaning" href="methodology/DATA_CLEANING_AND_CODING.md">查看字段与清洗细则 →</a>
+      </div>
     </section>
 
     <section class="section" id="evaluation">
-      <div class="section-heading">
-        <p class="section-label">评测结果</p>
-        <h2>当前版本重点检查结构完整性与可复现性</h2>
-        <p id="provisionalNote">候选证据包含暂不确定项，当前标签尚未经过真人复核。</p>
+      <div class="section-heading wide">
+        <p class="section-label">可靠性评测</p>
+        <h2>评测对象覆盖数据、编码、结论链路和运行过程</h2>
+        <p>项目把“结果看起来合理”拆成可检查的条件，避免用单一总分掩盖错误来源。</p>
       </div>
-      <div class="metric-grid" id="metricGrid" aria-label="评测结果">
-        <article class="metric"><h3>评测数据加载中</h3><p>如未显示，请查看仓库中的评测方法文档。</p></article>
+      <div class="evaluation-grid">
+        <article><span>A</span><h3>结构完整性</h3><p>编号唯一、父样本存在、平台一致、文本可定位。</p><strong>当前：全部通过</strong></article>
+        <article><span>B</span><h3>清洗与隐私</h3><p>字段白名单、URL 扫描、重复组、空值和文件哈希。</p><strong>当前：URL 0，重复组 0</strong></article>
+        <article><span>C</span><h3>编码可用性</h3><p>合法标签、不确定比例、相邻标签边界和编码来源差异。</p><strong>当前风险：机制不确定 52.4%</strong></article>
+        <article><span>D</span><h3>分析支撑</h3><p>结论引用具体证据，同时报告平台、样本量与分母。</p><strong>当前：页面结果均由公开数据计算</strong></article>
+        <article><span>E</span><h3>运行复现</h3><p>相同输入生成一致输出，manifest 与文件哈希对应。</p><strong>当前：Ubuntu / Windows CI 运行</strong></article>
+      </div>
+      <div class="metric-grid" id="metricGrid" aria-label="结构评测结果">
+        <article class="metric"><span>样本编号</span><strong>360 / 360</strong><p>无重复</p></article>
+        <article class="metric"><span>证据编号</span><strong>927 / 927</strong><p>无重复</p></article>
+        <article class="metric"><span>父样本关联</span><strong>927 / 927</strong><p>孤立证据为 0</p></article>
+        <article class="metric"><span>文本定位</span><strong>100%</strong><p>证据可回到公开样本</p></article>
+      </div>
+      <div class="evaluation-note">
+        <h3>下一阶段评测重点</h3>
+        <p>选取分层样本进行双人独立编码，建立争议裁决记录，并计算适用于名义变量的编码一致性；同时比较规则提案、模型编码与人工编码的混淆矩阵和返修成本。</p>
+        <a data-doc="evaluation_method" href="evaluation/EVALUATION_METHOD.md">查看评测框架 →</a>
       </div>
     </section>
 
@@ -115,29 +243,43 @@
       <div class="evidence-layout">
         <div>
           <p class="section-label">证据示例</p>
-          <h2>保留原意，同时让判断对象清晰可见</h2>
-          <p>证据单元直接来自公开反馈的脱敏副本。页面展示文本、标签来源和平台类别，不展示来源链接与内部迁移编号。</p>
+          <h2>从一段原文进入话题与机制判断</h2>
+          <p>证据文本逐字来自公开脱敏样本，并保留父样本与平台信息。</p>
         </div>
         <figure class="evidence-card" id="evidenceCard">
-          <blockquote data-showcase="evidence_excerpt">示例证据将从公开数据载入。</blockquote>
+          <blockquote data-showcase="evidence_excerpt">匹配机制就导致了一旦你连胜或者连败，要把你近期胜率“拉”回五十接下来就会反向连胜连败</blockquote>
           <figcaption>
-            <span>可独立判断的反馈片段</span>
-            <span class="muted" data-showcase="evidence_meta">标签来源待载入</span>
+            <span data-showcase="evidence_labels">匹配与对局分配 · 公平受损</span>
+            <span class="muted" data-showcase="evidence_meta">NGA · 历史编码</span>
           </figcaption>
         </figure>
       </div>
     </section>
 
-    <section class="section" id="demo">
+    <section class="section" id="scope">
+      <div class="scope-box">
+        <p class="section-label">解释边界</p>
+        <h2>当前比例用于探索与方法审计</h2>
+        <p id="scopeNote">编码分布用于审视方法表现和发现分析线索。三个平台采用等额抽样，且编码来源包含历史 AI 结果与离线规则提案，因此页面不把这些比例解释为总体玩家意见占比。</p>
+        <ul>
+          <li>等额样本设计不反映平台真实讨论规模；</li>
+          <li>证据数量同时受到原文长度和切分粒度影响；</li>
+          <li>240 条样本缺少日期，当前页面不进行时间趋势推断；</li>
+          <li>产品方向需要通过访谈、问卷、行为日志或实验继续检验。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section-soft" id="demo">
       <div class="demo-layout">
         <div>
           <p class="section-label">离线 Demo</p>
-          <h2>用少量脱敏反馈走通完整流程</h2>
-          <p>Demo 使用确定性 mock provider，在本地生成证据、草稿洞察、产品假设和评测报告。默认不联网，也不调用外部模型。</p>
+          <h2>用少量脱敏反馈复现分析链路</h2>
+          <p>Demo 在本地生成证据、草稿洞察、产品假设与评测报告。默认使用确定性 mock provider，不联网，也不读取密钥。</p>
           <ul class="check-list">
-            <li>输入与配置固定时，输出保持一致</li>
-            <li>结果写入独立 artifacts 目录</li>
-            <li>包含 JSON、Markdown 与 HTML 报告</li>
+            <li>相同输入与配置生成一致产物</li>
+            <li>输出写入独立 artifacts 目录</li>
+            <li>包含 JSON、Markdown、HTML 和 manifest</li>
           </ul>
         </div>
         <div class="code-panel">
@@ -148,30 +290,18 @@
       </div>
     </section>
 
-    <section class="section section-soft" id="method">
-      <div class="section-heading compact">
-        <p class="section-label">当前范围</p>
-        <h2>已完成的部分与后续复核</h2>
-      </div>
-      <div class="scope-grid">
-        <article><h3>已完成</h3><p>稳定编号、证据关联、公开数据脱敏、规则基线、离线 Demo 和结构评测。</p></article>
-        <article><h3>待复核</h3><p>机制标签、两条来源不确定的极短证据，以及基于编码结果形成的草稿洞察。</p></article>
-        <article><h3>待验证</h3><p>产品假设需要结合实验、访谈或上线指标进一步检验。</p></article>
-      </div>
-    </section>
-
     <section class="section" id="resources">
       <div class="section-heading compact">
         <p class="section-label">资料入口</p>
-        <h2>从页面继续查看数据、方法和运行说明</h2>
+        <h2>数据、方法与完整项目说明</h2>
       </div>
       <div class="resource-grid" id="fileLinks">
-        <a data-doc="readme" href="https://github.com/sherlock0717/PsyLens/blob/main/README.md"><strong>README</strong><span>项目结构与快速入口</span></a>
-        <a data-doc="public_data" href="https://github.com/sherlock0717/PsyLens/tree/main/data/public"><strong>公开数据</strong><span>脱敏样本与证据文件</span></a>
-        <a data-doc="evaluation_method" href="https://github.com/sherlock0717/PsyLens/blob/main/docs/evaluation/EVALUATION_METHOD.md"><strong>评测方法</strong><span>指标定义与判定范围</span></a>
-        <a data-doc="codebook" href="https://github.com/sherlock0717/PsyLens/blob/main/docs/methodology/MECHANISM_CODEBOOK.md"><strong>编码手册</strong><span>主题与机制标签说明</span></a>
-        <a data-doc="pipeline" href="https://github.com/sherlock0717/PsyLens/blob/main/pipeline/README.md"><strong>采集与分析流程</strong><span>模板、Prompt 与配置示例</span></a>
-        <a data-doc="project_brief" href="files/PsyLens_project_brief.docx"><strong>项目说明</strong><span>可下载的正式文档</span></a>
+        <a data-doc="project_brief" href="files/PsyLens_project_brief.docx"><strong>完整项目说明</strong><span>研究设计、结果、方法与参考文献</span></a>
+        <a data-doc="public_data" href="https://github.com/sherlock0717/PsyLens/tree/main/data/public"><strong>公开数据</strong><span>脱敏样本、证据与字段说明</span></a>
+        <a data-doc="psychology" href="methodology/PSYCHOLOGY_FRAMEWORK.md"><strong>心理学框架</strong><span>构念、编码原则与参考文献</span></a>
+        <a data-doc="data_cleaning" href="methodology/DATA_CLEANING_AND_CODING.md"><strong>数据处理方法</strong><span>清洗、切分、脱敏与质量检查</span></a>
+        <a data-doc="evaluation_method" href="evaluation/EVALUATION_METHOD.md"><strong>评测方法</strong><span>结构、编码、支撑与复现</span></a>
+        <a data-doc="readme" href="https://github.com/sherlock0717/PsyLens/blob/main/README.md"><strong>README</strong><span>仓库结构与快速运行</span></a>
       </div>
     </section>
   </main>
@@ -183,66 +313,111 @@
 
   <script>
     (function () {
-      fetch('assets/data/showcase.json').then(function (r) { return r.json(); }).then(function (s) {
-        var setText = function (key, value) {
-          document.querySelectorAll('[data-showcase="' + key + '"]').forEach(function (el) {
-            if (value !== undefined && value !== null) el.textContent = value;
-          });
-        };
-        var counts = s.counts || {};
-        var hero = s.hero_summary || {};
+      var topicNames = {
+        balance: '平衡与数值', matchmaking: '匹配与对局分配', event_design: '活动与玩法设计',
+        progression: '成长与养成', community_conflict: '社区冲突与氛围',
+        communication_transparency: '沟通与透明度', rewards: '奖励与产出',
+        new_player_onboarding: '新手引导与体验', other_uncertain: '其他 / 不确定'
+      };
+      var mechanismNames = {
+        competence_frustration: '胜任受挫', fairness_threat: '公平受损',
+        trust_communication_gap: '信任与沟通落差', belonging_drop: '归属感下降',
+        norm_safety_risk: '规范与安全风险', uncertain: '不确定'
+      };
+      var platformNames = { Bili: 'B 站', NGA: 'NGA', Tieba: '贴吧' };
+      var percent = function (rate) { return (Number(rate || 0) * 100).toFixed(1) + '%'; };
+      var setText = function (key, value) {
+        document.querySelectorAll('[data-showcase="' + key + '"]').forEach(function (el) {
+          if (value !== undefined && value !== null) el.textContent = value;
+        });
+      };
+      var renderBars = function (id, rows, labels) {
+        var root = document.getElementById(id);
+        if (!root || !Array.isArray(rows)) return;
+        root.textContent = '';
+        rows.slice(0, 8).forEach(function (row) {
+          var item = document.createElement('div'); item.className = 'bar-item';
+          var top = document.createElement('div'); top.className = 'bar-top';
+          var name = document.createElement('span'); name.textContent = labels[row.key] || row.key;
+          var value = document.createElement('strong'); value.textContent = row.count + ' · ' + percent(row.rate);
+          var track = document.createElement('div'); track.className = 'bar-track';
+          var fill = document.createElement('span'); fill.className = 'bar-fill'; fill.style.width = percent(row.rate);
+          top.appendChild(name); top.appendChild(value); track.appendChild(fill);
+          item.appendChild(top); item.appendChild(track); root.appendChild(item);
+        });
+      };
+      var renderPlatforms = function (data) {
+        var body = document.getElementById('platformTable');
+        if (!body || !data) return;
+        body.textContent = '';
+        ['Bili', 'NGA', 'Tieba'].forEach(function (key) {
+          var row = data[key]; if (!row) return;
+          var tr = document.createElement('tr');
+          var topics = (row.surface_topics || []).filter(function (x) { return x.key !== 'other_uncertain'; }).slice(0, 3);
+          var mechanisms = (row.assigned_mechanisms || []).slice(0, 2);
+          [platformNames[key] || key, row.sample_count, row.evidence_count, Number(row.evidence_per_sample).toFixed(2),
+            topics.map(function (x) { return topicNames[x.key] || x.key; }).join('、'),
+            mechanisms.map(function (x) { return mechanismNames[x.key] || x.key; }).join('、')].forEach(function (value) {
+              var td = document.createElement('td'); td.textContent = value; tr.appendChild(td);
+            });
+          body.appendChild(tr);
+        });
+      };
+
+      Promise.all([
+        fetch('assets/data/showcase.json').then(function (r) { return r.json(); }),
+        fetch('assets/data/analysis_summary.json').then(function (r) { return r.json(); })
+      ]).then(function (payload) {
+        var showcase = payload[0] || {};
+        var analysis = payload[1] || {};
+        var hero = showcase.hero_summary || {};
+        var counts = showcase.counts || {};
         setText('case', hero.case);
         setText('samples', counts.samples);
-        setText('platforms', hero.platform_count);
-        setText('per_platform_text', hero.per_platform_text);
-        setText('provisional_evidence', counts.provisional_evidence);
+        setText('evidence', counts.evidence);
+        setText('density', Number(counts.evidence_per_sample || 0).toFixed(2));
+        setText('match_rate', percent((analysis.integrity || {}).evidence_text_match_rate));
 
-        if (s.provisional_note) {
-          var note = document.getElementById('provisionalNote');
-          if (note) note.textContent = s.provisional_note;
-        }
+        var ex = showcase.evidence_example || {};
+        setText('evidence_excerpt', ex.sample_excerpt);
+        setText('evidence_labels', (ex.surface_topic || '') + ' · ' + (ex.mechanism || ''));
+        setText('evidence_meta', (ex.platform || '') + ' · ' + (ex.label_source || ''));
+        var scope = document.getElementById('scopeNote');
+        if (scope && showcase.scope_note) scope.textContent = showcase.scope_note;
+
+        var links = showcase.doc_links || {};
+        document.querySelectorAll('[data-doc]').forEach(function (el) {
+          var key = el.getAttribute('data-doc'); if (links[key]) el.setAttribute('href', links[key]);
+        });
+
+        var distributions = analysis.evidence_distributions || {};
+        renderBars('topicBars', distributions.specific_surface_topic, topicNames);
+        renderBars('mechanismBars', distributions.assigned_mechanism, mechanismNames);
+        renderPlatforms(analysis.platform_breakdown);
 
         var status = document.getElementById('heroStatus');
-        if (status && Array.isArray(s.hero_status)) {
+        if (status && Array.isArray(showcase.hero_status)) {
           status.textContent = '';
-          s.hero_status.forEach(function (item) {
+          showcase.hero_status.forEach(function (item) {
             var row = document.createElement('div');
-            var label = document.createElement('span');
-            var value = document.createElement('strong');
-            label.textContent = item.label;
-            value.textContent = item.value;
-            row.appendChild(label);
-            row.appendChild(value);
-            status.appendChild(row);
+            var label = document.createElement('span'); label.textContent = item.label;
+            var value = document.createElement('strong'); value.textContent = item.value;
+            row.appendChild(label); row.appendChild(value); status.appendChild(row);
           });
         }
 
         var grid = document.getElementById('metricGrid');
-        if (grid && Array.isArray(s.plain_metrics)) {
+        if (grid && Array.isArray(showcase.plain_metrics)) {
           grid.textContent = '';
-          s.plain_metrics.forEach(function (metric) {
-            var card = document.createElement('article');
-            var title = document.createElement('h3');
-            var text = document.createElement('p');
-            card.className = 'metric';
-            title.textContent = metric.label;
-            text.textContent = metric.plain;
-            card.appendChild(title);
-            card.appendChild(text);
-            grid.appendChild(card);
+          showcase.plain_metrics.forEach(function (item) {
+            var card = document.createElement('article'); card.className = 'metric';
+            var label = document.createElement('span'); label.textContent = item.label;
+            var value = document.createElement('strong'); value.textContent = item.value;
+            var note = document.createElement('p'); note.textContent = item.plain;
+            card.appendChild(label); card.appendChild(value); card.appendChild(note); grid.appendChild(card);
           });
         }
-
-        var example = s.evidence_example || {};
-        setText('evidence_excerpt', example.sample_excerpt);
-        setText('evidence_meta', (example.label_source || '') + (example.platform ? ' · ' + example.platform : ''));
-
-        var links = s.doc_links || {};
-        document.querySelectorAll('[data-doc]').forEach(function (el) {
-          var key = el.getAttribute('data-doc');
-          if (links[key]) el.setAttribute('href', links[key]);
-        });
-      }).catch(function () { /* 静态内容可独立阅读 */ });
+      }).catch(function () { /* 页面保留静态回退内容 */ });
     })();
   </script>
 </body>
