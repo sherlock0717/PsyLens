@@ -15,7 +15,7 @@ pipeline/
   prompts/                                    证据、编码、洞察与建议 Prompt
   examples/candidate_posts.example.csv        候选帖子示例
   examples/raw_feedback.example.jsonl         脱敏原始反馈示例
-  requirements-legacy.txt                     历史采集环境依赖参考
+  requirements-optional.txt                   真实采集或模型 provider 的可选依赖
 ```
 
 ## 完整流程
