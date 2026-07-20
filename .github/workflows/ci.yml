@@ -31,8 +31,33 @@ jobs:
       - name: Compile Python files
         run: python -m compileall demo/src pipeline tools tests demo/tests
 
-      - name: Ruff
-        run: ruff check demo/src demo/tests pipeline tools tests
+      - name: Ruff - Demo
+        run: ruff check demo/src demo/tests tools/run_demo.py
+
+      - name: Ruff - Pipeline
+        run: ruff check pipeline
+
+      - name: Ruff - Public normalization
+        run: ruff check tools/normalize_public_dataset.py
+
+      - name: Ruff - Public analysis
+        run: ruff check tools/summarize_public_analysis.py
+
+      - name: Ruff - Project brief
+        run: ruff check tools/build_project_brief_docx.py
+
+      - name: Ruff - Other tools
+        shell: bash
+        run: |
+          files=$(find tools -maxdepth 1 -name '*.py' \
+            ! -name 'run_demo.py' \
+            ! -name 'normalize_public_dataset.py' \
+            ! -name 'summarize_public_analysis.py' \
+            ! -name 'build_project_brief_docx.py' -print)
+          if [ -n "$files" ]; then ruff check $files; fi
+
+      - name: Ruff - Tests
+        run: ruff check tests
 
       - name: Test suite
         run: python -m pytest demo/tests tests -q
