@@ -1,11 +1,11 @@
 {
-  "schema_version": "showcase-2.0",
-  "generated_at": "2026-07-17T16:56:33.578346+08:00",
-  "repo_ref": "phase1/rebuild-evidence-and-demo",
+  "schema_version": "public-release-1.0",
+  "generated_at": "2026-07-20T00:00:00+08:00",
+  "repo_ref": "main",
   "brand": "PsyLens",
   "tagline": "社区反馈分析与可靠性评测",
   "hero_summary": {
-    "case": "3 个平台的社区反馈案例",
+    "case": "海克斯大乱斗社区反馈",
     "sample_count": 360,
     "platform_count": 3,
     "per_platform_text": "每个平台各 120 条",
@@ -13,68 +13,61 @@
   },
   "hero_status": [
     {
-      "label": "结构校验",
-      "value": "已通过"
+      "label": "证据关联",
+      "value": "完整"
     },
     {
       "label": "标签状态",
-      "value": "待人工复核"
+      "value": "待复核"
     },
     {
-      "label": "当前编码",
-      "value": "规则基线"
+      "label": "处理方式",
+      "value": "离线规则基线"
     }
   ],
-  "feature_flags": {
-    "show_full_data_download": false,
-    "show_raw_urls": false,
-    "show_draft_v2_insights": false,
-    "show_draft_action_hypotheses": false,
-    "show_historical_findings": true
-  },
   "plain_metrics": [
     {
       "key": "sample_id_unique_rate",
-      "label": "样本编号完整性",
-      "plain": "每条反馈都有唯一编号"
+      "label": "样本编号",
+      "plain": "360 条公开样本均使用稳定且唯一的编号。"
     },
     {
       "key": "evidence_text_match_rate",
-      "label": "证据可回溯",
-      "plain": "每条展示证据都能回到对应的原始反馈"
+      "label": "证据回溯",
+      "plain": "927 条候选证据均能关联到对应的公开样本。"
     },
     {
       "key": "platform_sample_coverage",
       "label": "平台覆盖",
-      "plain": "覆盖的平台数"
+      "plain": "数据覆盖 3 个社区平台，每个平台保留 120 条样本。"
     },
     {
       "key": "label_completion_rate",
-      "label": "标签覆盖",
-      "plain": "有多少证据被打上了机制标签（含不确定）"
+      "label": "编码覆盖",
+      "plain": "历史编码与规则基线提案均保留来源和复核状态。"
     },
     {
       "key": "uncertain_rate",
       "label": "不确定项",
-      "plain": "有多少证据的机制暂时判不准"
+      "plain": "163 条候选证据标记为暂不确定，后续需要进一步复核。"
     },
     {
       "key": "human_review_coverage",
-      "label": "人工复核覆盖",
-      "plain": "有多少证据经过真人复核（当前为 0）"
+      "label": "人工复核",
+      "plain": "当前没有真人复核记录，页面未将草稿编码作为正式结论。"
     },
     {
       "key": "repeatability_rate",
-      "label": "离线 Demo 复现",
-      "plain": "同样的输入是否每次都得到同样的结果"
+      "label": "离线复现",
+      "plain": "同一输入和配置会生成一致的 Demo 输出。"
     }
   ],
   "evidence_example": {
-    "sample_excerpt": "海克斯大乱斗最弱智的就是为了叠什么然后选个钢化你心，然后你妈的为了钢化你心又出个心之钢。",
+    "sample_excerpt": "丢子需要练习走位、预判、寻找破绽，也要考虑技能用于清兵还是攻击对手。",
     "platform": "平台 B",
-    "label_source": "历史 AI 标签（未人工复核）",
+    "label_source": "历史 AI 标签 · 未人工复核",
     "source": "public_dataset",
-    "note": "该示例的证据文本可在对应原始反馈中唯一定位；不展示原始链接与内部编号"
+    "note": "页面示例来自公开脱敏数据，不展示来源链接和内部编号。"
   },
   "counts": {
     "samples": 360,
@@ -93,83 +86,15 @@
     "draft_actions": 6,
     "unresolved_ambiguous": 2
   },
-  "status": {
-    "structural_integrity_status": "PASS",
-    "label_review_status": "NOT_STARTED",
-    "insight_draft_status": "DRAFT",
-    "release_readiness_status": "PENDING_REVIEW"
-  },
-  "provisional_note": "其中 163 条为暂不确定项，全部尚未经过真人复核；该数字是 provisional 证据数，不是最终有效证据数量。",
+  "provisional_note": "927 条候选证据中，163 条标记为暂不确定；当前标签尚未经过真人复核。",
   "doc_links": {
-    "readme": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/README.md",
-    "demo": "https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/demo",
-    "evaluation_method": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/evaluation/EVALUATION_METHOD.md",
-    "codebook": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/methodology/MECHANISM_CODEBOOK.md",
-    "pipeline": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/pipeline/README.md",
-    "project_brief": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/files/PsyLens_project_brief.docx",
-    "public_data": "https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/data/public"
+    "readme": "https://github.com/sherlock0717/PsyLens/blob/main/README.md",
+    "demo": "https://github.com/sherlock0717/PsyLens/tree/main/demo",
+    "evaluation_method": "https://github.com/sherlock0717/PsyLens/blob/main/docs/evaluation/EVALUATION_METHOD.md",
+    "codebook": "https://github.com/sherlock0717/PsyLens/blob/main/docs/methodology/MECHANISM_CODEBOOK.md",
+    "pipeline": "https://github.com/sherlock0717/PsyLens/blob/main/pipeline/README.md",
+    "project_brief": "https://github.com/sherlock0717/PsyLens/blob/main/docs/files/PsyLens_project_brief.docx",
+    "public_data": "https://github.com/sherlock0717/PsyLens/tree/main/data/public"
   },
-  "open_decisions": [
-    {
-      "decision_id": "D-001",
-      "title": "含来源字段的内部数据是否继续保留在未来 main",
-      "recommended_option": "未来 main 只合并 data/public；含 source_url 的 v2 内部文件不进入最终发布合并范围",
-      "status": "deferred"
-    },
-    {
-      "decision_id": "D-002",
-      "title": "历史提交中的来源 URL 是否需要后续单独清理",
-      "recommended_option": "暂不重写历史；发布只用 data/public；如需彻底清理另行单独执行",
-      "status": "deferred"
-    },
-    {
-      "decision_id": "D-003",
-      "title": "两条歧义证据如何处理",
-      "recommended_option": "keep_pending",
-      "status": "deferred"
-    },
-    {
-      "decision_id": "D-004",
-      "title": "B 站离线规则基线标签是否获人工认可",
-      "recommended_option": "保持 rule_based_proposed_unreviewed",
-      "status": "deferred"
-    },
-    {
-      "decision_id": "D-005",
-      "title": "草稿结构化洞察是否发布",
-      "recommended_option": "隐藏",
-      "status": "deferred"
-    },
-    {
-      "decision_id": "D-006",
-      "title": "草稿行动建议是否发布",
-      "recommended_option": "隐藏",
-      "status": "deferred"
-    },
-    {
-      "decision_id": "D-007",
-      "title": "Pages 最终部署方式",
-      "recommended_option": "仅在分支内准备 workflow",
-      "status": "deferred"
-    },
-    {
-      "decision_id": "D-008",
-      "title": "是否合并 main",
-      "recommended_option": "暂不合并",
-      "status": "deferred"
-    },
-    {
-      "decision_id": "D-009",
-      "title": "是否公开正式 DOCX",
-      "recommended_option": "生成底稿并归档旧版，DOCX 待确认",
-      "status": "deferred"
-    },
-    {
-      "decision_id": "D-010",
-      "title": "是否进一步做真实模型运行",
-      "recommended_option": "保持离线 mock",
-      "status": "deferred"
-    }
-  ],
-  "note": "所有关键计数与状态由数据文件与评测结果计算；草稿洞察与产品假设默认不公开；页面不展示原始 URL 与完整数据下载；B 站编码为离线规则基线提案，非人工或模型语义复核。"
+  "note": "页面只展示公开脱敏数据、方法、评测结果和复现入口。"
 }
