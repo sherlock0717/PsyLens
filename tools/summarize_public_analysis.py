@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Build a deterministic, public-facing analysis summary from data/public.
-
-The script uses only the Python standard library. It does not access network
-resources, private migration files, source URLs, cookies, or credentials.
-"""
+"""Build a deterministic public-facing analysis summary from data/public."""
 from __future__ import annotations
 
 import argparse
@@ -31,15 +27,11 @@ def normalized_text(value: str) -> str:
     return SPACE_PATTERN.sub("", (value or "").strip())
 
 
-def sorted_counts(values) -> list[dict[str, object]]:
+def sorted_counts(values, denominator: int | None = None) -> list[dict[str, object]]:
     counter = Counter(value or "(empty)" for value in values)
-    total = sum(counter.values())
+    total = denominator if denominator is not None else sum(counter.values())
     return [
-        {
-            "key": key,
-            "count": count,
-            "rate": round(count / total, 6) if total else 0.0,
-        }
+        {"key": key, "count": count, "rate": round(count / total, 6) if total else 0.0}
         for key, count in sorted(counter.items(), key=lambda item: (-item[1], item[0]))
     ]
 
@@ -84,7 +76,6 @@ def duplicate_summary(rows: list[dict[str, str]], field: str) -> dict[str, objec
 def build(public_dir: Path = PUBLIC_DIR) -> dict[str, object]:
     samples = read_rows(public_dir / "samples_public.csv")
     evidence = read_rows(public_dir / "evidence_public.csv")
-
     sample_by_id = {row["sample_id"]: row for row in samples}
     sample_ids = [row["sample_id"] for row in samples]
     evidence_ids = [row["evidence_id"] for row in evidence]
@@ -92,9 +83,9 @@ def build(public_dir: Path = PUBLIC_DIR) -> dict[str, object]:
     evidence_by_sample = Counter(row.get("sample_id", "") for row in evidence)
     evidence_density = [evidence_by_sample.get(sample_id, 0) for sample_id in sample_ids]
 
-    orphan_evidence = []
-    platform_mismatches = []
-    text_mismatches = []
+    orphan_evidence: list[str] = []
+    platform_mismatches: list[str] = []
+    text_mismatches: list[str] = []
     for row in evidence:
         sample = sample_by_id.get(row.get("sample_id", ""))
         if sample is None:
@@ -122,25 +113,50 @@ def build(public_dir: Path = PUBLIC_DIR) -> dict[str, object]:
             topic_mechanism.items(), key=lambda item: (-item[1], item[0][0], item[0][1])
         )
     ]
+    specific_intersections = [
+        item
+        for item in cross_distribution
+        if item["surface_topic"] != "other_uncertain" and item["mechanism_label"] != "uncertain"
+    ]
+
+    assigned_mechanisms = [
+        row.get("mechanism_label", "")
+        for row in evidence
+        if row.get("mechanism_label", "") not in {"", "uncertain", "unassigned"}
+    ]
+    specific_topics = [
+        row.get("surface_topic", "")
+        for row in evidence
+        if row.get("surface_topic", "") not in {"", "other_uncertain"}
+    ]
 
     platform_breakdown = {}
     for platform in sorted({row.get("platform_source", "") for row in samples}):
+        platform_samples = [row for row in samples if row.get("platform_source", "") == platform]
         platform_evidence = [row for row in evidence if row.get("platform_source", "") == platform]
+        platform_assigned = [
+            row.get("mechanism_label", "")
+            for row in platform_evidence
+            if row.get("mechanism_label", "") not in {"", "uncertain", "unassigned"}
+        ]
         platform_breakdown[platform] = {
-            "sample_count": sum(1 for row in samples if row.get("platform_source", "") == platform),
+            "sample_count": len(platform_samples),
             "evidence_count": len(platform_evidence),
-            "evidence_per_sample": round(
-                len(platform_evidence)
-                / max(1, sum(1 for row in samples if row.get("platform_source", "") == platform)),
-                3,
-            ),
+            "evidence_per_sample": round(len(platform_evidence) / max(1, len(platform_samples)), 3),
             "surface_topics": sorted_counts(row.get("surface_topic", "") for row in platform_evidence),
             "mechanisms": sorted_counts(row.get("mechanism_label", "") for row in platform_evidence),
+            "assigned_mechanisms": sorted_counts(platform_assigned),
         }
 
-    raw_public_differences = sum(
-        1 for row in samples if (row.get("raw_text", "") or "") != (row.get("public_text", "") or "")
-    )
+    raw_column_present = bool(samples and "raw_text" in samples[0])
+    raw_public_differences = None
+    if raw_column_present:
+        raw_public_differences = sum(
+            1
+            for row in samples
+            if (row.get("raw_text", "") or "") != (row.get("public_text", "") or "")
+        )
+
     url_hits = []
     for filename in ("samples_public.csv", "evidence_public.csv", "public_manifest.json"):
         text = (public_dir / filename).read_text(encoding="utf-8")
@@ -158,19 +174,29 @@ def build(public_dir: Path = PUBLIC_DIR) -> dict[str, object]:
         },
     }
 
-    summary = {
-        "schema_version": "public-analysis-1.0",
+    inclusion_flags = sum(
+        1 for row in evidence if row.get("analysis_inclusion_status", "") == "included_flagged_uncertain"
+    )
+    uncertain_mechanisms = sum(
+        1 for row in evidence if row.get("mechanism_label", "") == "uncertain"
+    )
+
+    return {
+        "schema_version": "public-analysis-1.1",
         "counts": {
             "samples": len(samples),
             "evidence": len(evidence),
             "platforms": len({row.get("platform_source", "") for row in samples}),
             "samples_without_evidence": sum(1 for count in evidence_density if count == 0),
-            "uncertain_mechanism": sum(
-                1 for row in evidence if row.get("mechanism_label", "") == "uncertain"
-            ),
+            "uncertain_mechanism": uncertain_mechanisms,
+            "uncertain_mechanism_rate": round(uncertain_mechanisms / len(evidence), 6) if evidence else 0.0,
             "other_uncertain_topic": sum(
                 1 for row in evidence if row.get("surface_topic", "") == "other_uncertain"
             ),
+            "inclusion_flagged_uncertain": inclusion_flags,
+            "inclusion_flagged_uncertain_rate": round(inclusion_flags / len(evidence), 6) if evidence else 0.0,
+            "assigned_mechanism_evidence": len(assigned_mechanisms),
+            "specific_topic_evidence": len(specific_topics),
         },
         "sample_distributions": {
             "platform": sorted_counts(row.get("platform_source", "") for row in samples),
@@ -182,7 +208,9 @@ def build(public_dir: Path = PUBLIC_DIR) -> dict[str, object]:
         "evidence_distributions": {
             "platform": sorted_counts(row.get("platform_source", "") for row in evidence),
             "surface_topic": sorted_counts(row.get("surface_topic", "") for row in evidence),
+            "specific_surface_topic": sorted_counts(specific_topics),
             "mechanism": sorted_counts(row.get("mechanism_label", "") for row in evidence),
+            "assigned_mechanism": sorted_counts(assigned_mechanisms),
             "label_source": sorted_counts(row.get("label_source", "") for row in evidence),
             "review_status": sorted_counts(row.get("review_status", "") for row in evidence),
             "analysis_inclusion_status": sorted_counts(
@@ -198,6 +226,7 @@ def build(public_dir: Path = PUBLIC_DIR) -> dict[str, object]:
             },
         },
         "topic_mechanism_cross": cross_distribution,
+        "specific_topic_mechanism_cross": specific_intersections,
         "platform_breakdown": platform_breakdown,
         "integrity": {
             "sample_id_unique": len(sample_ids) == len(set(sample_ids)),
@@ -213,13 +242,19 @@ def build(public_dir: Path = PUBLIC_DIR) -> dict[str, object]:
             if evidence
             else 0.0,
             "url_hit_files": url_hits,
+            "raw_text_column_present": raw_column_present,
             "raw_public_text_difference_count": raw_public_differences,
             "sample_duplicates": duplicate_summary(samples, "public_text"),
             "evidence_duplicates": duplicate_summary(evidence, "unit_text"),
             "empty_fields": empty_fields,
         },
+        "interpretation": {
+            "balanced_sampling": "三个平台各 120 条为分析设计，不能解释为平台真实讨论量相同。",
+            "segmentation_effect": "证据数量同时受原文长度和切分粒度影响，平台比较需结合每样本证据密度。",
+            "uncertainty_layers": "机制标签 uncertain 与 inclusion flagged uncertain 是两个字段，分别表示机制无法明确归类与证据纳入时需提醒。",
+            "coding_sources": "公开编码由历史 AI 结果与离线规则提案组成，分布用于方法审计和探索性描述。",
+        },
     }
-    return summary
 
 
 def main(argv=None) -> int:
@@ -227,7 +262,6 @@ def main(argv=None) -> int:
     parser.add_argument("--public-dir", default=str(PUBLIC_DIR))
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
     args = parser.parse_args(argv)
-
     result = build(Path(args.public_dir))
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
