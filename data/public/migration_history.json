@@ -1,0 +1,23 @@
+{
+  "schema_version": "public-migration-history-1.0",
+  "migrations": [
+    {
+      "migration_id": "public-1x-to-public-2.0",
+      "description": "精简公开样本字段并统一显式不确定话题值",
+      "input_rows": {
+        "samples": 360,
+        "evidence": 927
+      },
+      "transformations": {
+        "redundant_raw_text_column_removed": 360,
+        "blank_surface_topic_normalized_to_other_uncertain": 47
+      },
+      "invariants": [
+        "sample_id 与 evidence_id 保持不变",
+        "public_text 与 unit_text 不改写",
+        "样本数保持 360，证据数保持 927",
+        "父样本关联与平台字段保持不变"
+      ]
+    }
+  ]
+}
