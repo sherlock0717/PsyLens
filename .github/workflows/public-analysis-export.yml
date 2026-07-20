@@ -28,6 +28,12 @@ jobs:
         run: python tools/summarize_public_analysis.py --public-dir data/public --output docs/assets/data/analysis_summary.json
       - name: Build formal project brief
         run: python tools/build_project_brief_docx.py
+      - name: Upload formal project brief for QA
+        uses: actions/upload-artifact@v4
+        with:
+          name: psylens-project-brief
+          path: docs/files/PsyLens_project_brief.docx
+          if-no-files-found: error
       - name: Commit generated public files
         run: |
           git config user.name "github-actions[bot]"
