@@ -1,15 +1,29 @@
 {
-  "schema_version": "showcase-1.0",
+  "schema_version": "showcase-2.0",
   "generated_at": "2026-07-17T16:56:33.578346+08:00",
+  "repo_ref": "phase1/rebuild-evidence-and-demo",
   "brand": "PsyLens",
   "tagline": "社区反馈分析与可靠性评测",
   "hero_summary": {
     "case": "三平台社区反馈案例",
     "sample_count": 360,
     "platform_count": 3,
-    "provisional_evidence_count": 927,
-    "evaluation_status": "PASS"
+    "provisional_evidence_count": 927
   },
+  "hero_status": [
+    {
+      "label": "结构校验",
+      "value": "已通过"
+    },
+    {
+      "label": "标签状态",
+      "value": "待人工复核"
+    },
+    {
+      "label": "当前编码",
+      "value": "规则基线"
+    }
+  ],
   "feature_flags": {
     "show_full_data_download": false,
     "show_raw_urls": false,
@@ -19,82 +33,84 @@
   },
   "plain_metrics": [
     {
-      "key": "sample_integrity",
+      "key": "sample_id_unique_rate",
       "label": "样本编号完整性",
-      "value": 1.0,
       "plain": "每条反馈都有唯一编号"
     },
     {
-      "key": "evidence_traceable",
+      "key": "evidence_text_match_rate",
       "label": "证据可回溯",
-      "value": 1.0,
       "plain": "每条展示证据都能回到对应的原始反馈"
     },
     {
-      "key": "platform_coverage",
+      "key": "platform_sample_coverage",
       "label": "平台覆盖",
-      "value": 3,
-      "plain": "覆盖三个平台"
+      "plain": "覆盖的平台数"
     },
     {
-      "key": "label_completion",
+      "key": "label_completion_rate",
       "label": "标签覆盖",
-      "value": 1.0,
-      "plain": "证据都带机制标签（含不确定）"
+      "plain": "有多少证据被打上了机制标签（含不确定）"
     },
     {
-      "key": "uncertain",
+      "key": "uncertain_rate",
       "label": "不确定项",
-      "value": 0.5243,
-      "plain": "约一半证据机制暂判不准，诚实标注"
+      "plain": "有多少证据的机制暂时判不准"
     },
     {
-      "key": "human_review",
+      "key": "human_review_coverage",
       "label": "人工复核覆盖",
-      "value": 0.0,
-      "plain": "尚无真人复核（当前为机器提案与历史标签）"
+      "plain": "有多少证据经过真人复核（当前为 0）"
     },
     {
-      "key": "demo_repro",
+      "key": "repeatability_rate",
       "label": "离线 Demo 复现",
-      "value": 1.0,
-      "plain": "同样的输入每次得到同样的结果"
+      "plain": "同样的输入是否每次都得到同样的结果"
     }
   ],
   "evidence_example": {
     "sample_excerpt": "……让个金，还要让 3000 的经济去出个八成打完一整把都不一定能做完任务的心之钢……",
-    "evidence_id": "NGA_0001_U02",
-    "platform": "平台 C（NGA）",
-    "label_source": "legacy AI 标签（未人工复核）",
-    "note": "该示例的证据文本可在对应原始反馈中唯一定位（不展示原始 URL）"
+    "platform": "平台 C",
+    "label_source": "历史 AI 标签（未人工复核）",
+    "note": "该示例的证据文本可在对应原始反馈中唯一定位；不展示原始链接与内部编号"
   },
   "counts": {
     "samples": 360,
     "migrated_evidence": 695,
     "bili_candidates": 279,
     "provisional_evidence": 927,
+    "provisional_uncertain_flagged": 163,
     "draft_insights": 28,
     "draft_actions": 6,
     "unresolved_ambiguous": 2
   },
   "status": {
-    "legacy_status": "BLOCKED",
-    "v2_migration_status": "PASS",
-    "provisional_evidence_status": "PASS",
-    "human_review_status": "NOT_STARTED",
-    "publication_readiness": "PENDING_USER_DECISIONS"
+    "structural_integrity_status": "PASS",
+    "label_review_status": "NOT_STARTED",
+    "insight_draft_status": "DRAFT",
+    "release_readiness_status": "PENDING_REVIEW"
+  },
+  "provisional_note": "其中 163 条为暂不确定项，全部尚未经过真人复核；该数字是 provisional 证据数，不是最终有效证据数量。",
+  "doc_links": {
+    "readme": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/README.md",
+    "demo": "https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/demo",
+    "evaluation_method": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/evaluation/EVALUATION_METHOD.md",
+    "codebook": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/methodology/MECHANISM_CODEBOOK.md",
+    "pipeline": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/pipeline/README.md",
+    "project_brief": "https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/files/PsyLens_project_brief.docx",
+    "public_data": "https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/data/public"
   },
   "open_decisions": [
     {
       "decision_id": "D-001",
-      "title": "完整数据是否在页面提供下载",
-      "recommended_option": "页面不提供完整数据下载",
+      "title": "含来源字段的内部数据是否继续保留在未来 main",
+      "recommended_option": "未来 main 只合并 data/public；含 source_url 的 v2 内部文件不进入最终发布合并范围",
       "status": "deferred"
     },
     {
       "decision_id": "D-002",
-      "title": "原始 source_url 是否继续保留和公开",
-      "recommended_option": "底层保留、公开层全部隐藏",
+      "title": "历史提交中的来源 URL 是否需要后续单独清理",
+      "recommended_option": "暂不重写历史；发布只用 data/public；如需彻底清理另行单独执行",
       "status": "deferred"
     },
     {
@@ -105,8 +121,8 @@
     },
     {
       "decision_id": "D-004",
-      "title": "Agent 提议的 B 站标签是否获人工认可",
-      "recommended_option": "保持 agent_proposed_unreviewed",
+      "title": "B 站离线规则基线标签是否获人工认可",
+      "recommended_option": "保持 rule_based_proposed_unreviewed",
       "status": "deferred"
     },
     {
@@ -146,5 +162,5 @@
       "status": "deferred"
     }
   ],
-  "note": "草稿结构化洞察与产品假设默认不公开（feature flags）；页面不展示原始 URL 与完整数据下载。"
+  "note": "所有关键计数与状态由数据文件与评测结果计算；草稿洞察与产品假设默认不公开；页面不展示原始 URL 与完整数据下载；B 站编码为离线规则基线提案，非人工或模型语义复核。"
 }

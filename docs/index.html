@@ -31,9 +31,14 @@
         <div><dt>当前案例</dt><dd>三平台社区反馈</dd></div>
         <div><dt>样本</dt><dd data-showcase="samples">360</dd></div>
         <div><dt>平台</dt><dd data-showcase="platforms">3</dd></div>
-        <div><dt>可核查证据</dt><dd data-showcase="provisional_evidence">—</dd></div>
-        <div><dt>评测状态</dt><dd data-showcase="eval_status">—</dd></div>
+        <div><dt>provisional 证据</dt><dd data-showcase="provisional_evidence">—</dd></div>
       </dl>
+      <p class="muted" id="provisionalNote">其中部分为暂不确定项，全部尚未经过真人复核；这是 provisional 证据数，不是最终有效证据数量。</p>
+      <ul class="status-strip" id="heroStatus" aria-label="当前状态">
+        <li><span class="s-label">结构校验</span><span class="s-value">已通过</span></li>
+        <li><span class="s-label">标签状态</span><span class="s-value">待人工复核</span></li>
+        <li><span class="s-label">当前编码</span><span class="s-value">规则基线</span></li>
+      </ul>
       <div class="hero-actions">
         <a class="btn primary" href="#evaluation">查看评测结果</a>
         <a class="btn" href="#flow">查看分析流程</a>
@@ -95,7 +100,7 @@
           <span class="muted" data-showcase="evidence_meta">当前标签来源：历史 AI 标签（未人工复核）·平台 C</span>
         </figcaption>
       </figure>
-      <p class="muted">该示例的证据文本可在对应原始反馈中被唯一定位；页面不展示原始链接。</p>
+      <p class="muted">该示例的证据文本可在对应原始反馈中被唯一定位；页面不展示原始链接与内部编号。</p>
     </section>
 
     <section class="block" id="historical">
@@ -112,21 +117,23 @@
     <section class="block" id="method">
       <h2>方法与当前状态</h2>
       <ul class="clean-list">
-        <li>机器给出的标签是<strong>提案</strong>，不是人工复核结论；</li>
+        <li>B 站标签是<strong>离线规则基线提案</strong>：由关键词规则依据编码手册生成，用于演示评测流程，不是人工或模型语义复核；</li>
         <li>有两条极短证据来源不确定，仍待人工确认；</li>
         <li>产品建议是<strong>待验证假设</strong>，需要实验验证；</li>
-        <li>页面不展示原始链接，完整数据下载默认不开放。</li>
+        <li>仓库提供脱敏示例与公开分析数据；原始链接和内部迁移文件不作为展示页入口。</li>
       </ul>
     </section>
 
     <section class="block" id="files">
       <h2>文件与复现入口</h2>
-      <ul class="link-list">
-        <li><a href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/README.md">README</a></li>
-        <li><a href="https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/demo">离线 Demo</a></li>
-        <li><a href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/evaluation/EVALUATION_METHOD.md">评测方法</a></li>
-        <li><a href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/methodology/MECHANISM_CODEBOOK.md">Codebook</a></li>
-        <li><a href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/pipeline/FULL_PIPELINE.md">完整抓取链</a></li>
+      <ul class="link-list" id="fileLinks">
+        <li><a data-doc="readme" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/README.md">README</a></li>
+        <li><a data-doc="demo" href="https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/demo">离线 Demo</a></li>
+        <li><a data-doc="evaluation_method" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/evaluation/EVALUATION_METHOD.md">评测方法</a></li>
+        <li><a data-doc="codebook" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/methodology/MECHANISM_CODEBOOK.md">Codebook</a></li>
+        <li><a data-doc="pipeline" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/pipeline/README.md">采集与分析流程</a></li>
+        <li><a data-doc="public_data" href="https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/data/public">公开分析数据</a></li>
+        <li><a data-doc="project_brief" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/files/PsyLens_project_brief.docx">项目说明</a></li>
         <li><a href="https://github.com/sherlock0717/PsyLens">GitHub</a></li>
       </ul>
     </section>
@@ -138,32 +145,62 @@
   </footer>
 
   <script>
-    // 页面关键数字数据驱动；JS 失败时静态内容仍可阅读。
+    // 页面关键数字与状态数据驱动；JS 失败时静态内容仍可阅读。
+    // 仅使用 textContent / createElement / appendChild，避免把数据文本当成 HTML。
     (function () {
       fetch('assets/data/showcase.json').then(function (r) { return r.json(); }).then(function (s) {
-        var set = function (k, v) {
+        var setText = function (k, v) {
           document.querySelectorAll('[data-showcase="' + k + '"]').forEach(function (el) {
             if (v !== undefined && v !== null) el.textContent = v;
           });
         };
         var c = s.counts || {};
-        set('samples', c.samples);
-        set('platforms', (s.hero_summary || {}).platform_count);
-        set('provisional_evidence', c.provisional_evidence);
-        set('eval_status', (s.hero_summary || {}).evaluation_status);
-        var grid = document.getElementById('metricGrid');
-        if (grid && s.plain_metrics) {
-          grid.innerHTML = '';
-          s.plain_metrics.forEach(function (m) {
-            var d = document.createElement('div');
-            d.className = 'metric';
-            d.innerHTML = '<h3>' + m.label + '</h3><p>' + m.plain + '</p>';
-            grid.appendChild(d);
+        var hero = s.hero_summary || {};
+        setText('samples', c.samples);
+        setText('platforms', hero.platform_count);
+        setText('provisional_evidence', c.provisional_evidence);
+
+        if (s.provisional_note) {
+          var pn = document.getElementById('provisionalNote');
+          if (pn) pn.textContent = s.provisional_note;
+        }
+
+        // 状态条：结构校验 / 标签状态 / 当前编码
+        var statusEl = document.getElementById('heroStatus');
+        if (statusEl && Array.isArray(s.hero_status)) {
+          statusEl.textContent = '';
+          s.hero_status.forEach(function (it) {
+            var li = document.createElement('li');
+            var a = document.createElement('span'); a.className = 's-label'; a.textContent = it.label;
+            var b = document.createElement('span'); b.className = 's-value'; b.textContent = it.value;
+            li.appendChild(a); li.appendChild(b);
+            statusEl.appendChild(li);
           });
         }
+
+        // 评测结果：普通语言卡片（textContent，不注入 HTML）
+        var grid = document.getElementById('metricGrid');
+        if (grid && Array.isArray(s.plain_metrics)) {
+          grid.textContent = '';
+          s.plain_metrics.forEach(function (m) {
+            var d = document.createElement('div'); d.className = 'metric';
+            var h = document.createElement('h3'); h.textContent = m.label;
+            var p = document.createElement('p'); p.textContent = m.plain;
+            d.appendChild(h); d.appendChild(p); grid.appendChild(d);
+          });
+        }
+
+        // 证据示例
         var ex = s.evidence_example || {};
-        set('evidence_excerpt', ex.sample_excerpt);
-        set('evidence_meta', '当前标签来源：' + (ex.label_source || '') + '·' + (ex.platform || ''));
+        setText('evidence_excerpt', ex.sample_excerpt);
+        setText('evidence_meta', '当前标签来源：' + (ex.label_source || '') + '·' + (ex.platform || ''));
+
+        // 文档链接：由 repo_ref 生成，避免手工改分支名
+        var links = s.doc_links || {};
+        document.querySelectorAll('[data-doc]').forEach(function (el) {
+          var key = el.getAttribute('data-doc');
+          if (links[key]) el.setAttribute('href', links[key]);
+        });
       }).catch(function () { /* 静态内容已可阅读 */ });
     })();
   </script>
