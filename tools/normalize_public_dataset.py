@@ -43,7 +43,7 @@ def read_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def read_manifest(path: Path) -> dict[str, object]:
+def read_json(path: Path) -> dict[str, object]:
     if not path.exists():
         return {}
     try:
@@ -53,15 +53,28 @@ def read_manifest(path: Path) -> dict[str, object]:
     return value if isinstance(value, dict) else {}
 
 
-def previous_transformations(source_dir: Path) -> dict[str, int]:
-    manifest = read_manifest(source_dir / "public_manifest.json")
-    values = manifest.get("transformations", {})
+def nonnegative_ints(values: object) -> dict[str, int]:
     if not isinstance(values, dict):
         return {}
-    result: dict[str, int] = {}
-    for key, value in values.items():
-        if isinstance(value, int) and value >= 0:
-            result[key] = value
+    return {
+        key: value
+        for key, value in values.items()
+        if isinstance(key, str) and isinstance(value, int) and value >= 0
+    }
+
+
+def recorded_transformations(source_dir: Path) -> dict[str, int]:
+    result = nonnegative_ints(
+        read_json(source_dir / "public_manifest.json").get("transformations", {})
+    )
+    history = read_json(source_dir / "migration_history.json")
+    migrations = history.get("migrations", [])
+    if isinstance(migrations, list):
+        for migration in migrations:
+            if not isinstance(migration, dict):
+                continue
+            for key, value in nonnegative_ints(migration.get("transformations", {})).items():
+                result[key] = max(result.get(key, 0), value)
     return result
 
 
@@ -73,6 +86,11 @@ def write_rows(path: Path, fields: list[str], rows: list[dict[str, str]]) -> Non
         writer.writerows({field: row.get(field, "") for field in fields} for row in rows)
 
 
+def write_json(path: Path, value: dict[str, object]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -80,11 +98,11 @@ def sha256(path: Path) -> str:
 def normalize(source_dir: Path, output_dir: Path) -> dict[str, object]:
     samples = read_rows(source_dir / "samples_public.csv")
     evidence = read_rows(source_dir / "evidence_public.csv")
-    previous = previous_transformations(source_dir)
+    recorded = recorded_transformations(source_dir)
+    migration_history = read_json(source_dir / "migration_history.json")
 
-    raw_text_present = bool(samples and "raw_text" in samples[0])
     raw_public_equal = 0
-    if raw_text_present:
+    if samples and "raw_text" in samples[0]:
         raw_public_equal = sum(
             1
             for row in samples
@@ -102,35 +120,42 @@ def normalize(source_dir: Path, output_dir: Path) -> dict[str, object]:
 
     samples_path = output_dir / "samples_public.csv"
     evidence_path = output_dir / "evidence_public.csv"
+    history_path = output_dir / "migration_history.json"
     write_rows(samples_path, SAMPLE_FIELDS, samples)
     write_rows(evidence_path, EVIDENCE_FIELDS, normalized_evidence)
+    if migration_history:
+        write_json(history_path, migration_history)
 
     transformations = {
         "redundant_raw_text_column_removed": max(
             raw_public_equal,
-            previous.get("redundant_raw_text_column_removed", 0),
+            recorded.get("redundant_raw_text_column_removed", 0),
         ),
         "blank_surface_topic_normalized_to_other_uncertain": max(
             blank_topics,
-            previous.get("blank_surface_topic_normalized_to_other_uncertain", 0),
+            recorded.get("blank_surface_topic_normalized_to_other_uncertain", 0),
         ),
         "empty_date_count": sum(1 for row in samples if not (row.get("date", "") or "").strip()),
     }
 
+    files: dict[str, object] = {
+        "samples_public.csv": {
+            "row_count": len(samples),
+            "fields": SAMPLE_FIELDS,
+            "sha256": sha256(samples_path),
+        },
+        "evidence_public.csv": {
+            "row_count": len(normalized_evidence),
+            "fields": EVIDENCE_FIELDS,
+            "sha256": sha256(evidence_path),
+        },
+    }
+    if migration_history:
+        files["migration_history.json"] = {"sha256": sha256(history_path)}
+
     manifest = {
         "schema_version": "public-2.0",
-        "files": {
-            "samples_public.csv": {
-                "row_count": len(samples),
-                "fields": SAMPLE_FIELDS,
-                "sha256": sha256(samples_path),
-            },
-            "evidence_public.csv": {
-                "row_count": len(normalized_evidence),
-                "fields": EVIDENCE_FIELDS,
-                "sha256": sha256(evidence_path),
-            },
-        },
+        "files": files,
         "transformations": transformations,
         "sanitization_policy": [
             "不包含原始来源链接、账号标识和平台内部定位字段",
@@ -143,9 +168,7 @@ def normalize(source_dir: Path, output_dir: Path) -> dict[str, object]:
             "analysis_inclusion_status 与 mechanism_label 表示不同层面的不确定性",
         ],
     }
-    (output_dir / "public_manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-    )
+    write_json(output_dir / "public_manifest.json", manifest)
     return manifest
 
 
