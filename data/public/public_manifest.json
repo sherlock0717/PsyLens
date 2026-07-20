@@ -1,0 +1,53 @@
+{
+  "schema_version": "public-1.0",
+  "generated_at": "2026-07-17T16:56:33.578346+08:00",
+  "files": {
+    "samples_public.csv": {
+      "row_count": 360,
+      "fields": [
+        "sample_id",
+        "platform_source",
+        "platform_sequence",
+        "window_tag",
+        "theme_bucket",
+        "reply_type",
+        "date",
+        "raw_text",
+        "public_text",
+        "migration_status"
+      ]
+    },
+    "evidence_public.csv": {
+      "row_count": 927,
+      "fields": [
+        "evidence_id",
+        "sample_id",
+        "platform_source",
+        "unit_index",
+        "unit_text",
+        "surface_topic",
+        "mechanism_label",
+        "label_source",
+        "review_status",
+        "analysis_inclusion_status"
+      ]
+    }
+  },
+  "sanitization_policy": [
+    "移除 source_url、平台内部标题、账号/UID 等身份定位字段",
+    "对 raw_text 生成 public_text：屏蔽 URL、邮箱、手机号、@用户名、QQ、微信",
+    "不改写内部 data/v2/samples_v2.raw_text，仅在公开副本脱敏"
+  ],
+  "sanitized_sample_count": 0,
+  "contains_source_url": false,
+  "human_review_coverage": 0.0,
+  "human_review_note": "当前公开数据的人工复核覆盖为 0（无 reviewer_type=human 记录）",
+  "hashes": {
+    "samples_public.csv": "0a678c8a46836d408202757f4305c2594ba4137bf16c5f76e61258923994ed1b",
+    "evidence_public.csv": "b07bb03e25bcf6018ea468a84e05859ebadaa335ec00466c525afa7c2435b920"
+  },
+  "limitations": [
+    "公开副本不含来源链接；来源字段仅存于内部 data/v2，不进入发布合并范围（见 RESTRICTED_DATA_FILES.md）",
+    "证据标签均未经真人复核（legacy_ai_label_unreviewed 或 rule_based_proposed_unreviewed）"
+  ]
+}
