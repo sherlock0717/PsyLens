@@ -1,0 +1,22 @@
+name: Public Analysis Export
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build public analysis summary
+        run: python tools/summarize_public_analysis.py --output artifacts/public_analysis_summary.json
+      - name: Upload analysis summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-analysis-summary
+          path: artifacts/public_analysis_summary.json
+          if-no-files-found: error
