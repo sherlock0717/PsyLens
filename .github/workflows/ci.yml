@@ -32,8 +32,20 @@ jobs:
       - name: Compile Python files
         run: python -m compileall demo/src pipeline tools/run_demo.py
 
-      - name: Ruff
-        run: ruff check demo/src demo/tests pipeline tools/run_demo.py tests
+      - name: Ruff - Demo source
+        run: ruff check demo/src
+
+      - name: Ruff - Demo tests
+        run: ruff check demo/tests
+
+      - name: Ruff - Pipeline templates
+        run: ruff check pipeline
+
+      - name: Ruff - Demo entry
+        run: ruff check tools/run_demo.py
+
+      - name: Ruff - Public release tests
+        run: ruff check tests
 
       - name: Tests
         run: python -m pytest demo/tests tests -q
