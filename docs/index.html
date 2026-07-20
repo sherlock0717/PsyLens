@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>PsyLens｜社区反馈分析与可靠性评测</title>
-  <meta name="description" content="PsyLens 把公开社区反馈整理成可回溯证据，并评估从编码到产品假设的每一步是否可靠。">
+  <meta name="description" content="PsyLens 以公开社区反馈为基础，建立从样本、证据单元到产品假设的可追溯分析链路，并提供离线评测 Demo。">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,132 +12,167 @@
 
   <header class="hero" id="home">
     <nav class="topbar" aria-label="主导航">
-      <img src="assets/psylens-wordmark.svg" alt="PsyLens" class="wordmark">
+      <a class="brand" href="#home" aria-label="返回首页">
+        <img src="assets/psylens-wordmark.svg" alt="PsyLens" class="wordmark">
+      </a>
       <div class="nav-links">
+        <a href="#overview">项目概览</a>
         <a href="#evaluation">评测结果</a>
-        <a href="#flow">分析流程</a>
         <a href="#demo">离线 Demo</a>
-        <a href="https://github.com/sherlock0717/PsyLens">GitHub</a>
+        <a href="#resources">资料入口</a>
       </div>
     </nav>
 
-    <div class="hero-inner">
-      <p class="kicker">社区反馈分析与可靠性评测</p>
-      <h1>把公开反馈整理成可回溯证据，<br>并评估每一步是否可靠。</h1>
-      <p class="lede">
-        PsyLens 不只展示"分析出了什么"，更评估"样本 → 证据 → 编码 → 洞察 → 产品假设"这条链路是否站得住。
-      </p>
-      <dl class="hero-stats" id="heroStats" aria-label="当前案例概况">
-        <div><dt>当前案例</dt><dd data-showcase="case">社区反馈案例</dd></div>
-        <div><dt>样本</dt><dd data-showcase="samples">—</dd></div>
-        <div><dt>平台</dt><dd data-showcase="platforms">—</dd></div>
-        <div><dt>provisional 证据</dt><dd data-showcase="provisional_evidence">—</dd></div>
-      </dl>
-      <p class="muted" id="provisionalNote">其中部分为暂不确定项，全部尚未经过真人复核；这是 provisional 证据数，不是最终有效证据数量。</p>
-      <ul class="status-strip" id="heroStatus" aria-label="当前状态">
-        <li><span class="s-label">结构校验</span><span class="s-value">已通过</span></li>
-        <li><span class="s-label">标签状态</span><span class="s-value">待人工复核</span></li>
-        <li><span class="s-label">当前编码</span><span class="s-value">规则基线</span></li>
-      </ul>
-      <div class="hero-actions">
-        <a class="btn primary" href="#evaluation">查看评测结果</a>
-        <a class="btn" href="#flow">查看分析流程</a>
-        <a class="btn" href="#demo">运行离线 Demo</a>
-        <a class="btn ghost" href="https://github.com/sherlock0717/PsyLens">GitHub 仓库</a>
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="kicker">社区反馈分析 · 证据链 · 可靠性评测</p>
+        <h1>从社区反馈中提取<br>可核查的证据与产品线索</h1>
+        <p class="lede">
+          PsyLens 以《英雄联盟》海克斯大乱斗社区讨论为案例，整理多平台公开反馈，
+          建立从样本、证据单元、主题编码到产品假设的可追溯链路，并用离线评测检查数据完整性与复现性。
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#overview">查看项目方法</a>
+          <a class="btn" href="#demo">运行离线 Demo</a>
+          <a class="btn ghost" data-doc="project_brief" href="files/PsyLens_project_brief.docx">项目说明</a>
+        </div>
       </div>
+
+      <aside class="summary-panel" aria-label="当前案例概况">
+        <p class="panel-label">当前案例</p>
+        <h2 data-showcase="case">多平台社区反馈案例</h2>
+        <dl class="hero-stats">
+          <div><dt>公开样本</dt><dd data-showcase="samples">—</dd></div>
+          <div><dt>覆盖平台</dt><dd data-showcase="platforms">—</dd></div>
+          <div><dt>候选证据</dt><dd data-showcase="provisional_evidence">—</dd></div>
+        </dl>
+        <div class="status-list" id="heroStatus" aria-label="当前状态">
+          <div><span>证据关联</span><strong>完整</strong></div>
+          <div><span>标签状态</span><strong>待复核</strong></div>
+          <div><span>处理方式</span><strong>离线规则基线</strong></div>
+        </div>
+      </aside>
     </div>
   </header>
 
   <main id="main">
-    <section class="block" id="problem">
-      <h2>它解决什么问题</h2>
-      <p>面对成百上千条社区抱怨，很难判断哪些是真问题、哪些结论靠得住。PsyLens 用普通语言回答四件事：</p>
-      <ul class="clean-list">
-        <li>高频抱怨究竟集中在哪些方面；</li>
-        <li>这些反馈如何被拆成一条条可回溯的证据；</li>
-        <li>分析用的标签是否稳定、有多少暂时判不准；</li>
-        <li>由此得到的洞察和产品建议，能否回到最初的原始反馈。</li>
-      </ul>
-    </section>
+    <section class="section" id="overview">
+      <div class="section-heading">
+        <p class="section-label">项目概览</p>
+        <h2>一条从原始反馈延伸到产品假设的分析链路</h2>
+        <p>
+          项目同时保留样本层和证据层。样本层记录完整反馈，证据层将其中可单独判断的表达拆出并编码，
+          便于后续核对、统计和复盘。
+        </p>
+      </div>
 
-    <section class="block" id="case">
-      <h2>当前案例与数据组成</h2>
-      <p>案例整合多个社区平台的公开反馈。样本与平台数量由页面数据动态载入：当前共
-        <span data-showcase="samples">若干</span> 条样本，覆盖
-        <span data-showcase="platforms">数个</span> 个平台，<span data-showcase="per_platform_text">各平台样本量相近</span>。数据分两层：</p>
-      <ul class="clean-list">
-        <li><strong>样本层</strong>：一条完整的反馈原文；</li>
-        <li><strong>证据层</strong>：从原文中切出的、可单独判断的证据单元。</li>
-      </ul>
-      <p>因此证据数量不等于样本数量——一条反馈可能切出多条证据，也可能一条都不构成独立证据。仓库中同时保留了早期的 legacy 结果与经过重建、带稳定编号的 v2 数据。</p>
-    </section>
-
-    <section class="block" id="flow">
-      <h2>分析与评测流程</h2>
-      <ol class="flow">
-        <li>反馈</li>
-        <li>证据单元</li>
-        <li>主题与机制编码</li>
-        <li>结构化洞察</li>
-        <li>产品假设</li>
-        <li>可靠性评测</li>
-      </ol>
-      <p class="muted">流程细节与字段定义见仓库 README 与方法文档。</p>
-    </section>
-
-    <section class="block" id="evaluation">
-      <h2>当前评测结果</h2>
-      <p>用普通语言呈现，工程指标保留在 README 与评测方法文档中。</p>
-      <div class="metric-grid" id="metricGrid" aria-label="评测结果">
-        <p class="muted">评测数据加载中……如未显示，请查看仓库中的评测方法文档。</p>
+      <div class="card-grid three">
+        <article class="info-card">
+          <span class="card-index">01</span>
+          <h3>数据基础</h3>
+          <p>当前公开数据包含 <strong data-showcase="samples">若干</strong> 条样本，覆盖 <strong data-showcase="platforms">数个</strong> 个平台，<span data-showcase="per_platform_text">各平台样本量相近</span>。</p>
+        </article>
+        <article class="info-card">
+          <span class="card-index">02</span>
+          <h3>证据结构</h3>
+          <p>每条证据都有稳定编号，并能关联到对应样本。证据数量可能多于样本数量，因为一条反馈可以包含多个独立观点。</p>
+        </article>
+        <article class="info-card">
+          <span class="card-index">03</span>
+          <h3>当前产物</h3>
+          <p>公开仓库提供脱敏数据、编码手册、评测方法、离线 Demo 与项目说明，方便查看方法和复现实例。</p>
+        </article>
       </div>
     </section>
 
-    <section class="block" id="evidence">
-      <h2>证据示例</h2>
-      <figure class="evidence-card" id="evidenceCard">
-        <blockquote data-showcase="evidence_excerpt">示例证据将从公开数据自动载入；每条证据都可回到对应的原始反馈。</blockquote>
-        <figcaption>
-          <span>这段原始反馈被切成一条证据单元</span>
-          <span class="muted" data-showcase="evidence_meta">当前标签来源：历史 AI 标签（未人工复核）</span>
-        </figcaption>
-      </figure>
-      <p class="muted">该示例的证据文本可在对应原始反馈中被唯一定位；页面不展示原始链接与内部编号。</p>
+    <section class="section section-soft" id="flow">
+      <div class="section-heading compact">
+        <p class="section-label">处理流程</p>
+        <h2>六个阶段，逐步收束分析范围</h2>
+      </div>
+      <ol class="flow-grid">
+        <li><span>01</span><strong>反馈整理</strong><p>统一字段并保留必要上下文。</p></li>
+        <li><span>02</span><strong>证据拆分</strong><p>切出可以单独判断的表达。</p></li>
+        <li><span>03</span><strong>主题编码</strong><p>识别反馈讨论的具体问题。</p></li>
+        <li><span>04</span><strong>机制编码</strong><p>记录解释框架与不确定项。</p></li>
+        <li><span>05</span><strong>洞察汇总</strong><p>按证据组合形成结构化观察。</p></li>
+        <li><span>06</span><strong>可靠性评测</strong><p>核对关联、覆盖、复现与边界。</p></li>
+      </ol>
     </section>
 
-    <section class="block" id="historical">
-      <h2>历史分析观察</h2>
-      <p>仓库保留了早期 legacy 分析得到的观察。这些内容来自历史分析，目前正在用 v2 证据层重新复核，尚未作为当前结论。</p>
+    <section class="section" id="evaluation">
+      <div class="section-heading">
+        <p class="section-label">评测结果</p>
+        <h2>当前版本重点检查结构完整性与可复现性</h2>
+        <p id="provisionalNote">候选证据包含暂不确定项，当前标签尚未经过真人复核。</p>
+      </div>
+      <div class="metric-grid" id="metricGrid" aria-label="评测结果">
+        <article class="metric"><h3>评测数据加载中</h3><p>如未显示，请查看仓库中的评测方法文档。</p></article>
+      </div>
     </section>
 
-    <section class="block" id="demo">
-      <h2>离线 Demo</h2>
-      <p>输入几条反馈，Demo 会离线生成证据单元、草稿结构化洞察、待验证产品假设和一份评测报告。默认不联网、不调用模型。</p>
-      <pre class="code">python tools/run_demo.py</pre>
+    <section class="section section-soft" id="evidence">
+      <div class="evidence-layout">
+        <div>
+          <p class="section-label">证据示例</p>
+          <h2>保留原意，同时让判断对象清晰可见</h2>
+          <p>证据单元直接来自公开反馈的脱敏副本。页面展示文本、标签来源和平台类别，不展示来源链接与内部迁移编号。</p>
+        </div>
+        <figure class="evidence-card" id="evidenceCard">
+          <blockquote data-showcase="evidence_excerpt">示例证据将从公开数据载入。</blockquote>
+          <figcaption>
+            <span>可独立判断的反馈片段</span>
+            <span class="muted" data-showcase="evidence_meta">标签来源待载入</span>
+          </figcaption>
+        </figure>
+      </div>
     </section>
 
-    <section class="block" id="method">
-      <h2>方法与当前状态</h2>
-      <ul class="clean-list">
-        <li>B 站标签是<strong>离线规则基线提案</strong>：由关键词规则依据编码手册生成，用于演示评测流程，不是人工或模型语义复核；</li>
-        <li>有两条极短证据来源不确定，仍待人工确认；</li>
-        <li>产品建议是<strong>待验证假设</strong>，需要实验验证；</li>
-        <li>仓库提供脱敏示例与公开分析数据；原始链接和内部迁移文件不作为展示页入口。</li>
-      </ul>
+    <section class="section" id="demo">
+      <div class="demo-layout">
+        <div>
+          <p class="section-label">离线 Demo</p>
+          <h2>用少量脱敏反馈走通完整流程</h2>
+          <p>Demo 使用确定性 mock provider，在本地生成证据、草稿洞察、产品假设和评测报告。默认不联网，也不调用外部模型。</p>
+          <ul class="check-list">
+            <li>输入与配置固定时，输出保持一致</li>
+            <li>结果写入独立 artifacts 目录</li>
+            <li>包含 JSON、Markdown 与 HTML 报告</li>
+          </ul>
+        </div>
+        <div class="code-panel">
+          <span class="code-label">运行命令</span>
+          <pre><code>python tools/run_demo.py</code></pre>
+          <a data-doc="demo" href="https://github.com/sherlock0717/PsyLens/tree/main/demo">查看 Demo 说明 →</a>
+        </div>
+      </div>
     </section>
 
-    <section class="block" id="files">
-      <h2>文件与复现入口</h2>
-      <ul class="link-list" id="fileLinks">
-        <li><a data-doc="readme" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/README.md">README</a></li>
-        <li><a data-doc="demo" href="https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/demo">离线 Demo</a></li>
-        <li><a data-doc="evaluation_method" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/evaluation/EVALUATION_METHOD.md">评测方法</a></li>
-        <li><a data-doc="codebook" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/methodology/MECHANISM_CODEBOOK.md">Codebook</a></li>
-        <li><a data-doc="pipeline" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/pipeline/README.md">采集与分析流程</a></li>
-        <li><a data-doc="public_data" href="https://github.com/sherlock0717/PsyLens/tree/phase1/rebuild-evidence-and-demo/data/public">公开分析数据</a></li>
-        <li><a data-doc="project_brief" href="https://github.com/sherlock0717/PsyLens/blob/phase1/rebuild-evidence-and-demo/docs/files/PsyLens_project_brief.docx">项目说明</a></li>
-        <li><a href="https://github.com/sherlock0717/PsyLens">GitHub</a></li>
-      </ul>
+    <section class="section section-soft" id="method">
+      <div class="section-heading compact">
+        <p class="section-label">当前范围</p>
+        <h2>已完成的部分与后续复核</h2>
+      </div>
+      <div class="scope-grid">
+        <article><h3>已完成</h3><p>稳定编号、证据关联、公开数据脱敏、规则基线、离线 Demo 和结构评测。</p></article>
+        <article><h3>待复核</h3><p>机制标签、两条来源不确定的极短证据，以及基于编码结果形成的草稿洞察。</p></article>
+        <article><h3>待验证</h3><p>产品假设需要结合实验、访谈或上线指标进一步检验。</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="resources">
+      <div class="section-heading compact">
+        <p class="section-label">资料入口</p>
+        <h2>从页面继续查看数据、方法和运行说明</h2>
+      </div>
+      <div class="resource-grid" id="fileLinks">
+        <a data-doc="readme" href="https://github.com/sherlock0717/PsyLens/blob/main/README.md"><strong>README</strong><span>项目结构与快速入口</span></a>
+        <a data-doc="public_data" href="https://github.com/sherlock0717/PsyLens/tree/main/data/public"><strong>公开数据</strong><span>脱敏样本与证据文件</span></a>
+        <a data-doc="evaluation_method" href="https://github.com/sherlock0717/PsyLens/blob/main/docs/evaluation/EVALUATION_METHOD.md"><strong>评测方法</strong><span>指标定义与判定范围</span></a>
+        <a data-doc="codebook" href="https://github.com/sherlock0717/PsyLens/blob/main/docs/methodology/MECHANISM_CODEBOOK.md"><strong>编码手册</strong><span>主题与机制标签说明</span></a>
+        <a data-doc="pipeline" href="https://github.com/sherlock0717/PsyLens/blob/main/pipeline/README.md"><strong>采集与分析流程</strong><span>模板、Prompt 与配置示例</span></a>
+        <a data-doc="project_brief" href="files/PsyLens_project_brief.docx"><strong>项目说明</strong><span>可下载的正式文档</span></a>
+      </div>
     </section>
   </main>
 
@@ -147,65 +182,67 @@
   </footer>
 
   <script>
-    // 页面关键数字与状态数据驱动；JS 失败时静态内容仍可阅读。
-    // 仅使用 textContent / createElement / appendChild，避免把数据文本当成 HTML。
     (function () {
       fetch('assets/data/showcase.json').then(function (r) { return r.json(); }).then(function (s) {
-        var setText = function (k, v) {
-          document.querySelectorAll('[data-showcase="' + k + '"]').forEach(function (el) {
-            if (v !== undefined && v !== null) el.textContent = v;
+        var setText = function (key, value) {
+          document.querySelectorAll('[data-showcase="' + key + '"]').forEach(function (el) {
+            if (value !== undefined && value !== null) el.textContent = value;
           });
         };
-        var c = s.counts || {};
+        var counts = s.counts || {};
         var hero = s.hero_summary || {};
         setText('case', hero.case);
-        setText('samples', c.samples);
+        setText('samples', counts.samples);
         setText('platforms', hero.platform_count);
         setText('per_platform_text', hero.per_platform_text);
-        setText('provisional_evidence', c.provisional_evidence);
+        setText('provisional_evidence', counts.provisional_evidence);
 
         if (s.provisional_note) {
-          var pn = document.getElementById('provisionalNote');
-          if (pn) pn.textContent = s.provisional_note;
+          var note = document.getElementById('provisionalNote');
+          if (note) note.textContent = s.provisional_note;
         }
 
-        // 状态条：结构校验 / 标签状态 / 当前编码
-        var statusEl = document.getElementById('heroStatus');
-        if (statusEl && Array.isArray(s.hero_status)) {
-          statusEl.textContent = '';
-          s.hero_status.forEach(function (it) {
-            var li = document.createElement('li');
-            var a = document.createElement('span'); a.className = 's-label'; a.textContent = it.label;
-            var b = document.createElement('span'); b.className = 's-value'; b.textContent = it.value;
-            li.appendChild(a); li.appendChild(b);
-            statusEl.appendChild(li);
+        var status = document.getElementById('heroStatus');
+        if (status && Array.isArray(s.hero_status)) {
+          status.textContent = '';
+          s.hero_status.forEach(function (item) {
+            var row = document.createElement('div');
+            var label = document.createElement('span');
+            var value = document.createElement('strong');
+            label.textContent = item.label;
+            value.textContent = item.value;
+            row.appendChild(label);
+            row.appendChild(value);
+            status.appendChild(row);
           });
         }
 
-        // 评测结果：普通语言卡片（textContent，不注入 HTML）
         var grid = document.getElementById('metricGrid');
         if (grid && Array.isArray(s.plain_metrics)) {
           grid.textContent = '';
-          s.plain_metrics.forEach(function (m) {
-            var d = document.createElement('div'); d.className = 'metric';
-            var h = document.createElement('h3'); h.textContent = m.label;
-            var p = document.createElement('p'); p.textContent = m.plain;
-            d.appendChild(h); d.appendChild(p); grid.appendChild(d);
+          s.plain_metrics.forEach(function (metric) {
+            var card = document.createElement('article');
+            var title = document.createElement('h3');
+            var text = document.createElement('p');
+            card.className = 'metric';
+            title.textContent = metric.label;
+            text.textContent = metric.plain;
+            card.appendChild(title);
+            card.appendChild(text);
+            grid.appendChild(card);
           });
         }
 
-        // 证据示例
-        var ex = s.evidence_example || {};
-        setText('evidence_excerpt', ex.sample_excerpt);
-        setText('evidence_meta', '当前标签来源：' + (ex.label_source || '') + '·' + (ex.platform || ''));
+        var example = s.evidence_example || {};
+        setText('evidence_excerpt', example.sample_excerpt);
+        setText('evidence_meta', (example.label_source || '') + (example.platform ? ' · ' + example.platform : ''));
 
-        // 文档链接：由 repo_ref 生成，避免手工改分支名
         var links = s.doc_links || {};
         document.querySelectorAll('[data-doc]').forEach(function (el) {
           var key = el.getAttribute('data-doc');
           if (links[key]) el.setAttribute('href', links[key]);
         });
-      }).catch(function () { /* 静态内容已可阅读 */ });
+      }).catch(function () { /* 静态内容可独立阅读 */ });
     })();
   </script>
 </body>
