@@ -39,11 +39,12 @@ python tools/run_demo.py \
 
 ```text
 demo/
-  config/demo.yaml                 默认配置
-  examples/sample_feedback.csv     脱敏示例输入
+  config/demo.yaml                  默认配置
+  examples/sample_feedback.csv      脱敏示例输入
   mock/deterministic_responses.json 确定性规则
-  prompts/                         提示词参考
-  src/                             流程、校验、评分和报告\ n  tests/                           确定性与完整性测试
+  prompts/                          提示词参考
+  src/                              流程、校验、评分和报告
+  tests/                            确定性与完整性测试
 ```
 
-> 上述目录示意中的 `src/` 包含 pipeline、providers、validators、scoring 与 report 模块。
+`src/` 包含 pipeline、providers、validators、scoring 与 report 模块。
