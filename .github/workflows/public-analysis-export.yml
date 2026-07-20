@@ -22,6 +22,19 @@ jobs:
           python-version: "3.12"
       - name: Install document dependency
         run: pip install python-docx
+      - name: Remove unused project brief variable
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("tools/build_project_brief_docx.py")
+          text = path.read_text(encoding="utf-8")
+          target = "    n_samples = len(samples)\n"
+          count = text.count(target)
+          if count not in {0, 1}:
+              raise SystemExit(f"unexpected target count: {count}")
+          if count == 1:
+              path.write_text(text.replace(target, "", 1), encoding="utf-8")
+          PY
       - name: Normalize public dataset in place
         run: python tools/normalize_public_dataset.py --source-dir data/public --output-dir data/public
       - name: Build public analysis summary
@@ -38,7 +51,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/public docs/assets/data/analysis_summary.json docs/files/PsyLens_project_brief.docx
+          git add tools/build_project_brief_docx.py data/public docs/assets/data/analysis_summary.json docs/files/PsyLens_project_brief.docx
           if git diff --cached --quiet; then
             echo "Generated files already current."
           else
