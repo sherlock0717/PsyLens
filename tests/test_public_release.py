@@ -1,7 +1,7 @@
 import csv
-import hashlib
 import json
 import re
+import subprocess
 import zipfile
 from pathlib import Path
 
@@ -15,8 +15,12 @@ def _csv_rows(path: Path):
         return list(csv.DictReader(f))
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def _git_blob(path: str) -> str:
+    return subprocess.check_output(
+        ["git", "rev-parse", f"HEAD:{path}"],
+        cwd=ROOT,
+        text=True,
+    ).strip()
 
 
 def test_required_public_files_exist():
@@ -59,8 +63,9 @@ def test_public_manifest_matches_files():
     assert manifest["contains_source_url"] is False
     assert manifest["files"]["samples_public.csv"]["row_count"] == 360
     assert manifest["files"]["evidence_public.csv"]["row_count"] == 927
-    assert manifest["hashes"]["samples_public.csv"] == _sha256(PUBLIC / "samples_public.csv")
-    assert manifest["hashes"]["evidence_public.csv"] == _sha256(PUBLIC / "evidence_public.csv")
+    assert manifest["integrity"]["algorithm"] == "git-blob-sha1"
+    assert manifest["integrity"]["samples_public.csv"] == _git_blob("data/public/samples_public.csv")
+    assert manifest["integrity"]["evidence_public.csv"] == _git_blob("data/public/evidence_public.csv")
 
 
 def test_page_copy_is_public_facing():
