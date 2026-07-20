@@ -36,6 +36,7 @@ def test_required_public_files_exist():
         PUBLIC / "README.md",
         PUBLIC / "samples_public.csv",
         PUBLIC / "evidence_public.csv",
+        PUBLIC / "migration_history.json",
         PUBLIC / "public_manifest.json",
         DOCS / "index.html",
         DOCS / "style.css",
@@ -78,14 +79,20 @@ def test_public_data_counts_and_schema():
 
 
 def test_public_data_contains_no_external_urls():
-    for name in ["samples_public.csv", "evidence_public.csv", "public_manifest.json"]:
+    for name in [
+        "samples_public.csv",
+        "evidence_public.csv",
+        "migration_history.json",
+        "public_manifest.json",
+    ]:
         text = (PUBLIC / name).read_text(encoding="utf-8")
         assert "http://" not in text
         assert "https://" not in text
 
 
-def test_public_manifest_matches_files():
+def test_public_manifest_matches_files_and_migration_history():
     manifest = json.loads((PUBLIC / "public_manifest.json").read_text(encoding="utf-8"))
+    history = json.loads((PUBLIC / "migration_history.json").read_text(encoding="utf-8"))
     assert manifest["schema_version"] == "public-2.0"
     assert manifest["files"]["samples_public.csv"]["row_count"] == 360
     assert manifest["files"]["evidence_public.csv"]["row_count"] == 927
@@ -95,6 +102,13 @@ def test_public_manifest_matches_files():
     assert manifest["files"]["evidence_public.csv"]["sha256"] == _sha256(
         PUBLIC / "evidence_public.csv"
     )
+    assert manifest["files"]["migration_history.json"]["sha256"] == _sha256(
+        PUBLIC / "migration_history.json"
+    )
+    migration = history["migrations"][0]
+    assert migration["migration_id"] == "public-1x-to-public-2.0"
+    assert migration["transformations"]["redundant_raw_text_column_removed"] == 360
+    assert migration["transformations"]["blank_surface_topic_normalized_to_other_uncertain"] == 47
     assert manifest["transformations"]["redundant_raw_text_column_removed"] == 360
     assert manifest["transformations"]["blank_surface_topic_normalized_to_other_uncertain"] == 47
 
@@ -193,4 +207,5 @@ def test_project_brief_is_readable_and_substantive():
     ]:
         assert heading in xml
     assert "927" in xml and "52.4%" in xml and "Krippendorff" in xml
+    assert xml.count("Copyright © 2026 Sherlock0717. All rights reserved.") == 1
     assert len(xml) > 60000
