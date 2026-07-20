@@ -13,13 +13,16 @@
 | 验证完成 | 无 |
 | 经人工复核（无日志） | 无（页面 `test_no_overclaim` 断言；`human_review_coverage=0` 如实说明） |
 | 三平台机制一致（无完整证据） | 无（单平台洞察均标注 single_platform） |
+| 内部阻断术语（P0/P1/BLOCKED/裸露 PASS） | 页面无（`test_no_internal_blocking_terms`）；仅保留在审计文档 |
+| Agent 语义判断 / Agent 编码 | 无（B 站标签统一表述为"离线规则基线提案"） |
 
 ## 口径
 
-- Agent 提案与人工复核严格区分（`REVIEW_STATUS_DEFINITIONS.md`）；
-- 草稿洞察/建议标 `agent_compiled_draft` / `hidden_pending_review`；
-- 相关性不表述为因果；置信度不当作证据强度。
+- 离线规则基线提案与人工复核、模型语义复核严格区分（`REVIEW_STATUS_DEFINITIONS.md`）；
+- 草稿洞察/建议标 `agent_compiled_draft` / `hidden_pending_review`（`agent_compiled` 指自动汇编流程，非人工/模型语义判断）；
+- 相关性不表述为因果；置信度不当作证据强度；
+- 发布级阻断问题的详细说明仅在审计文档，不进入 README / 页面 / showcase 可见文案 / 正式 DOCX 主体。
 
 ## 结论
 
-页面与公开文档主张与实际数据一致，无过强或不实表述。
+页面与公开文档主张与实际数据一致，无过强或不实表述；内部工程/阻断细节未在公开表达中堆叠。

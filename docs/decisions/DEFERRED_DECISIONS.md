@@ -55,13 +55,13 @@
 - status：deferred
 - final_decision：（待用户确认）
 
-## D-004 Agent 提议的 B 站标签是否获人工认可
+## D-004 B 站离线规则基线标签是否获人工认可
 
-- background：B 站 279 候选单元由本 Agent 依据 codebook 生成提案，尚未人工复核。
-- options：A. 保持 agent_proposed_unreviewed（推荐）；B. 部分人工确认；C. 全量人工确认。
+- background：B 站 279 候选单元由本地关键词规则基线依据 codebook 生成初步提案（非人工/模型语义复核），尚未人工复核。
+- options：A. 保持 rule_based_proposed_unreviewed（推荐）；B. 部分人工确认；C. 全量人工确认。
 - recommended_option：A
-- safe_default：`review_status = agent_proposed_unreviewed`。可进入草稿分析；不得称为人工复核；不进入正式公开结论；页面默认不展示为已确认结果。
-- affected_files：`data/v2/agent_label_proposals.csv`、`data/v2/evidence_provisional_v2.csv`
+- safe_default：`review_status = rule_based_proposed_unreviewed`。可进入草稿分析；不得称为人工复核；不进入正式公开结论；页面默认不展示为已确认结果。
+- affected_files：`data/v2/rule_based_label_proposals.csv`、`data/v2/evidence_provisional_v2.csv`
 - affected_metrics：`human_review_coverage`、`label_completion_rate`
 - publication_effect：草稿层，不作为已确认结论发布
 - status：deferred
