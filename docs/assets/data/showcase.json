@@ -1,6 +1,5 @@
 {
-  "schema_version": "public-release-1.0",
-  "generated_at": "2026-07-20T00:00:00+08:00",
+  "schema_version": "public-release-2.0",
   "repo_ref": "main",
   "brand": "PsyLens",
   "tagline": "社区反馈分析与可靠性评测",
@@ -9,92 +8,91 @@
     "sample_count": 360,
     "platform_count": 3,
     "per_platform_text": "每个平台各 120 条",
-    "provisional_evidence_count": 927
+    "evidence_count": 927
   },
   "hero_status": [
     {
-      "label": "证据关联",
-      "value": "完整"
+      "label": "平衡样本",
+      "value": "3 × 120"
     },
     {
-      "label": "标签状态",
-      "value": "待复核"
+      "label": "证据密度",
+      "value": "2.58 / 样本"
     },
     {
-      "label": "处理方式",
-      "value": "离线规则基线"
+      "label": "文本回溯",
+      "value": "100%"
     }
   ],
   "plain_metrics": [
     {
-      "key": "sample_id_unique_rate",
+      "key": "sample_id_unique",
       "label": "样本编号",
-      "plain": "360 条公开样本均使用稳定且唯一的编号。"
+      "value": "360 / 360",
+      "plain": "公开样本编号无重复。"
+    },
+    {
+      "key": "evidence_id_unique",
+      "label": "证据编号",
+      "value": "927 / 927",
+      "plain": "证据编号无重复。"
     },
     {
       "key": "evidence_text_match_rate",
-      "label": "证据回溯",
-      "plain": "927 条候选证据均能关联到对应的公开样本。"
+      "label": "文本回溯",
+      "value": "100%",
+      "plain": "每条证据文本都能在对应公开样本中定位。"
     },
     {
-      "key": "platform_sample_coverage",
-      "label": "平台覆盖",
-      "plain": "数据覆盖 3 个社区平台，每个平台保留 120 条样本。"
+      "key": "orphan_evidence_count",
+      "label": "孤立证据",
+      "value": "0",
+      "plain": "没有找不到父样本的证据。"
     },
     {
-      "key": "label_completion_rate",
-      "label": "编码覆盖",
-      "plain": "历史编码与规则基线提案均保留来源和复核状态。"
+      "key": "duplicate_groups",
+      "label": "文本重复组",
+      "value": "0",
+      "plain": "规范化后未发现样本或证据文本重复组。"
     },
     {
-      "key": "uncertain_rate",
-      "label": "不确定项",
-      "plain": "163 条候选证据标记为暂不确定，后续需要进一步复核。"
-    },
-    {
-      "key": "human_review_coverage",
-      "label": "人工复核",
-      "plain": "当前没有真人复核记录，页面未将草稿编码作为正式结论。"
-    },
-    {
-      "key": "repeatability_rate",
-      "label": "离线复现",
-      "plain": "同一输入和配置会生成一致的 Demo 输出。"
+      "key": "samples_without_evidence",
+      "label": "无证据样本",
+      "value": "2",
+      "plain": "两条样本未切出可保留的证据单元。"
     }
   ],
   "evidence_example": {
-    "sample_excerpt": "丢子需要练习走位、预判、寻找破绽，也要考虑技能用于清兵还是攻击对手。",
-    "platform": "平台 B",
-    "label_source": "历史 AI 标签 · 未人工复核",
-    "source": "public_dataset",
-    "note": "页面示例来自公开脱敏数据，不展示来源链接和内部编号。"
+    "evidence_id": "NGA_0021_U01",
+    "sample_excerpt": "匹配机制就导致了一旦你连胜或者连败，要把你近期胜率“拉”回五十接下来就会反向连胜连败",
+    "platform": "NGA",
+    "surface_topic": "匹配与对局分配",
+    "mechanism": "公平受损",
+    "label_source": "历史编码",
+    "note": "该文本逐字来自公开脱敏样本。"
   },
   "counts": {
     "samples": 360,
+    "platforms": 3,
     "per_platform": 120,
-    "platform_distribution": {
-      "平台 A": 120,
-      "平台 B": 120,
-      "平台 C": 120
-    },
-    "all_platforms_equal": true,
-    "migrated_evidence": 695,
-    "bili_candidates": 279,
-    "provisional_evidence": 927,
-    "provisional_uncertain_flagged": 163,
-    "draft_insights": 28,
-    "draft_actions": 6,
-    "unresolved_ambiguous": 2
+    "evidence": 927,
+    "evidence_per_sample": 2.575,
+    "assigned_mechanism_evidence": 441,
+    "specific_topic_evidence": 441,
+    "uncertain_mechanism": 486,
+    "inclusion_flagged_uncertain": 163,
+    "samples_without_evidence": 2
   },
-  "provisional_note": "927 条候选证据中，163 条标记为暂不确定；当前标签尚未经过真人复核。",
+  "scope_note": "编码分布用于审视方法表现和发现分析线索。三个平台采用等额抽样，且编码来源包含历史 AI 结果与离线规则提案，因此页面不把这些比例解释为总体玩家意见占比。",
   "doc_links": {
     "readme": "https://github.com/sherlock0717/PsyLens/blob/main/README.md",
     "demo": "https://github.com/sherlock0717/PsyLens/tree/main/demo",
     "evaluation_method": "https://github.com/sherlock0717/PsyLens/blob/main/docs/evaluation/EVALUATION_METHOD.md",
     "codebook": "https://github.com/sherlock0717/PsyLens/blob/main/docs/methodology/MECHANISM_CODEBOOK.md",
+    "psychology": "https://github.com/sherlock0717/PsyLens/blob/main/docs/methodology/PSYCHOLOGY_FRAMEWORK.md",
+    "data_cleaning": "https://github.com/sherlock0717/PsyLens/blob/main/docs/methodology/DATA_CLEANING_AND_CODING.md",
     "pipeline": "https://github.com/sherlock0717/PsyLens/blob/main/pipeline/README.md",
     "project_brief": "https://github.com/sherlock0717/PsyLens/blob/main/docs/files/PsyLens_project_brief.docx",
     "public_data": "https://github.com/sherlock0717/PsyLens/tree/main/data/public"
-  },
-  "note": "页面只展示公开脱敏数据、方法、评测结果和复现入口。"
+  }
 }
