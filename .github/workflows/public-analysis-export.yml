@@ -1,60 +1,41 @@
-name: Public Analysis Export
+name: Public Analysis Artifacts
 
 on:
-  push:
-    branches: ["revamp/analysis-methods-doc"]
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "data/public/**"
+      - "tools/normalize_public_dataset.py"
+      - "tools/summarize_public_analysis.py"
+      - "tools/build_project_brief_docx.py"
+      - "docs/assets/data/**"
+      - "docs/files/PsyLens_project_brief.docx"
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  export:
-    if: ${{ !contains(github.event.head_commit.message, '[generated-public-data]') }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: revamp/analysis-methods-doc
-          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install document dependency
-        run: pip install python-docx
-      - name: Remove unused project brief variable
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          path = Path("tools/build_project_brief_docx.py")
-          text = path.read_text(encoding="utf-8")
-          target = "    n_samples = len(samples)\n"
-          count = text.count(target)
-          if count not in {0, 1}:
-              raise SystemExit(f"unexpected target count: {count}")
-          if count == 1:
-              path.write_text(text.replace(target, "", 1), encoding="utf-8")
-          PY
-      - name: Normalize public dataset in place
-        run: python tools/normalize_public_dataset.py --source-dir data/public --output-dir data/public
-      - name: Build public analysis summary
-        run: python tools/summarize_public_analysis.py --public-dir data/public --output docs/assets/data/analysis_summary.json
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Build normalized public package
+        run: python tools/normalize_public_dataset.py --source-dir data/public --output-dir artifacts/normalized_public
+      - name: Build analysis summary
+        run: python tools/summarize_public_analysis.py --public-dir data/public --output artifacts/public_analysis_summary.json
       - name: Build formal project brief
-        run: python tools/build_project_brief_docx.py
-      - name: Upload formal project brief for QA
+        run: python tools/build_project_brief_docx.py --output artifacts/PsyLens_project_brief.docx
+      - name: Upload public analysis artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: psylens-project-brief
-          path: docs/files/PsyLens_project_brief.docx
+          name: psylens-public-analysis
+          path: |
+            artifacts/normalized_public
+            artifacts/public_analysis_summary.json
+            artifacts/PsyLens_project_brief.docx
           if-no-files-found: error
-      - name: Commit generated public files
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/build_project_brief_docx.py data/public docs/assets/data/analysis_summary.json docs/files/PsyLens_project_brief.docx
-          if git diff --cached --quiet; then
-            echo "Generated files already current."
-          else
-            git commit -m "data: refresh public analysis and project brief [generated-public-data]"
-            git push origin HEAD:revamp/analysis-methods-doc
-          fi
