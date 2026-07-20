@@ -1,12 +1,13 @@
 [project]
 name = "psylens"
-version = "0.2.0"
-description = "PsyLens：社区反馈分析与可靠性评测（偏评测的可核查分析案例 + 离线 Demo）"
+version = "0.3.0"
+description = "Community feedback analysis, psychology-informed coding, and reliability evaluation"
 requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0", "ruff>=0.4"]
+docs = ["python-docx>=1.1"]
+dev = ["pytest>=7.0", "ruff>=0.4", "python-docx>=1.1"]
 
 [tool.ruff]
 line-length = 120
