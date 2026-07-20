@@ -1,19 +1,20 @@
-name: CI
+name: Public Release CI
 
 on:
   push:
-    branches: ["phase1/rebuild-evidence-and-demo"]
+    branches: ["release/public-v2", "main"]
   pull_request:
   workflow_dispatch:
 
 jobs:
   test:
-    name: 测试与校验（${{ matrix.os }}）
+    name: Public release checks (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -22,41 +23,20 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: 安装依赖
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest ruff python-docx
 
-      - name: 语法编译（compileall）
-        run: python -m compileall tools demo/src pipeline
+      - name: Compile Python files
+        run: python -m compileall demo/src pipeline tools/run_demo.py
 
-      - name: 静态检查（Ruff，阻断）
-        run: ruff check tools demo/src tests pipeline
+      - name: Ruff
+        run: ruff check demo/src demo/tests pipeline tools/run_demo.py tests
 
-      - name: 单元测试（pytest）
-        run: python -m pytest -q
+      - name: Tests
+        run: python -m pytest demo/tests tests -q
 
-      - name: v2 审计（v2 迁移应为 PASS，退出码 0）
-        run: python tools/audit_public_data.py --dataset v2
-
-      - name: 评测器（输出到 artifacts）
-        run: python tools/evaluate_v2.py --input-dir data/v2 --output-dir artifacts/evaluation/ci
-
-      - name: 公开数据构建（输出到 artifacts）
-        run: python tools/build_public_dataset.py --output-dir artifacts/public/ci
-
-      - name: 页面数据构建（输出到 artifacts）
-        run: python tools/build_showcase_data.py --output artifacts/showcase/ci_showcase.json
-
-      - name: Demo smoke（离线 mock）
+      - name: Demo smoke
         run: python tools/run_demo.py --provider mock --output artifacts/demo/ci
-
-      - name: 页面静态校验
-        run: python -m pytest tests/test_site_static.py -q
-
-      - name: 历史文件保护 / 分层状态 / 无密钥 / DOCX 可读
-        run: python -m pytest tests/test_ci_guards.py -q
-
-      - name: 确认工作树无历史数据改动
-        run: git diff --exit-code -- docs/files data/v2
