@@ -12,11 +12,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Normalize public dataset
+        run: python tools/normalize_public_dataset.py --output-dir artifacts/normalized_public
       - name: Build public analysis summary
-        run: python tools/summarize_public_analysis.py --output artifacts/public_analysis_summary.json
-      - name: Upload analysis summary
+        run: python tools/summarize_public_analysis.py --public-dir artifacts/normalized_public --output artifacts/public_analysis_summary.json
+      - name: Upload normalized public package
         uses: actions/upload-artifact@v4
         with:
-          name: public-analysis-summary
-          path: artifacts/public_analysis_summary.json
+          name: normalized-public-package
+          path: |
+            artifacts/normalized_public
+            artifacts/public_analysis_summary.json
           if-no-files-found: error
