@@ -282,7 +282,6 @@ def build(samples_path: Path, evidence_path: Path, output: Path):
     samples = read_csv(samples_path)
     evidence = read_csv(evidence_path)
     specific, assigned, mechanisms, cross, platforms, densities = compute(samples, evidence)
-    n_samples = len(samples)
     n_evidence = len(evidence)
     specific_n = sum(specific.values())
     assigned_n = sum(assigned.values())
