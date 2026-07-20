@@ -1,0 +1,24 @@
+# PsyLens 案例配置示例（case.example.yaml）
+# 仅示例值，不含真实账号 / Cookie / API Key。真实运行请自行填写并妥善保管密钥。
+
+case_id: example_case
+mode: game            # game | ux
+title: 示例案例（社区反馈平衡讨论）
+
+discovery:
+  keywords: ["平衡", "匹配", "奖励", "活动"]
+  per_platform_target: 120   # 每平台平衡采样目标
+
+platforms: ["PlatformA", "PlatformB", "PlatformC"]
+
+curation:
+  provider: ""        # 例如 deepseek；留空表示不启用 AI 精修
+  model: ""           # 例如 deepseek-chat
+  # API Key 通过环境变量提供（见 .env.example），不写入本文件
+
+sampling:
+  per_platform: 120
+  balance: true
+
+audit:
+  min_text_len: 8

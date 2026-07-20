@@ -1,0 +1,54 @@
+{
+  "schema_version": "public-1.1",
+  "generated_at": "2026-07-20T00:00:00+08:00",
+  "files": {
+    "samples_public.csv": {
+      "row_count": 360,
+      "fields": [
+        "sample_id",
+        "platform_source",
+        "platform_sequence",
+        "window_tag",
+        "theme_bucket",
+        "reply_type",
+        "date",
+        "raw_text",
+        "public_text",
+        "migration_status"
+      ]
+    },
+    "evidence_public.csv": {
+      "row_count": 927,
+      "fields": [
+        "evidence_id",
+        "sample_id",
+        "platform_source",
+        "unit_index",
+        "unit_text",
+        "surface_topic",
+        "mechanism_label",
+        "label_source",
+        "review_status",
+        "analysis_inclusion_status"
+      ]
+    }
+  },
+  "sanitization_policy": [
+    "移除来源链接、平台内部标题、账号与 UID 等定位字段",
+    "屏蔽文本中的 URL、邮箱、手机号、@用户名、QQ 与微信号",
+    "公开文件只保留分析、复现与字段说明所需内容"
+  ],
+  "sanitized_sample_count": 0,
+  "contains_source_url": false,
+  "human_review_coverage": 0.0,
+  "human_review_note": "当前公开数据没有真人复核记录。",
+  "integrity": {
+    "algorithm": "git-blob-sha1",
+    "samples_public.csv": "03b9787e4e2e188c394c4904ac8055a0429ea0e3",
+    "evidence_public.csv": "2341d8d4a3e3ff0e76adeb3c59ba7fd546882fe1"
+  },
+  "limitations": [
+    "公开数据不包含原始来源链接。",
+    "证据标签保留生成方式与复核状态，当前未经过真人复核。"
+  ]
+}

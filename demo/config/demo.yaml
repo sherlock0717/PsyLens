@@ -1,0 +1,8 @@
+# PsyLens 离线 Demo 配置
+# 默认离线、mock provider、确定性；不联网、不读取 .env、不读取密钥。
+
+provider: mock            # mock（默认）| real（需用户显式启用，CI 永不运行）
+min_unit_len: 6           # 候选单元最小长度
+min_high_support: 2       # Demo 规模小，降低高支持阈值
+offline: true             # 强制离线
+seed: 20260717            # 仅用于稳定排序，不引入随机

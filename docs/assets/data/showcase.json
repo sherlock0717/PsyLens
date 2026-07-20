@@ -1,0 +1,100 @@
+{
+  "schema_version": "public-release-1.0",
+  "generated_at": "2026-07-20T00:00:00+08:00",
+  "repo_ref": "main",
+  "brand": "PsyLens",
+  "tagline": "社区反馈分析与可靠性评测",
+  "hero_summary": {
+    "case": "海克斯大乱斗社区反馈",
+    "sample_count": 360,
+    "platform_count": 3,
+    "per_platform_text": "每个平台各 120 条",
+    "provisional_evidence_count": 927
+  },
+  "hero_status": [
+    {
+      "label": "证据关联",
+      "value": "完整"
+    },
+    {
+      "label": "标签状态",
+      "value": "待复核"
+    },
+    {
+      "label": "处理方式",
+      "value": "离线规则基线"
+    }
+  ],
+  "plain_metrics": [
+    {
+      "key": "sample_id_unique_rate",
+      "label": "样本编号",
+      "plain": "360 条公开样本均使用稳定且唯一的编号。"
+    },
+    {
+      "key": "evidence_text_match_rate",
+      "label": "证据回溯",
+      "plain": "927 条候选证据均能关联到对应的公开样本。"
+    },
+    {
+      "key": "platform_sample_coverage",
+      "label": "平台覆盖",
+      "plain": "数据覆盖 3 个社区平台，每个平台保留 120 条样本。"
+    },
+    {
+      "key": "label_completion_rate",
+      "label": "编码覆盖",
+      "plain": "历史编码与规则基线提案均保留来源和复核状态。"
+    },
+    {
+      "key": "uncertain_rate",
+      "label": "不确定项",
+      "plain": "163 条候选证据标记为暂不确定，后续需要进一步复核。"
+    },
+    {
+      "key": "human_review_coverage",
+      "label": "人工复核",
+      "plain": "当前没有真人复核记录，页面未将草稿编码作为正式结论。"
+    },
+    {
+      "key": "repeatability_rate",
+      "label": "离线复现",
+      "plain": "同一输入和配置会生成一致的 Demo 输出。"
+    }
+  ],
+  "evidence_example": {
+    "sample_excerpt": "丢子需要练习走位、预判、寻找破绽，也要考虑技能用于清兵还是攻击对手。",
+    "platform": "平台 B",
+    "label_source": "历史 AI 标签 · 未人工复核",
+    "source": "public_dataset",
+    "note": "页面示例来自公开脱敏数据，不展示来源链接和内部编号。"
+  },
+  "counts": {
+    "samples": 360,
+    "per_platform": 120,
+    "platform_distribution": {
+      "平台 A": 120,
+      "平台 B": 120,
+      "平台 C": 120
+    },
+    "all_platforms_equal": true,
+    "migrated_evidence": 695,
+    "bili_candidates": 279,
+    "provisional_evidence": 927,
+    "provisional_uncertain_flagged": 163,
+    "draft_insights": 28,
+    "draft_actions": 6,
+    "unresolved_ambiguous": 2
+  },
+  "provisional_note": "927 条候选证据中，163 条标记为暂不确定；当前标签尚未经过真人复核。",
+  "doc_links": {
+    "readme": "https://github.com/sherlock0717/PsyLens/blob/main/README.md",
+    "demo": "https://github.com/sherlock0717/PsyLens/tree/main/demo",
+    "evaluation_method": "https://github.com/sherlock0717/PsyLens/blob/main/docs/evaluation/EVALUATION_METHOD.md",
+    "codebook": "https://github.com/sherlock0717/PsyLens/blob/main/docs/methodology/MECHANISM_CODEBOOK.md",
+    "pipeline": "https://github.com/sherlock0717/PsyLens/blob/main/pipeline/README.md",
+    "project_brief": "https://github.com/sherlock0717/PsyLens/blob/main/docs/files/PsyLens_project_brief.docx",
+    "public_data": "https://github.com/sherlock0717/PsyLens/tree/main/data/public"
+  },
+  "note": "页面只展示公开脱敏数据、方法、评测结果和复现入口。"
+}

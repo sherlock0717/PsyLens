@@ -1,0 +1,13 @@
+{
+  "note": "确定性 mock 标签响应：按关键词映射，供离线 Demo 使用。不调用任何模型。",
+  "rules": [
+    {"keywords": ["肝", "回报", "投入", "打不过", "做不完"], "surface_topic": "progression", "mechanism_label": "competence_frustration"},
+    {"keywords": ["匹配", "队友", "人机", "带不动"], "surface_topic": "matchmaking", "mechanism_label": "fairness_threat"},
+    {"keywords": ["暗改", "公告", "透明", "官方"], "surface_topic": "communication_transparency", "mechanism_label": "trust_communication_gap"},
+    {"keywords": ["超模", "平衡", "数值", "英雄"], "surface_topic": "balance", "mechanism_label": "competence_frustration"},
+    {"keywords": ["举报", "挂", "环境", "退坑"], "surface_topic": "community_conflict", "mechanism_label": "norm_safety_risk"},
+    {"keywords": ["活动", "奖励", "寒酸", "规则"], "surface_topic": "event_design", "mechanism_label": "competence_frustration"},
+    {"keywords": ["失望", "不想玩", "社区"], "surface_topic": "community_conflict", "mechanism_label": "belonging_drop"}
+  ],
+  "default": {"surface_topic": "", "mechanism_label": "uncertain"}
+}

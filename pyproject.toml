@@ -1,0 +1,20 @@
+[project]
+name = "psylens"
+version = "0.2.0"
+description = "PsyLens：社区反馈分析与可靠性评测（偏评测的可核查分析案例 + 离线 Demo）"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "demo/tests"]
