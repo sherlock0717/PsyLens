@@ -73,3 +73,13 @@ jobs:
 
       - name: Demo smoke
         run: python tools/run_demo.py --provider mock --output artifacts/demo/ci
+
+      - name: Upload QA artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: psylens-ci-${{ matrix.os }}
+          path: |
+            artifacts/public_analysis_summary.json
+            artifacts/PsyLens_project_brief.docx
+            artifacts/demo/ci
+          if-no-files-found: error
