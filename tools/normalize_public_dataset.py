@@ -43,6 +43,28 @@ def read_rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
+def read_manifest(path: Path) -> dict[str, object]:
+    if not path.exists():
+        return {}
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def previous_transformations(source_dir: Path) -> dict[str, int]:
+    manifest = read_manifest(source_dir / "public_manifest.json")
+    values = manifest.get("transformations", {})
+    if not isinstance(values, dict):
+        return {}
+    result: dict[str, int] = {}
+    for key, value in values.items():
+        if isinstance(value, int) and value >= 0:
+            result[key] = value
+    return result
+
+
 def write_rows(path: Path, fields: list[str], rows: list[dict[str, str]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -58,12 +80,17 @@ def sha256(path: Path) -> str:
 def normalize(source_dir: Path, output_dir: Path) -> dict[str, object]:
     samples = read_rows(source_dir / "samples_public.csv")
     evidence = read_rows(source_dir / "evidence_public.csv")
+    previous = previous_transformations(source_dir)
 
-    raw_public_equal = sum(
-        1
-        for row in samples
-        if (row.get("raw_text", "") or "") == (row.get("public_text", "") or "")
-    )
+    raw_text_present = bool(samples and "raw_text" in samples[0])
+    raw_public_equal = 0
+    if raw_text_present:
+        raw_public_equal = sum(
+            1
+            for row in samples
+            if (row.get("raw_text", "") or "") == (row.get("public_text", "") or "")
+        )
+
     blank_topics = 0
     normalized_evidence = []
     for row in evidence:
@@ -77,6 +104,18 @@ def normalize(source_dir: Path, output_dir: Path) -> dict[str, object]:
     evidence_path = output_dir / "evidence_public.csv"
     write_rows(samples_path, SAMPLE_FIELDS, samples)
     write_rows(evidence_path, EVIDENCE_FIELDS, normalized_evidence)
+
+    transformations = {
+        "redundant_raw_text_column_removed": max(
+            raw_public_equal,
+            previous.get("redundant_raw_text_column_removed", 0),
+        ),
+        "blank_surface_topic_normalized_to_other_uncertain": max(
+            blank_topics,
+            previous.get("blank_surface_topic_normalized_to_other_uncertain", 0),
+        ),
+        "empty_date_count": sum(1 for row in samples if not (row.get("date", "") or "").strip()),
+    }
 
     manifest = {
         "schema_version": "public-2.0",
@@ -92,11 +131,7 @@ def normalize(source_dir: Path, output_dir: Path) -> dict[str, object]:
                 "sha256": sha256(evidence_path),
             },
         },
-        "transformations": {
-            "redundant_raw_text_column_removed": raw_public_equal,
-            "blank_surface_topic_normalized_to_other_uncertain": blank_topics,
-            "empty_date_count": sum(1 for row in samples if not (row.get("date", "") or "").strip()),
-        },
+        "transformations": transformations,
         "sanitization_policy": [
             "不包含原始来源链接、账号标识和平台内部定位字段",
             "文本字段使用公开脱敏版本 public_text",
