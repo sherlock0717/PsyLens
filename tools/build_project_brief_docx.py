@@ -461,11 +461,6 @@ def build(samples_path: Path, evidence_path: Path, output: Path):
         p.paragraph_format.left_indent = Cm(0.7)
         p.paragraph_format.first_line_indent = Cm(-0.7)
         font(p.add_run(reference), size=9.2)
-    p = doc.add_paragraph()
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.paragraph_format.space_before = Pt(22)
-    font(p.add_run("Copyright © 2026 Sherlock0717. All rights reserved."), size=8.5, color=MUTED)
-
     output.parent.mkdir(parents=True, exist_ok=True)
     doc.save(output)
     return output
