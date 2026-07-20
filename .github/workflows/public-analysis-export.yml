@@ -20,18 +20,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install document dependency
+        run: pip install python-docx
       - name: Normalize public dataset in place
         run: python tools/normalize_public_dataset.py --source-dir data/public --output-dir data/public
       - name: Build public analysis summary
         run: python tools/summarize_public_analysis.py --public-dir data/public --output docs/assets/data/analysis_summary.json
+      - name: Build formal project brief
+        run: python tools/build_project_brief_docx.py
       - name: Commit generated public files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/public docs/assets/data/analysis_summary.json
+          git add data/public docs/assets/data/analysis_summary.json docs/files/PsyLens_project_brief.docx
           if git diff --cached --quiet; then
             echo "Generated files already current."
           else
-            git commit -m "data: refresh public analysis artifacts [generated-public-data]"
+            git commit -m "data: refresh public analysis and project brief [generated-public-data]"
             git push origin HEAD:revamp/analysis-methods-doc
           fi
