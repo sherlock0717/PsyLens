@@ -1,26 +1,37 @@
 name: Public Analysis Export
 
 on:
-  pull_request:
+  push:
+    branches: ["revamp/analysis-methods-doc"]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   export:
+    if: ${{ !contains(github.event.head_commit.message, '[generated-public-data]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: revamp/analysis-methods-doc
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Normalize public dataset
-        run: python tools/normalize_public_dataset.py --output-dir artifacts/normalized_public
+      - name: Normalize public dataset in place
+        run: python tools/normalize_public_dataset.py --source-dir data/public --output-dir data/public
       - name: Build public analysis summary
-        run: python tools/summarize_public_analysis.py --public-dir artifacts/normalized_public --output artifacts/public_analysis_summary.json
-      - name: Upload normalized public package
-        uses: actions/upload-artifact@v4
-        with:
-          name: normalized-public-package
-          path: |
-            artifacts/normalized_public
-            artifacts/public_analysis_summary.json
-          if-no-files-found: error
+        run: python tools/summarize_public_analysis.py --public-dir data/public --output docs/assets/data/analysis_summary.json
+      - name: Commit generated public files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/public docs/assets/data/analysis_summary.json
+          if git diff --cached --quiet; then
+            echo "Generated files already current."
+          else
+            git commit -m "data: refresh public analysis artifacts [generated-public-data]"
+            git push origin HEAD:revamp/analysis-methods-doc
+          fi
