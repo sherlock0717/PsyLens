@@ -1,0 +1,4 @@
+candidate_id,platform,keyword,title,url_placeholder,discovered_at,notes
+CAND_0001,PlatformA,平衡 数值,版本平衡讨论（示例）,example://platforma/post/0001,2026-07-17T16:56:33.578346+08:00,reconstructed_template 示例候选；非真实链接
+CAND_0002,PlatformB,匹配 队友,匹配机制吐槽（示例）,example://platformb/post/0002,2026-07-17T16:56:33.578346+08:00,reconstructed_template 示例候选；非真实链接
+CAND_0003,PlatformC,活动 奖励,活动奖励反馈（示例）,example://platformc/post/0003,2026-07-17T16:56:33.578346+08:00,reconstructed_template 示例候选；非真实链接

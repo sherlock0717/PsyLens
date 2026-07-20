@@ -1,0 +1,21 @@
+# 平台配置示例（platforms.example.yaml）
+# 仅示例值。真实抓取需遵守各平台条款；Cookie / 登录态不得提交到仓库。
+
+platforms:
+  PlatformA:
+    kind: forum
+    requires_login: false
+    rate_limit_sec: 1.0
+    notes: 示例论坛平台；真实端点与解析规则请自行实现
+
+  PlatformB:
+    kind: video_comments
+    requires_login: true          # 真实抓取可能需要登录态（Cookie 不入库）
+    rate_limit_sec: 1.5
+    notes: 示例视频评论平台
+
+  PlatformC:
+    kind: forum
+    requires_login: false
+    rate_limit_sec: 1.0
+    notes: 示例论坛平台

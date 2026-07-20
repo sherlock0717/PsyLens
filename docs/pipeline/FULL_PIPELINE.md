@@ -13,7 +13,7 @@
 
 | 步骤 | 对应脚本 | 输入 | 输出 | 网络/登录 | 说明 |
 | --- | --- | --- | --- | --- | --- |
-| 候选发现 | （人工/脚本挑选帖子）| 平台关键词 | 候选帖子清单 | 需网络 | 当前候选发现脚本未纳入公开仓库（见缺失项） |
+| 候选发现 | `pipeline/discovery/candidate_discovery_template.py`（模板，默认 dry-run 离线） | 平台关键词 | 候选帖子清单 | dry-run 离线；真实检索需网络 | 公开模板（`reconstructed_template`） |
 | 页面/评论抓取 | `scripts_public/crawl_tieba_selected.py`、`crawl_bili_selected_auto.py` | 候选清单 | 原始抓取缓存 | 需网络，可能需登录态 | **默认关闭**；不得提交 Cookie/登录缓存 |
 | 缓存 | （抓取脚本内）| 抓取结果 | 本地缓存文件 | — | 缓存不入库 |
 | 预清洗 | `scripts_public/preclean_feedback_registry.py` | 原始缓存 | 预清洗登记 | 离线 | 去噪、字段规整 |
@@ -28,15 +28,21 @@
 ## 与当前 v2 的关系
 
 - legacy 阶段（抓取→AI 精修→证据→洞察→建议）产出的历史结果保留在 `docs/files/**`，作为 legacy 中间产物；
-- v2 重建（稳定 ID、迁移、Agent 提案、provisional 证据、评测、草稿洞察/建议）在 `data/v2/**`；
+- v2 重建（稳定 ID、迁移、离线规则基线提案、provisional 证据、评测、草稿洞察/建议）在 `data/v2/**`；
 - 离线 Demo 用脱敏输入复现「拆分→编码→洞察→建议→评测」链路，不含真实抓取与模型。
 
-## 缺失项（当前公开仓库不含）
+## 已公开内容
 
-- 候选发现脚本；
-- `prompts/` 与 `config/case_*.yaml`（真实运行配置）；
-- 真实示例抓取输入；
-- mock provider（legacy 脚本无 dry-run/mock，Demo 已补）；
-- `requirements.txt` 针对 legacy 脚本的第三方依赖（pandas/openai/requests/bs4 等）。
+当前仓库公开了主要脚本、配置模板、Prompt 模板、依赖清单、示例输入和离线 Demo：
 
-详见 `CONFIGURATION.md`、`PROMPT_REFERENCE.md`、`CRAWLING_GUIDE.md`、`SECURITY_AND_PRIVACY.md`、`FAILURE_RECOVERY.md`。
+- 主要脚本：`scripts_public/**`（抓取/精修/预清洗/合并）；
+- 候选发现模板：`pipeline/discovery/candidate_discovery_template.py`（默认 dry-run、离线）；
+- 配置模板：`pipeline/config/case.example.yaml`、`platforms.example.yaml`（无密钥）；
+- Prompt 模板：`pipeline/prompts/*.md`（6 个）；
+- legacy 依赖：`pipeline/requirements-legacy.txt`（pandas/openai/requests/bs4 等）；
+- 示例输入：`pipeline/examples/**`（脱敏、非真实链接）；
+- 离线 Demo：`tools/run_demo.py`（仅标准库，不联网、不调用模型）。
+
+> 部分历史候选发现逻辑与历史 Prompt 无法精确恢复，`pipeline/**` 中相关内容根据现有脚本重建（标记 `reconstructed_template`），不能保证与最初运行逐字一致。
+
+详见 `pipeline/README.md`、`CONFIGURATION.md`、`PROMPT_REFERENCE.md`、`CRAWLING_GUIDE.md`、`SECURITY_AND_PRIVACY.md`、`FAILURE_RECOVERY.md`。

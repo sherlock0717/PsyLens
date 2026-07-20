@@ -1,0 +1,12 @@
+# legacy 抓取与精修脚本（scripts_public/**）的第三方依赖
+# 根据脚本实际 import 建立；固定主要版本范围。
+# 说明：真实平台抓取可能因平台页面结构变化而失效；这些依赖仅用于历史/本地复现，
+#       离线 Demo（tools/run_demo.py、仅标准库）不需要它们。
+
+pandas>=2.0,<3.0
+pyyaml>=6.0,<7.0
+python-dotenv>=1.0,<2.0
+openai>=1.0,<2.0
+tqdm>=4.66,<5.0
+requests>=2.31,<3.0
+beautifulsoup4>=4.12,<5.0
