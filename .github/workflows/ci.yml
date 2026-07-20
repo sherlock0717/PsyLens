@@ -2,7 +2,7 @@ name: Public Release CI
 
 on:
   push:
-    branches: ["main", "revamp/analysis-methods-doc"]
+    branches: ["main"]
   pull_request:
   workflow_dispatch:
 
