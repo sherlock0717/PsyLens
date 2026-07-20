@@ -38,9 +38,14 @@ def test_page_numbers_from_showcase():
     idx = (REPO_ROOT / "docs" / "index.html").read_text(encoding="utf-8")
     assert "fetch('assets/data/showcase.json')" in idx
     showcase = json.loads((REPO_ROOT / "docs" / "assets" / "data" / "showcase.json").read_text(encoding="utf-8"))
-    # showcase 数字与评测/迁移一致
     ev = json.loads((REPO_ROOT / "data" / "v2" / "evaluation_report.json").read_text(encoding="utf-8"))
-    assert showcase["hero_summary"]["evaluation_status"] == ev["evaluation_status"]
+    # showcase 四分状态与评测报告一致（不再使用裸露 evaluation_status）
+    assert showcase["status"]["structural_integrity_status"] == ev["structural_integrity_status"]
+    assert showcase["status"]["label_review_status"] == ev["label_review_status"]
+    assert showcase["status"]["release_readiness_status"] == ev["release_readiness_status"]
+    # showcase 计数与数据文件一致（sample_count 实际读取）
+    _, samples = audit.read_csv_rows(REPO_ROOT / "data" / "v2" / "samples_v2.csv")
+    assert showcase["counts"]["samples"] == len(samples)
 
 
 def test_no_unexpected_large_files():
@@ -64,3 +69,21 @@ def test_docs_files_history_present():
     for f in ["input_feedback_phase2_multiplatform_clean.csv", "final_evidence_table.csv",
               "04_validated_insights.jsonl", "05_action_matrix.json"]:
         assert (REPO_ROOT / "docs" / "files" / f).exists(), f
+
+
+def test_project_brief_docx_present_and_readable():
+    import pytest
+    docx = pytest.importorskip("docx")
+    p = REPO_ROOT / "docs" / "files" / "PsyLens_project_brief.docx"
+    assert p.exists(), "正式 DOCX 不存在"
+    d = docx.Document(str(p))
+    assert len(d.paragraphs) > 5
+    headings = [x.text for x in d.paragraphs if x.style.name.startswith("Heading")]
+    assert any("项目概述" in h for h in headings)
+
+
+def test_legacy_docx_archived():
+    # 旧 v3/v4 已移出 docs/files，归档到 archive/project_brief_legacy
+    assert not (REPO_ROOT / "docs" / "files" / "PsyLens_enterprise_project_brief_v3.docx").exists()
+    assert not (REPO_ROOT / "docs" / "files" / "PsyLens_enterprise_project_brief_v4.docx").exists()
+    assert (REPO_ROOT / "archive" / "project_brief_legacy" / "PsyLens_enterprise_project_brief_v3.docx").exists()

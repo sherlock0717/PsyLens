@@ -278,7 +278,6 @@ def _read_csv(path):
 
 
 def _sha256(path):
-    import hashlib
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
