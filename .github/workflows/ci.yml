@@ -47,8 +47,11 @@ jobs:
       - name: Ruff - Public release tests
         run: ruff check tests
 
-      - name: Tests
-        run: python -m pytest demo/tests tests -q
+      - name: Demo tests
+        run: python -m pytest demo/tests -q
+
+      - name: Public release tests
+        run: python -m pytest tests -q
 
       - name: Demo smoke
         run: python tools/run_demo.py --provider mock --output artifacts/demo/ci
