@@ -123,15 +123,19 @@ def _read_jsonl(path):
     return [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
 
 
-def _compute_repeatability():
-    """在两个临时目录各运行一次 provisional 生成流程，比较 3 个产物哈希。"""
+def _compute_repeatability(input_dir):
+    """在两个临时目录各运行一次 provisional 生成流程，比较 3 个产物哈希。
+
+    读取的输入来自 evaluator 实际传入的 ``input_dir``（而非仓库固定 data/v2），
+    因此临时目录篡改测试可验证对应输入的可重复性。
+    """
     names = ["evidence_candidates_v2.csv", "evidence_provisional_v2.csv", "evidence_exclusion_log.csv"]
     ga = "2026-07-17T16:56:33.578346+08:00"
     commit = "371d245a0ce82ed5d980472147b49568525e2986"
     try:
         with tempfile.TemporaryDirectory() as t1, tempfile.TemporaryDirectory() as t2:
-            build_prov.build(Path(t1), ga, commit)
-            build_prov.build(Path(t2), ga, commit)
+            build_prov.build(Path(t1), ga, commit, input_dir=input_dir)
+            build_prov.build(Path(t2), ga, commit, input_dir=input_dir)
             match = sum(1 for n in names
                         if audit.sha256_bytes(Path(t1) / n) == audit.sha256_bytes(Path(t2) / n))
     except Exception:
@@ -313,7 +317,7 @@ def evaluate(input_dir=None, output_dir=None):
     metrics["stage_completion_rate"] = _metric(
         rate(completed, len(PLANNED_STAGES)), completed, len(PLANNED_STAGES),
         "分析流程走完了多少步", "stage_completion_rate")
-    rep_ok, rep_total = _compute_repeatability()
+    rep_ok, rep_total = _compute_repeatability(input_dir)
     metrics["repeatability_rate"] = _metric(
         rate(rep_ok, rep_total), rep_ok, rep_total,
         "同样的输入是否每次都得到同样的结果", "repeatability_rate")

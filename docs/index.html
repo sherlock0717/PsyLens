@@ -29,8 +29,8 @@
       </p>
       <dl class="hero-stats" id="heroStats" aria-label="当前案例概况">
         <div><dt>当前案例</dt><dd>三平台社区反馈</dd></div>
-        <div><dt>样本</dt><dd data-showcase="samples">360</dd></div>
-        <div><dt>平台</dt><dd data-showcase="platforms">3</dd></div>
+        <div><dt>样本</dt><dd data-showcase="samples">—</dd></div>
+        <div><dt>平台</dt><dd data-showcase="platforms">—</dd></div>
         <div><dt>provisional 证据</dt><dd data-showcase="provisional_evidence">—</dd></div>
       </dl>
       <p class="muted" id="provisionalNote">其中部分为暂不确定项，全部尚未经过真人复核；这是 provisional 证据数，不是最终有效证据数量。</p>
@@ -62,7 +62,10 @@
 
     <section class="block" id="case">
       <h2>当前案例与数据组成</h2>
-      <p>案例整合三个社区平台的公开反馈，共 360 条样本，每个平台各 120 条。数据分两层：</p>
+      <p>案例整合多个社区平台的公开反馈。样本与每平台数量由页面数据动态载入：当前共
+        <span data-showcase="samples">若干</span> 条样本，覆盖
+        <span data-showcase="platforms">数个</span> 个平台，每个平台
+        <span data-showcase="per_platform">数量相近</span> 条。数据分两层：</p>
       <ul class="clean-list">
         <li><strong>样本层</strong>：一条完整的反馈原文；</li>
         <li><strong>证据层</strong>：从原文中切出的、可单独判断的证据单元。</li>
@@ -94,10 +97,10 @@
     <section class="block" id="evidence">
       <h2>证据示例</h2>
       <figure class="evidence-card" id="evidenceCard">
-        <blockquote data-showcase="evidence_excerpt">……让个金，还要让 3000 的经济去出个八成打完一整把都不一定能做完任务的心之钢……</blockquote>
+        <blockquote data-showcase="evidence_excerpt">示例证据将从公开数据自动载入；每条证据都可回到对应的原始反馈。</blockquote>
         <figcaption>
           <span>这段原始反馈被切成一条证据单元</span>
-          <span class="muted" data-showcase="evidence_meta">当前标签来源：历史 AI 标签（未人工复核）·平台 C</span>
+          <span class="muted" data-showcase="evidence_meta">当前标签来源：历史 AI 标签（未人工复核）</span>
         </figcaption>
       </figure>
       <p class="muted">该示例的证据文本可在对应原始反馈中被唯一定位；页面不展示原始链接与内部编号。</p>
@@ -158,6 +161,7 @@
         var hero = s.hero_summary || {};
         setText('samples', c.samples);
         setText('platforms', hero.platform_count);
+        setText('per_platform', c.per_platform);
         setText('provisional_evidence', c.provisional_evidence);
 
         if (s.provisional_note) {

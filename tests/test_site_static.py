@@ -82,6 +82,24 @@ def test_numbers_are_data_driven():
     assert "验证洞察" not in h
 
 
+def test_body_no_hardcoded_project_counts():
+    """HTML 正文（去脚本）不硬编码具体项目计数；数字由 showcase 注入。"""
+    v = _visible(_html())
+    for num in ["360", "120", "927", "695", "279", "163"]:
+        assert num not in v, f"HTML 正文硬编码了项目计数 {num}"
+    # "2" 作为项目计数（如"2 条""共 2 个"）不得硬编码；版权年份/比例等不算
+    assert not re.search(r"(?<![\d.])2(?![\d.])\s*(条|个|项|平台)", v), "HTML 正文疑似硬编码计数 2"
+
+
+def test_hero_and_case_counts_injected():
+    """样本数、平台数、每平台数量均以 data-showcase 注入，静态回退不含数字。"""
+    h = _html()
+    for key in ["samples", "platforms", "per_platform"]:
+        assert f'data-showcase="{key}"' in h, key
+    # JS 注入 per_platform
+    assert "setText('per_platform'" in h
+
+
 def test_js_uses_textcontent_not_innerhtml():
     """showcase 文案通过 textContent / createElement 注入，禁止 innerHTML。"""
     h = _html()

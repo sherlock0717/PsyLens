@@ -50,12 +50,13 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def build(output_dir, generated_at, source_data_commit):
+def build(output_dir, generated_at, source_data_commit, input_dir=None):
     output_dir = Path(output_dir)
-    _, samples = audit.read_csv_rows(V2_DIR / "samples_v2.csv")
-    _, evidence = audit.read_csv_rows(V2_DIR / "evidence_v2.csv")
-    _, proposals = audit.read_csv_rows(V2_DIR / "rule_based_label_proposals.csv")
-    _, ambiguous = audit.read_csv_rows(V2_DIR / "ambiguous_evidence_queue.csv")
+    input_dir = Path(input_dir) if input_dir else V2_DIR
+    _, samples = audit.read_csv_rows(input_dir / "samples_v2.csv")
+    _, evidence = audit.read_csv_rows(input_dir / "evidence_v2.csv")
+    _, proposals = audit.read_csv_rows(input_dir / "rule_based_label_proposals.csv")
+    _, ambiguous = audit.read_csv_rows(input_dir / "ambiguous_evidence_queue.csv")
     sample_by_id = {r["sample_id"]: r for r in samples}
 
     candidates = []
@@ -199,11 +200,12 @@ def _write(path: Path, cols, rows):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description="构建 provisional 三平台证据层（离线/确定性）")
+    ap.add_argument("--input-dir", default=str(V2_DIR))
     ap.add_argument("--output-dir", default=str(V2_DIR))
     ap.add_argument("--generated-at", default="2026-07-17T16:56:33.578346+08:00")
     ap.add_argument("--source-data-commit", default="371d245a0ce82ed5d980472147b49568525e2986")
     args = ap.parse_args(argv)
-    m = build(args.output_dir, args.generated_at, args.source_data_commit)
+    m = build(args.output_dir, args.generated_at, args.source_data_commit, input_dir=args.input_dir)
     print("provisional 证据层生成完成：")
     print(f"  candidates={m['candidate_count']} provisional={m['provisional_evidence_count']} "
           f"exclusions={m['exclusion_count']}")

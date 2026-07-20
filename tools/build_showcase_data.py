@@ -74,6 +74,35 @@ def _doc_link(repo_ref, rel_path):
     return f"{REPO_URL}/{kind}/{repo_ref}/{rel_path}"
 
 
+def _platform_alias(samples):
+    """将真实平台名映射为匿名标签（平台 A/B/C…），确定性、避免暴露平台身份。"""
+    plats = sorted({(r.get("platform_source", "") or "").strip() for r in samples if r.get("platform_source")})
+    return {p: f"平台 {chr(ord('A') + i)}" for i, p in enumerate(plats)}
+
+
+def _pick_evidence_example(prov_rows, samples):
+    """从 provisional 证据中确定性选取一条 legacy AI 示例；文本截断、平台匿名化。"""
+    alias = _platform_alias(samples)
+    row = next((r for r in prov_rows if r.get("label_source") == "legacy_ai"), None)
+    if row is None and prov_rows:
+        row = prov_rows[0]
+    if row is None:
+        return {
+            "sample_excerpt": "",
+            "platform": "",
+            "label_source": "历史 AI 标签（未人工复核）",
+            "note": "该示例的证据文本可在对应原始反馈中唯一定位；不展示原始链接与内部编号",
+        }
+    text = (row.get("unit_text", "") or "").strip()
+    excerpt = text if len(text) <= 60 else text[:60] + "……"
+    return {
+        "sample_excerpt": excerpt,
+        "platform": alias.get((row.get("platform_source", "") or "").strip(), ""),
+        "label_source": "历史 AI 标签（未人工复核）",
+        "note": "该示例的证据文本可在对应原始反馈中唯一定位；不展示原始链接与内部编号",
+    }
+
+
 def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path=None):
     output = Path(output) if output else OUT
     input_dir = Path(input_dir) if input_dir else V2_DIR
@@ -91,6 +120,7 @@ def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path
     # ---- 计数：全部从文件读取 ----
     sample_count = len(samples)
     platform_count = len({r.get("platform_source") for r in samples})
+    per_platform = sample_count // platform_count if platform_count else 0
     migrated_evidence = len(evidence)
     bili_candidates = len(bili)
     unresolved_ambiguous = sum(1 for r in ambiguous
@@ -139,12 +169,8 @@ def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path
             "plain": mm.get("plain_explanation", ""),
         })
 
-    evidence_example = {
-        "sample_excerpt": "……让个金，还要让 3000 的经济去出个八成打完一整把都不一定能做完任务的心之钢……",
-        "platform": "平台 C",
-        "label_source": "历史 AI 标签（未人工复核）",
-        "note": "该示例的证据文本可在对应原始反馈中唯一定位；不展示原始链接与内部编号",
-    }
+    # ---- 证据示例：从稳定 v2 provisional 证据自动读取（平台匿名化，不硬编码）----
+    evidence_example = _pick_evidence_example(prov_rows, samples)
 
     doc_links = {k: _doc_link(repo_ref, v) for k, v in DOC_PATHS.items()}
 
@@ -166,6 +192,7 @@ def build(output=None, repo_ref=DEFAULT_REPO_REF, input_dir=None, decisions_path
         "evidence_example": evidence_example,
         "counts": {
             "samples": sample_count,
+            "per_platform": per_platform,
             "migrated_evidence": migrated_evidence,
             "bili_candidates": bili_candidates,
             "provisional_evidence": provisional_evidence,
