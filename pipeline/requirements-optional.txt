@@ -1,0 +1,10 @@
+# Optional dependencies for re-implementing real collection or model providers.
+# The public offline workflow does not require this file.
+
+pandas>=2.0,<3.0
+pyyaml>=6.0,<7.0
+python-dotenv>=1.0,<2.0
+openai>=1.0,<2.0
+tqdm>=4.66,<5.0
+requests>=2.31,<3.0
+beautifulsoup4>=4.12,<5.0
