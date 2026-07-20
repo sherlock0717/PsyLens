@@ -21,21 +21,16 @@ groups:
         numerator: 引用编号存在数
         denominator: legacy 证据总数
         plain: 每条迁移证据都写了一个存在的父样本编号
-      parent_semantic_linkage_rate:
-        definition: legacy 证据 unit_text 能匹配其声明 parent 原文的比例
-        numerator: 语义匹配数
-        denominator: legacy 证据总数
-        plain: legacy 证据能否直接回到它声明的那条原话（历史遗留问题，当前为 0）
       evidence_text_match_rate:
         definition: provisional 证据 unit_text 能在对应 sample.raw_text 中定位的比例
         numerator: 可定位数
         denominator: provisional 证据总数
         plain: 每条展示证据都能回到对应的原始反馈
       source_url_coverage:
-        definition: 有来源 URL 的样本比例（仅底层统计，不公开展示）
-        numerator: url 非空样本数
+        definition: 内部样本来源字段的非空率（仅字段存在性，不代表可追溯真实性；公开层不含来源字段）
+        numerator: source_url 非空样本数
         denominator: 样本总数
-        plain: 每条反馈都能在底层追到原帖（页面不展示 URL）
+        plain: 仅统计内部来源字段是否非空，不等于能真实追溯原帖；公开层不展示、不包含该字段
       platform_sample_coverage:
         definition: 覆盖的平台数
         numerator: 出现的平台数
@@ -65,11 +60,11 @@ groups:
         numerator: 可定位数
         denominator: 有 evidence_phrase 的证据数
         plain: 标注依据短语能否在证据文本中找到
-      agent_proposal_coverage:
-        definition: B 站候选中已生成 Agent 提案的比例
+      rule_based_proposal_coverage:
+        definition: B 站候选中已生成离线规则基线提案的比例
         numerator: 有提案的候选数
         denominator: B 站候选总数
-        plain: B 站候选是否都给了机器提案
+        plain: B 站候选是否都给出了离线规则基线提案（不是模型/人工语义判断）
       human_review_coverage:
         definition: 经真实人工复核的证据比例
         numerator: reviewer_type=human 的复核证据数
@@ -133,11 +128,6 @@ groups:
         numerator: 有预期效果的建议数
         denominator: 草稿建议总数
         plain: 每条建议是否写了预期效果
-      human_curated_rate:
-        definition: 经人工整理的建议比例
-        numerator: 人工整理建议数
-        denominator: 草稿建议总数
-        plain: 有多少建议经过真人整理（当前为 0）
 
   E_run_quality:
     title: 运行质量

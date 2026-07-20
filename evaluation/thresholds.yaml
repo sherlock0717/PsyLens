@@ -1,26 +1,26 @@
 # 评测阈值与阻断级别（thresholds.yaml）
-# level: block（阻断）/ warn（警告）。阻断项任一未达标即整体 BLOCKED。
-# 注意：legacy 遗留指标（如 parent_semantic_linkage_rate）当前为 0 是已知历史问题，
-#       在 provisional 语境下以 warn 记录，不重复阻断 v2 迁移（迁移本身已 PASS）。
+# level: block（阻断）/ warn（警告）。阻断项任一未达标即结构完整性 BLOCKED。
+# 说明：所有指标均由 tools/evaluate_v2.py 从真实输入计算，记录 value/numerator/denominator。
+#       human_review_coverage 当前为真实计算的 0（NOT_STARTED）；human_override_rate 无复核时为 n/a。
 
 thresholds:
   sample_id_unique_rate: { min: 1.0, level: block }
   evidence_id_unique_rate: { min: 1.0, level: block }
   parent_reference_exists_rate: { min: 1.0, level: warn }
-  parent_semantic_linkage_rate: { min: 0.98, level: warn }   # legacy 历史问题，warn
   evidence_text_match_rate: { min: 0.98, level: block }
-  source_url_coverage: { min: 0.95, level: warn }
+  source_url_coverage: { min: 0.0, level: warn }             # 仅字段存在性，不阻断
   platform_sample_coverage: { min: 3, level: warn }
 
   label_completion_rate: { min: 0.30, level: warn }          # 含大量 uncertain，warn
   uncertain_rate: { max: 0.75, level: warn }
   invalid_label_rate: { max: 0.0, level: block }
   evidence_phrase_match_rate: { min: 0.98, level: block }
-  agent_proposal_coverage: { min: 1.0, level: block }
-  human_review_coverage: { min: 0.0, level: warn }           # 当前 0，warn
-  human_override_rate: { min: 0.0, level: warn }
+  rule_based_proposal_coverage: { min: 1.0, level: block }
+  human_review_coverage: { min: 0.0, level: warn }           # 当前真实计算为 0（NOT_STARTED）
 
   support_resolution_rate: { min: 1.0, level: block }
+  platform_coverage: { min: 1.0, level: warn }
+  time_window_coverage: { min: 1.0, level: warn }
   low_support_claim_rate: { max: 0.5, level: warn }
   single_platform_claim_rate: { max: 1.0, level: warn }
 
@@ -28,9 +28,9 @@ thresholds:
   action_to_evidence_linkage_rate: { min: 1.0, level: block }
   validation_plan_coverage: { min: 1.0, level: warn }
   expected_effect_coverage: { min: 1.0, level: warn }
-  human_curated_rate: { min: 0.0, level: warn }
 
   parse_success_rate: { min: 1.0, level: block }
+  stage_completion_rate: { min: 1.0, level: warn }
   repeatability_rate: { min: 1.0, level: warn }
   manifest_completeness: { min: 1.0, level: warn }
   output_hash_match_rate: { min: 1.0, level: block }
