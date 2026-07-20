@@ -1,36 +1,35 @@
-# 评测阈值与阻断级别（thresholds.yaml）
-# level: block（阻断）/ warn（警告）。阻断项任一未达标即结构完整性 BLOCKED。
-# 说明：所有指标均由 tools/evaluate_v2.py 从真实输入计算，记录 value/numerator/denominator。
-#       human_review_coverage 当前为真实计算的 0（NOT_STARTED）；human_override_rate 无复核时为 n/a。
+# PsyLens 公开发布门槛
+# block: 未达标时阻止发布；warn: 记录风险并解释。
 
 thresholds:
   sample_id_unique_rate: { min: 1.0, level: block }
   evidence_id_unique_rate: { min: 1.0, level: block }
-  parent_reference_exists_rate: { min: 1.0, level: warn }
-  evidence_text_match_rate: { min: 0.98, level: block }
-  source_url_coverage: { min: 0.0, level: warn }             # 仅字段存在性，不阻断
-  platform_sample_coverage: { min: 3, level: warn }
+  parent_reference_rate: { min: 1.0, level: block }
+  platform_match_rate: { min: 1.0, level: block }
+  evidence_text_match_rate: { min: 1.0, level: block }
 
-  label_completion_rate: { min: 0.30, level: warn }          # 含大量 uncertain，warn
-  uncertain_rate: { max: 0.75, level: warn }
-  invalid_label_rate: { max: 0.0, level: block }
-  evidence_phrase_match_rate: { min: 0.98, level: block }
-  rule_based_proposal_coverage: { min: 1.0, level: block }
-  human_review_coverage: { min: 0.0, level: warn }           # 当前真实计算为 0（NOT_STARTED）
+  public_url_hit_count: { max: 0, level: block }
+  sample_duplicate_group_count: { max: 0, level: warn }
+  evidence_duplicate_group_count: { max: 0, level: warn }
+  required_field_completion_rate: { min: 1.0, level: block }
+  manifest_hash_match_rate: { min: 1.0, level: block }
 
-  support_resolution_rate: { min: 1.0, level: block }
-  platform_coverage: { min: 1.0, level: warn }
-  time_window_coverage: { min: 1.0, level: warn }
-  low_support_claim_rate: { max: 0.5, level: warn }
-  single_platform_claim_rate: { max: 1.0, level: warn }
+  valid_surface_topic_rate: { min: 1.0, level: block }
+  valid_mechanism_rate: { min: 1.0, level: block }
+  explicit_topic_rate: { min: 0.35, level: warn }
+  assigned_mechanism_rate: { min: 0.35, level: warn }
+  mechanism_uncertain_rate: { max: 0.60, level: warn }
+  inclusion_flagged_uncertain_rate: { max: 0.30, level: warn }
+  samples_without_evidence_rate: { max: 0.02, level: warn }
 
-  action_to_insight_linkage_rate: { min: 1.0, level: block }
-  action_to_evidence_linkage_rate: { min: 1.0, level: block }
-  validation_plan_coverage: { min: 1.0, level: warn }
-  expected_effect_coverage: { min: 1.0, level: warn }
+  claim_has_source_dataset: { min: 1.0, level: block }
+  claim_has_denominator: { min: 1.0, level: block }
+  claim_has_scope: { min: 1.0, level: block }
+  platform_density_reported: { min: 1.0, level: warn }
+  causal_language_check: { min: 1.0, level: block }
 
   parse_success_rate: { min: 1.0, level: block }
-  stage_completion_rate: { min: 1.0, level: warn }
-  repeatability_rate: { min: 1.0, level: warn }
-  manifest_completeness: { min: 1.0, level: warn }
-  output_hash_match_rate: { min: 1.0, level: block }
+  deterministic_demo_rate: { min: 1.0, level: block }
+  generated_analysis_match: { min: 1.0, level: block }
+  cross_platform_ci: { min: 1.0, level: block }
+  pages_validation: { min: 1.0, level: block }
