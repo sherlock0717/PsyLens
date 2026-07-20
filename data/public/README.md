@@ -6,6 +6,7 @@
 
 - `samples_public.csv`：360 条完整样本；
 - `evidence_public.csv`：927 条证据单元；
+- `migration_history.json`：公开 schema 迁移操作、数量与保持不变的字段；
 - `public_manifest.json`：字段、行数、转换记录和 SHA-256；
 - `README.md`：字段与解释口径。
 
@@ -37,6 +38,15 @@
 | `label_source` | 编码来源 |
 | `review_status` | 编码流程状态 |
 | `analysis_inclusion_status` | 证据纳入状态 |
+
+## Schema 迁移
+
+公开版 2.0 完成两项字段规范化：
+
+- 移除 360 条样本中与 `public_text` 内容相同的冗余 `raw_text` 列；
+- 将 47 条空的 `surface_topic` 统一写为 `other_uncertain`。
+
+迁移不改变样本编号、证据编号、公开文本、证据文本、父样本关系和平台字段。详细记录见 `migration_history.json`。
 
 ## 两种“不确定”
 
