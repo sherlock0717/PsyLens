@@ -51,8 +51,8 @@ MECH_ACTION = {
 
 def build(output_dir=None):
     output_dir = Path(output_dir) if output_dir else V2_DIR
-    insights = [json.loads(l) for l in (V2_DIR / "structured_insights_draft.jsonl").read_text(
-        encoding="utf-8").splitlines() if l.strip()]
+    insights = [json.loads(line) for line in (V2_DIR / "structured_insights_draft.jsonl").read_text(
+        encoding="utf-8").splitlines() if line.strip()]
     # 取高支持洞察，按证据数降序，最多 6 条生成建议
     high = sorted([x for x in insights if x["support_level"] == "high_support"],
                   key=lambda x: (-x["evidence_count"], x["insight_id"]))[:6]

@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""复核基础设施与 B 站 Agent 标签提案生成器（确定性、离线、不调用任何模型）。
+"""复核基础设施与 B 站离线规则基线提案生成器（确定性、离线、不调用任何模型）。
 
 产出：
-  data/v2/review_queue.csv           待复核队列（legacy 证据 / B 站候选 / 歧义）
-  data/v2/human_review_log.csv       人工复核日志（仅表头 + system_migration 事件，无 human）
-  data/v2/agent_label_proposals.csv  B 站 279 候选的 Agent 提案
+  data/v2/review_queue.csv                 待复核队列（legacy 证据 / B 站候选 / 歧义）
+  data/v2/human_review_log.csv             人工复核日志（仅表头 + system_migration 事件，无 human）
+  data/v2/rule_based_label_proposals.csv   B 站 279 候选的离线规则基线提案
 
 设计要点：
-  - 提案完全由本地规则依据 codebook 生成，**不调用外部模型 API / 在线模型**；
+  - 提案由本地关键词规则依据 codebook 生成，**不是模型/人工 Agent 的语义判断**，
+    **不调用外部模型 API / 在线模型**；
   - 相同输入产生相同输出（确定性）；
-  - proposer_type=agent，proposal_status=agent_proposed_unreviewed；
+  - proposer_type=rule_based_baseline，proposal_status=rule_based_proposed_unreviewed；
   - include_as_evidence ∈ {yes, no, uncertain}，uncertain 真实使用；
   - mechanism_label_proposed 严格取自 codebook 六项；
   - evidence_phrase_proposed 从 candidate_unit_text 确定性提取，保证可定位；
@@ -163,8 +164,8 @@ def build_proposals(bili_rows):
             "proposal_confidence": conf,
             "needs_human_review": needs_review,
             "proposal_reason": reason,
-            "proposer_type": "agent",
-            "proposal_status": "agent_proposed_unreviewed",
+            "proposer_type": "rule_based_baseline",
+            "proposal_status": "rule_based_proposed_unreviewed",
         })
     return proposals
 
@@ -198,8 +199,8 @@ def build_review_queue(evidence_rows, bili_rows, ambiguous_rows):
         rows.append({
             "queue_item_id": f"RQ_{n:05d}", "entity_type": "bili_candidate",
             "entity_id": b.get("queue_id", ""), "source_sample_id": b.get("sample_id", ""),
-            "current_status": "agent_proposed_unreviewed", "priority": "normal",
-            "notes": "B 站候选单元 + Agent 提案待人工复核",
+            "current_status": "rule_based_proposed_unreviewed", "priority": "normal",
+            "notes": "B 站候选单元 + 离线规则基线提案待人工复核",
         })
     for a in ambiguous_rows:
         n += 1
@@ -244,20 +245,20 @@ def build_all(output_dir=None):
     review_queue = build_review_queue(evidence_rows, bili_rows, ambiguous_rows)
     human_log = build_human_review_log(len(evidence_rows))
 
-    write_csv(output_dir / "agent_label_proposals.csv", PROPOSAL_COLS, proposals)
+    write_csv(output_dir / "rule_based_label_proposals.csv", PROPOSAL_COLS, proposals)
     write_csv(output_dir / "review_queue.csv", REVIEW_QUEUE_COLS, review_queue)
     write_csv(output_dir / "human_review_log.csv", HUMAN_LOG_COLS, human_log)
     return proposals, review_queue, human_log
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="复核基础设施与 B 站 Agent 提案生成（离线/确定性）")
+    ap = argparse.ArgumentParser(description="复核基础设施与 B 站离线规则基线提案生成（离线/确定性）")
     ap.add_argument("--output-dir", default=str(V2_DIR))
     args = ap.parse_args(argv)
     proposals, review_queue, human_log = build_all(args.output_dir)
     from collections import Counter
     inc = Counter(p["include_as_evidence"] for p in proposals)
-    print("Agent 提案生成完成：")
+    print("离线规则基线提案生成完成：")
     print(f"  proposals={len(proposals)} include={dict(inc)}")
     print(f"  review_queue={len(review_queue)} human_log={len(human_log)}(仅 system_migration)")
     return 0

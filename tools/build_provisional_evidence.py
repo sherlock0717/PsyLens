@@ -3,15 +3,15 @@
 """构建 provisional 三平台证据层（离线、确定性）。
 
 输出：
-  data/v2/evidence_candidates_v2.csv   全部候选（695 迁移 + 279 B 站提案 + 2 歧义状态）
+  data/v2/evidence_candidates_v2.csv   全部候选（695 迁移 + 279 B 站规则基线提案 + 2 歧义状态）
   data/v2/evidence_provisional_v2.csv  临时证据（695 + B 站 include=yes；uncertain 单独标记；不含 2 歧义）
   data/v2/evidence_exclusion_log.csv   排除记录（B 站 no/uncertain、2 歧义）
   data/v2/provisional_manifest.json    provisional 状态与哈希
 
 原则：
   - unit_text 不修改；
-  - label_source ∈ {legacy_ai, agent_proposed}；
-  - review_status ∈ {legacy_ai_label_unreviewed, agent_proposed_unreviewed}；不得出现 human_* / verified / approved；
+  - label_source ∈ {legacy_ai, rule_based_proposal}；
+  - review_status ∈ {legacy_ai_label_unreviewed, rule_based_proposed_unreviewed}；不得出现 human_* / verified / approved；
   - 2 条 unresolved 歧义证据不进入 provisional；
   - 相同输入产生相同输出。
 """
@@ -19,7 +19,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import datetime
 import hashlib
 import importlib.util
 import json
@@ -55,7 +54,7 @@ def build(output_dir, generated_at, source_data_commit):
     output_dir = Path(output_dir)
     _, samples = audit.read_csv_rows(V2_DIR / "samples_v2.csv")
     _, evidence = audit.read_csv_rows(V2_DIR / "evidence_v2.csv")
-    _, proposals = audit.read_csv_rows(V2_DIR / "agent_label_proposals.csv")
+    _, proposals = audit.read_csv_rows(V2_DIR / "rule_based_label_proposals.csv")
     _, ambiguous = audit.read_csv_rows(V2_DIR / "ambiguous_evidence_queue.csv")
     sample_by_id = {r["sample_id"]: r for r in samples}
 
@@ -95,18 +94,18 @@ def build(output_dir, generated_at, source_data_commit):
         platform = sample_by_id.get(sid, {}).get("platform_source", "Bili")
         inc = p["include_as_evidence"]
         candidates.append({
-            "candidate_id": p["proposal_id"], "source_kind": "bili_agent_proposal",
+            "candidate_id": p["proposal_id"], "source_kind": "bili_rule_based_proposal",
             "evidence_id": "", "sample_id": sid, "platform_source": platform,
             "unit_text": p["candidate_unit_text"], "surface_topic": p.get("surface_topic_proposed", ""),
-            "mechanism_label": p.get("mechanism_label_proposed", ""), "label_source": "agent_proposed",
-            "include_as_evidence": inc, "review_status": "agent_proposed_unreviewed",
+            "mechanism_label": p.get("mechanism_label_proposed", ""), "label_source": "rule_based_proposal",
+            "include_as_evidence": inc, "review_status": "rule_based_proposed_unreviewed",
             "notes": p.get("proposal_reason", ""),
         })
         if inc == "no":
             exclusions.append({
-                "excluded_id": p["proposal_id"], "source_kind": "bili_agent_proposal",
+                "excluded_id": p["proposal_id"], "source_kind": "bili_rule_based_proposal",
                 "sample_id": sid, "platform_source": platform, "unit_text": p["candidate_unit_text"],
-                "exclusion_reason": "agent 提案 include_as_evidence=no（过短/上下文依赖/无机制指向）",
+                "exclusion_reason": "规则基线提案 include_as_evidence=no（过短/上下文依赖/无机制指向）",
                 "recoverable": "yes", "notes": p.get("proposal_reason", ""),
             })
             continue
@@ -120,18 +119,18 @@ def build(output_dir, generated_at, source_data_commit):
             "unit_index": n, "unit_text": p["candidate_unit_text"],
             "surface_topic": p.get("surface_topic_proposed", ""),
             "mechanism_label": p.get("mechanism_label_proposed", ""),
-            "evidence_phrase": p.get("evidence_phrase_proposed", ""), "label_source": "agent_proposed",
+            "evidence_phrase": p.get("evidence_phrase_proposed", ""), "label_source": "rule_based_proposal",
             "proposal_confidence": p.get("proposal_confidence", ""),
-            "review_status": "agent_proposed_unreviewed",
+            "review_status": "rule_based_proposed_unreviewed",
             "analysis_inclusion_status": analysis_status,
             "legacy_evidence_id": "", "queue_id": p.get("queue_id", ""),
-            "notes": "B 站 Agent 提案，未人工复核" + ("；uncertain 单独标记" if inc == "uncertain" else ""),
+            "notes": "B 站离线规则基线提案，未人工复核" + ("；uncertain 单独标记" if inc == "uncertain" else ""),
         })
         if inc == "uncertain":
             exclusions.append({
-                "excluded_id": ev_id, "source_kind": "bili_agent_proposal_uncertain",
+                "excluded_id": ev_id, "source_kind": "bili_rule_based_proposal_uncertain",
                 "sample_id": sid, "platform_source": platform, "unit_text": p["candidate_unit_text"],
-                "exclusion_reason": "agent 提案 include_as_evidence=uncertain（默认不计入正式分析分子，单独标记）",
+                "exclusion_reason": "规则基线提案 include_as_evidence=uncertain（默认不计入正式分析分子，单独标记）",
                 "recoverable": "yes", "notes": "保留在 provisional 但 analysis_inclusion_status=included_flagged_uncertain",
             })
 
@@ -173,10 +172,10 @@ def build(output_dir, generated_at, source_data_commit):
         "platform_distribution": dict(plat_dist),
         "analysis_inclusion_distribution": dict(incl_dist),
         "label_source_distribution": dict(label_src),
-        "review_status_note": "全部为 legacy_ai_label_unreviewed 或 agent_proposed_unreviewed；无人工复核",
+        "review_status_note": "全部为 legacy_ai_label_unreviewed 或 rule_based_proposed_unreviewed；无人工复核",
         "hashes": {},
         "limitations": [
-            "provisional 证据含 legacy AI 标签与 B 站 Agent 提案，均未人工复核",
+            "provisional 证据含 legacy AI 标签与 B 站离线规则基线提案，均未人工复核",
             "uncertain 的 B 站提案以 included_flagged_uncertain 单独标记，默认不计入正式分子",
             "2 条歧义证据未进入 provisional",
             "结构化洞察与行动建议为草稿，默认不公开",

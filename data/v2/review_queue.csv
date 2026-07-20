@@ -694,284 +694,284 @@ RQ_00692,legacy_evidence,TIEBA_0119_U01,TIEBA_0119,legacy_ai_label_unreviewed,no
 RQ_00693,legacy_evidence,TIEBA_0120_U01,TIEBA_0120,legacy_ai_label_unreviewed,normal,legacy 迁移证据待人工复核
 RQ_00694,legacy_evidence,TIEBA_0120_U02,TIEBA_0120,legacy_ai_label_unreviewed,normal,legacy 迁移证据待人工复核
 RQ_00695,legacy_evidence,TIEBA_0120_U03,TIEBA_0120,legacy_ai_label_unreviewed,normal,legacy 迁移证据待人工复核
-RQ_00696,bili_candidate,BQ_0001,BILI_0001,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00697,bili_candidate,BQ_0002,BILI_0002,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00698,bili_candidate,BQ_0003,BILI_0002,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00699,bili_candidate,BQ_0004,BILI_0002,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00700,bili_candidate,BQ_0005,BILI_0002,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00701,bili_candidate,BQ_0006,BILI_0003,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00702,bili_candidate,BQ_0007,BILI_0004,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00703,bili_candidate,BQ_0008,BILI_0005,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00704,bili_candidate,BQ_0009,BILI_0006,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00705,bili_candidate,BQ_0010,BILI_0007,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00706,bili_candidate,BQ_0011,BILI_0007,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00707,bili_candidate,BQ_0012,BILI_0007,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00708,bili_candidate,BQ_0013,BILI_0007,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00709,bili_candidate,BQ_0014,BILI_0008,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00710,bili_candidate,BQ_0015,BILI_0009,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00711,bili_candidate,BQ_0016,BILI_0010,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00712,bili_candidate,BQ_0017,BILI_0010,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00713,bili_candidate,BQ_0018,BILI_0010,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00714,bili_candidate,BQ_0019,BILI_0010,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00715,bili_candidate,BQ_0020,BILI_0011,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00716,bili_candidate,BQ_0021,BILI_0011,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00717,bili_candidate,BQ_0022,BILI_0012,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00718,bili_candidate,BQ_0023,BILI_0012,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00719,bili_candidate,BQ_0024,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00720,bili_candidate,BQ_0025,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00721,bili_candidate,BQ_0026,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00722,bili_candidate,BQ_0027,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00723,bili_candidate,BQ_0028,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00724,bili_candidate,BQ_0029,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00725,bili_candidate,BQ_0030,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00726,bili_candidate,BQ_0031,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00727,bili_candidate,BQ_0032,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00728,bili_candidate,BQ_0033,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00729,bili_candidate,BQ_0034,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00730,bili_candidate,BQ_0035,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00731,bili_candidate,BQ_0036,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00732,bili_candidate,BQ_0037,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00733,bili_candidate,BQ_0038,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00734,bili_candidate,BQ_0039,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00735,bili_candidate,BQ_0040,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00736,bili_candidate,BQ_0041,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00737,bili_candidate,BQ_0042,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00738,bili_candidate,BQ_0043,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00739,bili_candidate,BQ_0044,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00740,bili_candidate,BQ_0045,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00741,bili_candidate,BQ_0046,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00742,bili_candidate,BQ_0047,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00743,bili_candidate,BQ_0048,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00744,bili_candidate,BQ_0049,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00745,bili_candidate,BQ_0050,BILI_0013,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00746,bili_candidate,BQ_0051,BILI_0014,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00747,bili_candidate,BQ_0052,BILI_0014,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00748,bili_candidate,BQ_0053,BILI_0015,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00749,bili_candidate,BQ_0054,BILI_0016,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00750,bili_candidate,BQ_0055,BILI_0016,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00751,bili_candidate,BQ_0056,BILI_0016,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00752,bili_candidate,BQ_0057,BILI_0017,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00753,bili_candidate,BQ_0058,BILI_0017,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00754,bili_candidate,BQ_0059,BILI_0017,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00755,bili_candidate,BQ_0060,BILI_0018,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00756,bili_candidate,BQ_0061,BILI_0018,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00757,bili_candidate,BQ_0062,BILI_0019,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00758,bili_candidate,BQ_0063,BILI_0019,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00759,bili_candidate,BQ_0064,BILI_0020,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00760,bili_candidate,BQ_0065,BILI_0021,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00761,bili_candidate,BQ_0066,BILI_0022,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00762,bili_candidate,BQ_0067,BILI_0023,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00763,bili_candidate,BQ_0068,BILI_0024,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00764,bili_candidate,BQ_0069,BILI_0025,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00765,bili_candidate,BQ_0070,BILI_0025,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00766,bili_candidate,BQ_0071,BILI_0025,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00767,bili_candidate,BQ_0072,BILI_0025,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00768,bili_candidate,BQ_0073,BILI_0025,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00769,bili_candidate,BQ_0074,BILI_0026,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00770,bili_candidate,BQ_0075,BILI_0026,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00771,bili_candidate,BQ_0076,BILI_0026,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00772,bili_candidate,BQ_0077,BILI_0027,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00773,bili_candidate,BQ_0078,BILI_0028,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00774,bili_candidate,BQ_0079,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00775,bili_candidate,BQ_0080,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00776,bili_candidate,BQ_0081,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00777,bili_candidate,BQ_0082,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00778,bili_candidate,BQ_0083,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00779,bili_candidate,BQ_0084,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00780,bili_candidate,BQ_0085,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00781,bili_candidate,BQ_0086,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00782,bili_candidate,BQ_0087,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00783,bili_candidate,BQ_0088,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00784,bili_candidate,BQ_0089,BILI_0029,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00785,bili_candidate,BQ_0090,BILI_0030,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00786,bili_candidate,BQ_0091,BILI_0030,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00787,bili_candidate,BQ_0092,BILI_0030,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00788,bili_candidate,BQ_0093,BILI_0031,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00789,bili_candidate,BQ_0094,BILI_0031,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00790,bili_candidate,BQ_0095,BILI_0031,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00791,bili_candidate,BQ_0096,BILI_0031,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00792,bili_candidate,BQ_0097,BILI_0031,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00793,bili_candidate,BQ_0098,BILI_0031,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00794,bili_candidate,BQ_0099,BILI_0031,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00795,bili_candidate,BQ_0100,BILI_0031,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00796,bili_candidate,BQ_0101,BILI_0032,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00797,bili_candidate,BQ_0102,BILI_0032,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00798,bili_candidate,BQ_0103,BILI_0032,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00799,bili_candidate,BQ_0104,BILI_0033,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00800,bili_candidate,BQ_0105,BILI_0034,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00801,bili_candidate,BQ_0106,BILI_0035,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00802,bili_candidate,BQ_0107,BILI_0036,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00803,bili_candidate,BQ_0108,BILI_0036,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00804,bili_candidate,BQ_0109,BILI_0037,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00805,bili_candidate,BQ_0110,BILI_0037,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00806,bili_candidate,BQ_0111,BILI_0037,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00807,bili_candidate,BQ_0112,BILI_0038,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00808,bili_candidate,BQ_0113,BILI_0039,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00809,bili_candidate,BQ_0114,BILI_0040,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00810,bili_candidate,BQ_0115,BILI_0040,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00811,bili_candidate,BQ_0116,BILI_0041,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00812,bili_candidate,BQ_0117,BILI_0041,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00813,bili_candidate,BQ_0118,BILI_0042,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00814,bili_candidate,BQ_0119,BILI_0042,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00815,bili_candidate,BQ_0120,BILI_0043,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00816,bili_candidate,BQ_0121,BILI_0044,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00817,bili_candidate,BQ_0122,BILI_0044,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00818,bili_candidate,BQ_0123,BILI_0044,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00819,bili_candidate,BQ_0124,BILI_0044,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00820,bili_candidate,BQ_0125,BILI_0044,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00821,bili_candidate,BQ_0126,BILI_0045,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00822,bili_candidate,BQ_0127,BILI_0046,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00823,bili_candidate,BQ_0128,BILI_0046,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00824,bili_candidate,BQ_0129,BILI_0046,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00825,bili_candidate,BQ_0130,BILI_0047,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00826,bili_candidate,BQ_0131,BILI_0047,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00827,bili_candidate,BQ_0132,BILI_0048,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00828,bili_candidate,BQ_0133,BILI_0048,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00829,bili_candidate,BQ_0134,BILI_0048,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00830,bili_candidate,BQ_0135,BILI_0048,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00831,bili_candidate,BQ_0136,BILI_0049,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00832,bili_candidate,BQ_0137,BILI_0049,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00833,bili_candidate,BQ_0138,BILI_0049,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00834,bili_candidate,BQ_0139,BILI_0049,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00835,bili_candidate,BQ_0140,BILI_0050,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00836,bili_candidate,BQ_0141,BILI_0050,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00837,bili_candidate,BQ_0142,BILI_0050,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00838,bili_candidate,BQ_0143,BILI_0051,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00839,bili_candidate,BQ_0144,BILI_0051,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00840,bili_candidate,BQ_0145,BILI_0051,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00841,bili_candidate,BQ_0146,BILI_0051,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00842,bili_candidate,BQ_0147,BILI_0052,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00843,bili_candidate,BQ_0148,BILI_0053,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00844,bili_candidate,BQ_0149,BILI_0053,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00845,bili_candidate,BQ_0150,BILI_0053,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00846,bili_candidate,BQ_0151,BILI_0053,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00847,bili_candidate,BQ_0152,BILI_0053,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00848,bili_candidate,BQ_0153,BILI_0053,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00849,bili_candidate,BQ_0154,BILI_0053,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00850,bili_candidate,BQ_0155,BILI_0053,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00851,bili_candidate,BQ_0156,BILI_0053,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00852,bili_candidate,BQ_0157,BILI_0054,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00853,bili_candidate,BQ_0158,BILI_0054,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00854,bili_candidate,BQ_0159,BILI_0054,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00855,bili_candidate,BQ_0160,BILI_0054,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00856,bili_candidate,BQ_0161,BILI_0054,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00857,bili_candidate,BQ_0162,BILI_0054,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00858,bili_candidate,BQ_0163,BILI_0054,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00859,bili_candidate,BQ_0164,BILI_0054,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00860,bili_candidate,BQ_0165,BILI_0054,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00861,bili_candidate,BQ_0166,BILI_0055,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00862,bili_candidate,BQ_0167,BILI_0056,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00863,bili_candidate,BQ_0168,BILI_0057,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00864,bili_candidate,BQ_0169,BILI_0057,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00865,bili_candidate,BQ_0170,BILI_0057,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00866,bili_candidate,BQ_0171,BILI_0057,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00867,bili_candidate,BQ_0172,BILI_0058,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00868,bili_candidate,BQ_0173,BILI_0058,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00869,bili_candidate,BQ_0174,BILI_0059,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00870,bili_candidate,BQ_0175,BILI_0060,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00871,bili_candidate,BQ_0176,BILI_0060,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00872,bili_candidate,BQ_0177,BILI_0060,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00873,bili_candidate,BQ_0178,BILI_0061,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00874,bili_candidate,BQ_0179,BILI_0062,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00875,bili_candidate,BQ_0180,BILI_0063,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00876,bili_candidate,BQ_0181,BILI_0064,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00877,bili_candidate,BQ_0182,BILI_0065,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00878,bili_candidate,BQ_0183,BILI_0066,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00879,bili_candidate,BQ_0184,BILI_0067,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00880,bili_candidate,BQ_0185,BILI_0068,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00881,bili_candidate,BQ_0186,BILI_0069,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00882,bili_candidate,BQ_0187,BILI_0070,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00883,bili_candidate,BQ_0188,BILI_0070,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00884,bili_candidate,BQ_0189,BILI_0071,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00885,bili_candidate,BQ_0190,BILI_0071,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00886,bili_candidate,BQ_0191,BILI_0071,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00887,bili_candidate,BQ_0192,BILI_0071,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00888,bili_candidate,BQ_0193,BILI_0072,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00889,bili_candidate,BQ_0194,BILI_0073,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00890,bili_candidate,BQ_0195,BILI_0073,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00891,bili_candidate,BQ_0196,BILI_0074,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00892,bili_candidate,BQ_0197,BILI_0075,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00893,bili_candidate,BQ_0198,BILI_0076,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00894,bili_candidate,BQ_0199,BILI_0076,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00895,bili_candidate,BQ_0200,BILI_0077,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00896,bili_candidate,BQ_0201,BILI_0078,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00897,bili_candidate,BQ_0202,BILI_0078,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00898,bili_candidate,BQ_0203,BILI_0078,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00899,bili_candidate,BQ_0204,BILI_0079,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00900,bili_candidate,BQ_0205,BILI_0080,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00901,bili_candidate,BQ_0206,BILI_0080,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00902,bili_candidate,BQ_0207,BILI_0080,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00903,bili_candidate,BQ_0208,BILI_0081,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00904,bili_candidate,BQ_0209,BILI_0082,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00905,bili_candidate,BQ_0210,BILI_0083,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00906,bili_candidate,BQ_0211,BILI_0083,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00907,bili_candidate,BQ_0212,BILI_0084,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00908,bili_candidate,BQ_0213,BILI_0084,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00909,bili_candidate,BQ_0214,BILI_0084,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00910,bili_candidate,BQ_0215,BILI_0085,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00911,bili_candidate,BQ_0216,BILI_0086,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00912,bili_candidate,BQ_0217,BILI_0087,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00913,bili_candidate,BQ_0218,BILI_0088,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00914,bili_candidate,BQ_0219,BILI_0088,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00915,bili_candidate,BQ_0220,BILI_0089,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00916,bili_candidate,BQ_0221,BILI_0090,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00917,bili_candidate,BQ_0222,BILI_0090,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00918,bili_candidate,BQ_0223,BILI_0091,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00919,bili_candidate,BQ_0224,BILI_0092,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00920,bili_candidate,BQ_0225,BILI_0092,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00921,bili_candidate,BQ_0226,BILI_0092,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00922,bili_candidate,BQ_0227,BILI_0092,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00923,bili_candidate,BQ_0228,BILI_0092,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00924,bili_candidate,BQ_0229,BILI_0093,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00925,bili_candidate,BQ_0230,BILI_0094,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00926,bili_candidate,BQ_0231,BILI_0095,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00927,bili_candidate,BQ_0232,BILI_0096,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00928,bili_candidate,BQ_0233,BILI_0097,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00929,bili_candidate,BQ_0234,BILI_0097,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00930,bili_candidate,BQ_0235,BILI_0098,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00931,bili_candidate,BQ_0236,BILI_0099,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00932,bili_candidate,BQ_0237,BILI_0099,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00933,bili_candidate,BQ_0238,BILI_0100,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00934,bili_candidate,BQ_0239,BILI_0100,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00935,bili_candidate,BQ_0240,BILI_0100,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00936,bili_candidate,BQ_0241,BILI_0100,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00937,bili_candidate,BQ_0242,BILI_0101,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00938,bili_candidate,BQ_0243,BILI_0102,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00939,bili_candidate,BQ_0244,BILI_0103,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00940,bili_candidate,BQ_0245,BILI_0104,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00941,bili_candidate,BQ_0246,BILI_0105,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00942,bili_candidate,BQ_0247,BILI_0106,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00943,bili_candidate,BQ_0248,BILI_0106,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00944,bili_candidate,BQ_0249,BILI_0106,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00945,bili_candidate,BQ_0250,BILI_0106,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00946,bili_candidate,BQ_0251,BILI_0106,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00947,bili_candidate,BQ_0252,BILI_0106,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00948,bili_candidate,BQ_0253,BILI_0107,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00949,bili_candidate,BQ_0254,BILI_0108,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00950,bili_candidate,BQ_0255,BILI_0108,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00951,bili_candidate,BQ_0256,BILI_0108,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00952,bili_candidate,BQ_0257,BILI_0109,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00953,bili_candidate,BQ_0258,BILI_0110,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00954,bili_candidate,BQ_0259,BILI_0110,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00955,bili_candidate,BQ_0260,BILI_0111,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00956,bili_candidate,BQ_0261,BILI_0112,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00957,bili_candidate,BQ_0262,BILI_0112,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00958,bili_candidate,BQ_0263,BILI_0112,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00959,bili_candidate,BQ_0264,BILI_0112,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00960,bili_candidate,BQ_0265,BILI_0113,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00961,bili_candidate,BQ_0266,BILI_0113,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00962,bili_candidate,BQ_0267,BILI_0113,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00963,bili_candidate,BQ_0268,BILI_0113,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00964,bili_candidate,BQ_0269,BILI_0113,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00965,bili_candidate,BQ_0270,BILI_0113,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00966,bili_candidate,BQ_0271,BILI_0114,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00967,bili_candidate,BQ_0272,BILI_0115,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00968,bili_candidate,BQ_0273,BILI_0116,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00969,bili_candidate,BQ_0274,BILI_0117,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00970,bili_candidate,BQ_0275,BILI_0117,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00971,bili_candidate,BQ_0276,BILI_0118,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00972,bili_candidate,BQ_0277,BILI_0119,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00973,bili_candidate,BQ_0278,BILI_0120,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
-RQ_00974,bili_candidate,BQ_0279,BILI_0120,agent_proposed_unreviewed,normal,B 站候选单元 + Agent 提案待人工复核
+RQ_00696,bili_candidate,BQ_0001,BILI_0001,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00697,bili_candidate,BQ_0002,BILI_0002,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00698,bili_candidate,BQ_0003,BILI_0002,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00699,bili_candidate,BQ_0004,BILI_0002,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00700,bili_candidate,BQ_0005,BILI_0002,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00701,bili_candidate,BQ_0006,BILI_0003,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00702,bili_candidate,BQ_0007,BILI_0004,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00703,bili_candidate,BQ_0008,BILI_0005,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00704,bili_candidate,BQ_0009,BILI_0006,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00705,bili_candidate,BQ_0010,BILI_0007,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00706,bili_candidate,BQ_0011,BILI_0007,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00707,bili_candidate,BQ_0012,BILI_0007,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00708,bili_candidate,BQ_0013,BILI_0007,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00709,bili_candidate,BQ_0014,BILI_0008,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00710,bili_candidate,BQ_0015,BILI_0009,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00711,bili_candidate,BQ_0016,BILI_0010,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00712,bili_candidate,BQ_0017,BILI_0010,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00713,bili_candidate,BQ_0018,BILI_0010,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00714,bili_candidate,BQ_0019,BILI_0010,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00715,bili_candidate,BQ_0020,BILI_0011,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00716,bili_candidate,BQ_0021,BILI_0011,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00717,bili_candidate,BQ_0022,BILI_0012,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00718,bili_candidate,BQ_0023,BILI_0012,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00719,bili_candidate,BQ_0024,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00720,bili_candidate,BQ_0025,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00721,bili_candidate,BQ_0026,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00722,bili_candidate,BQ_0027,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00723,bili_candidate,BQ_0028,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00724,bili_candidate,BQ_0029,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00725,bili_candidate,BQ_0030,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00726,bili_candidate,BQ_0031,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00727,bili_candidate,BQ_0032,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00728,bili_candidate,BQ_0033,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00729,bili_candidate,BQ_0034,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00730,bili_candidate,BQ_0035,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00731,bili_candidate,BQ_0036,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00732,bili_candidate,BQ_0037,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00733,bili_candidate,BQ_0038,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00734,bili_candidate,BQ_0039,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00735,bili_candidate,BQ_0040,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00736,bili_candidate,BQ_0041,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00737,bili_candidate,BQ_0042,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00738,bili_candidate,BQ_0043,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00739,bili_candidate,BQ_0044,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00740,bili_candidate,BQ_0045,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00741,bili_candidate,BQ_0046,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00742,bili_candidate,BQ_0047,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00743,bili_candidate,BQ_0048,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00744,bili_candidate,BQ_0049,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00745,bili_candidate,BQ_0050,BILI_0013,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00746,bili_candidate,BQ_0051,BILI_0014,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00747,bili_candidate,BQ_0052,BILI_0014,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00748,bili_candidate,BQ_0053,BILI_0015,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00749,bili_candidate,BQ_0054,BILI_0016,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00750,bili_candidate,BQ_0055,BILI_0016,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00751,bili_candidate,BQ_0056,BILI_0016,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00752,bili_candidate,BQ_0057,BILI_0017,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00753,bili_candidate,BQ_0058,BILI_0017,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00754,bili_candidate,BQ_0059,BILI_0017,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00755,bili_candidate,BQ_0060,BILI_0018,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00756,bili_candidate,BQ_0061,BILI_0018,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00757,bili_candidate,BQ_0062,BILI_0019,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00758,bili_candidate,BQ_0063,BILI_0019,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00759,bili_candidate,BQ_0064,BILI_0020,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00760,bili_candidate,BQ_0065,BILI_0021,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00761,bili_candidate,BQ_0066,BILI_0022,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00762,bili_candidate,BQ_0067,BILI_0023,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00763,bili_candidate,BQ_0068,BILI_0024,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00764,bili_candidate,BQ_0069,BILI_0025,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00765,bili_candidate,BQ_0070,BILI_0025,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00766,bili_candidate,BQ_0071,BILI_0025,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00767,bili_candidate,BQ_0072,BILI_0025,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00768,bili_candidate,BQ_0073,BILI_0025,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00769,bili_candidate,BQ_0074,BILI_0026,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00770,bili_candidate,BQ_0075,BILI_0026,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00771,bili_candidate,BQ_0076,BILI_0026,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00772,bili_candidate,BQ_0077,BILI_0027,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00773,bili_candidate,BQ_0078,BILI_0028,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00774,bili_candidate,BQ_0079,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00775,bili_candidate,BQ_0080,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00776,bili_candidate,BQ_0081,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00777,bili_candidate,BQ_0082,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00778,bili_candidate,BQ_0083,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00779,bili_candidate,BQ_0084,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00780,bili_candidate,BQ_0085,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00781,bili_candidate,BQ_0086,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00782,bili_candidate,BQ_0087,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00783,bili_candidate,BQ_0088,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00784,bili_candidate,BQ_0089,BILI_0029,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00785,bili_candidate,BQ_0090,BILI_0030,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00786,bili_candidate,BQ_0091,BILI_0030,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00787,bili_candidate,BQ_0092,BILI_0030,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00788,bili_candidate,BQ_0093,BILI_0031,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00789,bili_candidate,BQ_0094,BILI_0031,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00790,bili_candidate,BQ_0095,BILI_0031,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00791,bili_candidate,BQ_0096,BILI_0031,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00792,bili_candidate,BQ_0097,BILI_0031,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00793,bili_candidate,BQ_0098,BILI_0031,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00794,bili_candidate,BQ_0099,BILI_0031,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00795,bili_candidate,BQ_0100,BILI_0031,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00796,bili_candidate,BQ_0101,BILI_0032,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00797,bili_candidate,BQ_0102,BILI_0032,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00798,bili_candidate,BQ_0103,BILI_0032,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00799,bili_candidate,BQ_0104,BILI_0033,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00800,bili_candidate,BQ_0105,BILI_0034,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00801,bili_candidate,BQ_0106,BILI_0035,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00802,bili_candidate,BQ_0107,BILI_0036,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00803,bili_candidate,BQ_0108,BILI_0036,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00804,bili_candidate,BQ_0109,BILI_0037,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00805,bili_candidate,BQ_0110,BILI_0037,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00806,bili_candidate,BQ_0111,BILI_0037,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00807,bili_candidate,BQ_0112,BILI_0038,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00808,bili_candidate,BQ_0113,BILI_0039,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00809,bili_candidate,BQ_0114,BILI_0040,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00810,bili_candidate,BQ_0115,BILI_0040,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00811,bili_candidate,BQ_0116,BILI_0041,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00812,bili_candidate,BQ_0117,BILI_0041,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00813,bili_candidate,BQ_0118,BILI_0042,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00814,bili_candidate,BQ_0119,BILI_0042,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00815,bili_candidate,BQ_0120,BILI_0043,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00816,bili_candidate,BQ_0121,BILI_0044,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00817,bili_candidate,BQ_0122,BILI_0044,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00818,bili_candidate,BQ_0123,BILI_0044,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00819,bili_candidate,BQ_0124,BILI_0044,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00820,bili_candidate,BQ_0125,BILI_0044,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00821,bili_candidate,BQ_0126,BILI_0045,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00822,bili_candidate,BQ_0127,BILI_0046,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00823,bili_candidate,BQ_0128,BILI_0046,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00824,bili_candidate,BQ_0129,BILI_0046,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00825,bili_candidate,BQ_0130,BILI_0047,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00826,bili_candidate,BQ_0131,BILI_0047,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00827,bili_candidate,BQ_0132,BILI_0048,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00828,bili_candidate,BQ_0133,BILI_0048,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00829,bili_candidate,BQ_0134,BILI_0048,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00830,bili_candidate,BQ_0135,BILI_0048,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00831,bili_candidate,BQ_0136,BILI_0049,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00832,bili_candidate,BQ_0137,BILI_0049,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00833,bili_candidate,BQ_0138,BILI_0049,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00834,bili_candidate,BQ_0139,BILI_0049,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00835,bili_candidate,BQ_0140,BILI_0050,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00836,bili_candidate,BQ_0141,BILI_0050,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00837,bili_candidate,BQ_0142,BILI_0050,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00838,bili_candidate,BQ_0143,BILI_0051,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00839,bili_candidate,BQ_0144,BILI_0051,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00840,bili_candidate,BQ_0145,BILI_0051,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00841,bili_candidate,BQ_0146,BILI_0051,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00842,bili_candidate,BQ_0147,BILI_0052,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00843,bili_candidate,BQ_0148,BILI_0053,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00844,bili_candidate,BQ_0149,BILI_0053,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00845,bili_candidate,BQ_0150,BILI_0053,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00846,bili_candidate,BQ_0151,BILI_0053,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00847,bili_candidate,BQ_0152,BILI_0053,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00848,bili_candidate,BQ_0153,BILI_0053,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00849,bili_candidate,BQ_0154,BILI_0053,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00850,bili_candidate,BQ_0155,BILI_0053,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00851,bili_candidate,BQ_0156,BILI_0053,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00852,bili_candidate,BQ_0157,BILI_0054,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00853,bili_candidate,BQ_0158,BILI_0054,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00854,bili_candidate,BQ_0159,BILI_0054,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00855,bili_candidate,BQ_0160,BILI_0054,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00856,bili_candidate,BQ_0161,BILI_0054,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00857,bili_candidate,BQ_0162,BILI_0054,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00858,bili_candidate,BQ_0163,BILI_0054,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00859,bili_candidate,BQ_0164,BILI_0054,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00860,bili_candidate,BQ_0165,BILI_0054,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00861,bili_candidate,BQ_0166,BILI_0055,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00862,bili_candidate,BQ_0167,BILI_0056,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00863,bili_candidate,BQ_0168,BILI_0057,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00864,bili_candidate,BQ_0169,BILI_0057,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00865,bili_candidate,BQ_0170,BILI_0057,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00866,bili_candidate,BQ_0171,BILI_0057,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00867,bili_candidate,BQ_0172,BILI_0058,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00868,bili_candidate,BQ_0173,BILI_0058,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00869,bili_candidate,BQ_0174,BILI_0059,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00870,bili_candidate,BQ_0175,BILI_0060,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00871,bili_candidate,BQ_0176,BILI_0060,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00872,bili_candidate,BQ_0177,BILI_0060,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00873,bili_candidate,BQ_0178,BILI_0061,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00874,bili_candidate,BQ_0179,BILI_0062,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00875,bili_candidate,BQ_0180,BILI_0063,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00876,bili_candidate,BQ_0181,BILI_0064,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00877,bili_candidate,BQ_0182,BILI_0065,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00878,bili_candidate,BQ_0183,BILI_0066,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00879,bili_candidate,BQ_0184,BILI_0067,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00880,bili_candidate,BQ_0185,BILI_0068,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00881,bili_candidate,BQ_0186,BILI_0069,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00882,bili_candidate,BQ_0187,BILI_0070,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00883,bili_candidate,BQ_0188,BILI_0070,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00884,bili_candidate,BQ_0189,BILI_0071,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00885,bili_candidate,BQ_0190,BILI_0071,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00886,bili_candidate,BQ_0191,BILI_0071,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00887,bili_candidate,BQ_0192,BILI_0071,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00888,bili_candidate,BQ_0193,BILI_0072,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00889,bili_candidate,BQ_0194,BILI_0073,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00890,bili_candidate,BQ_0195,BILI_0073,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00891,bili_candidate,BQ_0196,BILI_0074,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00892,bili_candidate,BQ_0197,BILI_0075,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00893,bili_candidate,BQ_0198,BILI_0076,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00894,bili_candidate,BQ_0199,BILI_0076,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00895,bili_candidate,BQ_0200,BILI_0077,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00896,bili_candidate,BQ_0201,BILI_0078,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00897,bili_candidate,BQ_0202,BILI_0078,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00898,bili_candidate,BQ_0203,BILI_0078,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00899,bili_candidate,BQ_0204,BILI_0079,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00900,bili_candidate,BQ_0205,BILI_0080,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00901,bili_candidate,BQ_0206,BILI_0080,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00902,bili_candidate,BQ_0207,BILI_0080,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00903,bili_candidate,BQ_0208,BILI_0081,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00904,bili_candidate,BQ_0209,BILI_0082,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00905,bili_candidate,BQ_0210,BILI_0083,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00906,bili_candidate,BQ_0211,BILI_0083,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00907,bili_candidate,BQ_0212,BILI_0084,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00908,bili_candidate,BQ_0213,BILI_0084,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00909,bili_candidate,BQ_0214,BILI_0084,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00910,bili_candidate,BQ_0215,BILI_0085,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00911,bili_candidate,BQ_0216,BILI_0086,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00912,bili_candidate,BQ_0217,BILI_0087,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00913,bili_candidate,BQ_0218,BILI_0088,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00914,bili_candidate,BQ_0219,BILI_0088,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00915,bili_candidate,BQ_0220,BILI_0089,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00916,bili_candidate,BQ_0221,BILI_0090,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00917,bili_candidate,BQ_0222,BILI_0090,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00918,bili_candidate,BQ_0223,BILI_0091,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00919,bili_candidate,BQ_0224,BILI_0092,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00920,bili_candidate,BQ_0225,BILI_0092,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00921,bili_candidate,BQ_0226,BILI_0092,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00922,bili_candidate,BQ_0227,BILI_0092,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00923,bili_candidate,BQ_0228,BILI_0092,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00924,bili_candidate,BQ_0229,BILI_0093,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00925,bili_candidate,BQ_0230,BILI_0094,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00926,bili_candidate,BQ_0231,BILI_0095,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00927,bili_candidate,BQ_0232,BILI_0096,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00928,bili_candidate,BQ_0233,BILI_0097,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00929,bili_candidate,BQ_0234,BILI_0097,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00930,bili_candidate,BQ_0235,BILI_0098,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00931,bili_candidate,BQ_0236,BILI_0099,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00932,bili_candidate,BQ_0237,BILI_0099,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00933,bili_candidate,BQ_0238,BILI_0100,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00934,bili_candidate,BQ_0239,BILI_0100,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00935,bili_candidate,BQ_0240,BILI_0100,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00936,bili_candidate,BQ_0241,BILI_0100,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00937,bili_candidate,BQ_0242,BILI_0101,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00938,bili_candidate,BQ_0243,BILI_0102,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00939,bili_candidate,BQ_0244,BILI_0103,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00940,bili_candidate,BQ_0245,BILI_0104,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00941,bili_candidate,BQ_0246,BILI_0105,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00942,bili_candidate,BQ_0247,BILI_0106,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00943,bili_candidate,BQ_0248,BILI_0106,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00944,bili_candidate,BQ_0249,BILI_0106,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00945,bili_candidate,BQ_0250,BILI_0106,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00946,bili_candidate,BQ_0251,BILI_0106,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00947,bili_candidate,BQ_0252,BILI_0106,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00948,bili_candidate,BQ_0253,BILI_0107,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00949,bili_candidate,BQ_0254,BILI_0108,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00950,bili_candidate,BQ_0255,BILI_0108,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00951,bili_candidate,BQ_0256,BILI_0108,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00952,bili_candidate,BQ_0257,BILI_0109,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00953,bili_candidate,BQ_0258,BILI_0110,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00954,bili_candidate,BQ_0259,BILI_0110,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00955,bili_candidate,BQ_0260,BILI_0111,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00956,bili_candidate,BQ_0261,BILI_0112,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00957,bili_candidate,BQ_0262,BILI_0112,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00958,bili_candidate,BQ_0263,BILI_0112,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00959,bili_candidate,BQ_0264,BILI_0112,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00960,bili_candidate,BQ_0265,BILI_0113,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00961,bili_candidate,BQ_0266,BILI_0113,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00962,bili_candidate,BQ_0267,BILI_0113,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00963,bili_candidate,BQ_0268,BILI_0113,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00964,bili_candidate,BQ_0269,BILI_0113,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00965,bili_candidate,BQ_0270,BILI_0113,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00966,bili_candidate,BQ_0271,BILI_0114,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00967,bili_candidate,BQ_0272,BILI_0115,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00968,bili_candidate,BQ_0273,BILI_0116,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00969,bili_candidate,BQ_0274,BILI_0117,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00970,bili_candidate,BQ_0275,BILI_0117,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00971,bili_candidate,BQ_0276,BILI_0118,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00972,bili_candidate,BQ_0277,BILI_0119,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00973,bili_candidate,BQ_0278,BILI_0120,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
+RQ_00974,bili_candidate,BQ_0279,BILI_0120,rule_based_proposed_unreviewed,normal,B 站候选单元 + 离线规则基线提案待人工复核
 RQ_00975,ambiguous_evidence,83_u2,,pending_human_resolution,high,歧义证据待人工确认候选
 RQ_00976,ambiguous_evidence,96_u3,,pending_human_resolution,high,歧义证据待人工确认候选

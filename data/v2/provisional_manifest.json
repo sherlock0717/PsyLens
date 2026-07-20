@@ -16,16 +16,16 @@
   },
   "label_source_distribution": {
     "legacy_ai": 695,
-    "agent_proposed": 232
+    "rule_based_proposal": 232
   },
-  "review_status_note": "全部为 legacy_ai_label_unreviewed 或 agent_proposed_unreviewed；无人工复核",
+  "review_status_note": "全部为 legacy_ai_label_unreviewed 或 rule_based_proposed_unreviewed；无人工复核",
   "hashes": {
-    "evidence_candidates_v2.csv": "1dc94dd772c776cde2c2ad99a55f00908b103cdd209684f398d780d2ebe3f1d7",
-    "evidence_provisional_v2.csv": "fb70bd88e5beb8fdcb3db42583a6732e88d35e784ab660bfd646884dc7a74728",
-    "evidence_exclusion_log.csv": "34dd861df401daa763504b41702f521a30ef5f92975e17c6dce202db75763c87"
+    "evidence_candidates_v2.csv": "c9a3c1ff106bfc2db73932b97fd3634cef0d31ca22e9fa5ec35ef70fa12a21ab",
+    "evidence_provisional_v2.csv": "2228b01cf05c680bf94290896eebdc330d7e9b3fa005c69b209c545eed3c0cb2",
+    "evidence_exclusion_log.csv": "7550d53d0a92a788176c2210fe328bfffe74728fba6f89d154980544109986b4"
   },
   "limitations": [
-    "provisional 证据含 legacy AI 标签与 B 站 Agent 提案，均未人工复核",
+    "provisional 证据含 legacy AI 标签与 B 站离线规则基线提案，均未人工复核",
     "uncertain 的 B 站提案以 included_flagged_uncertain 单独标记，默认不计入正式分子",
     "2 条歧义证据未进入 provisional",
     "结构化洞察与行动建议为草稿，默认不公开"

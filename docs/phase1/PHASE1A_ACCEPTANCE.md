@@ -36,7 +36,7 @@
 ## 4. 未开始 / 仍待事项
 
 - **未开始真实人工复核**：`human_review_log.csv` 仅记录 system_migration 事件，无 `reviewer_type=human`；
-- **B 站仍处于候选与 Agent 提案阶段**：所有 B 站标签为 `agent_proposed_unreviewed`，不得称为人工复核；
+- **B 站仍处于候选与离线规则基线提案阶段**：所有 B 站标签为 `rule_based_proposed_unreviewed`，不得称为人工复核；
 - 结构化洞察与行动建议仅为 Agent 草稿，默认隐藏；
 - `publication_readiness` 仍 BLOCKED，公开发布须等待用户决策（见 `docs/decisions/DEFERRED_DECISIONS.md`）。
 
