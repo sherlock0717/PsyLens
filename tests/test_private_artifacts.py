@@ -7,8 +7,10 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 GITIGNORE = REPO_ROOT / ".gitignore"
 PUBLIC_SAMPLE = REPO_ROOT / "data" / "calibration" / "calibration_sample.csv"
 
-FORBIDDEN_COLUMNS = {"platform_source", "current_surface_topic", "current_mechanism_label",
-                     "label_source", "review_status", "surface_topic", "mechanism_label"}
+FORBIDDEN_COLUMNS = {"source_evidence_id", "platform_source", "current_surface_topic",
+                     "current_mechanism_label", "label_source", "review_status",
+                     "surface_topic", "mechanism_label", "sampling_stratum",
+                     "is_retest", "retest_group_id"}
 
 
 def test_gitignore_excludes_private_paths():

@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 """共识与争议逻辑校验：3/3、2/3、分歧、熵、重测一致率、分母、空输入、非金标准。"""
 import importlib.util
+import json
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+
+# mock 结构自测报告禁止出现的措辞：不能让读者误以为是真实校准结论。
+FORBIDDEN_MOCK_TERMS = ["calibration_validated", "label_reliability", "codebook_quality",
+                        "gold", "benchmark_score"]
 
 
 def _load(rel):
@@ -14,6 +19,7 @@ def _load(rel):
 
 
 consensus = _load("tools/calibration/build_agent_consensus.py")
+disagree = _load("tools/calibration/analyze_disagreements.py")
 
 
 def _rev(blinded, mech, topic="balance", boundary="complete", eid="E"):
@@ -90,3 +96,34 @@ def test_consensus_not_named_gold():
     reviews, sample_rows = _fixture()
     _rows, stats = consensus.build_consensus(reviews, sample_rows, [])
     assert "金标准" in stats["note"] and "不是" in stats["note"]
+
+
+def test_mock_stats_marked_as_self_test():
+    """默认结果类型为 mock 结构自测。"""
+    reviews, sample_rows = _fixture()
+    _rows, stats = consensus.build_consensus(reviews, sample_rows, [])
+    assert stats["result_type"] == "mock_pipeline_self_test"
+
+
+def test_mock_report_has_no_validated_terms():
+    """mock 报告（JSON 与 Markdown）不得出现校准已验证/可靠性/质量/金标准/评分等措辞。"""
+    reviews, sample_rows = _fixture()
+    _rows, stats = consensus.build_consensus(reviews, sample_rows, [])
+    payload = json.dumps(stats, ensure_ascii=False) + consensus.render_report_md(stats)
+    for term in FORBIDDEN_MOCK_TERMS:
+        assert term not in payload, term
+
+
+def test_codebook_proposals_are_synthetic_in_mock():
+    """mock 模式下 Codebook 建议标注 synthetic_example_only。"""
+    rows = [{"reviewer_a_mechanism": "competence_frustration",
+             "reviewer_b_mechanism": "fairness_threat",
+             "reviewer_c_mechanism": "uncertain",
+             "agreement_level": "disputed", "needs_adjudication": "yes",
+             "source_evidence_id": "E1"}]
+    _levels, _disp, _pairs, proposals = disagree.analyze(rows, {}, "mock_pipeline_self_test")
+    assert proposals
+    for p in proposals:
+        assert p["proposal_status"] == "synthetic_example_only"
+    md = disagree.render_codebook_md(proposals)
+    assert "synthetic_example_only" in md

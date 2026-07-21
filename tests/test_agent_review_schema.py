@@ -68,6 +68,31 @@ def test_reviewer_input_hides_labels():
     assert "public_evidence_text" in keys
 
 
+def test_reviewer_input_has_no_source_id():
+    """reviewer 输入不含来源编号，代理无法反推样本来源。"""
+    rows = [{"blinded_item_id": "CAL_0001", "source_evidence_id": "NGA_0001_U01",
+             "public_evidence_text": "文本", "parent_context": "", "context_available": "no"}]
+    items = runner.reviewer_input(rows)
+    keys = set(items[0].keys())
+    assert "source_evidence_id" not in keys
+    # 取值中也不出现来源编号
+    joined = " ".join(str(v) for v in items[0].values())
+    assert "NGA_0001_U01" not in joined
+
+
+def test_reviewer_input_has_no_retest_relation():
+    """reviewer 输入不含重测标记与重测组，代理看不出哪些项是重复项。"""
+    rows = [{"blinded_item_id": "CAL_R001", "public_evidence_text": "文本",
+             "parent_context": "", "context_available": "no",
+             "is_retest": "true", "retest_group_id": "RT_CAL_0007"}]
+    items = runner.reviewer_input(rows)
+    keys = set(items[0].keys())
+    assert "is_retest" not in keys
+    assert "retest_group_id" not in keys
+    joined = " ".join(str(v) for v in items[0].values())
+    assert "RT_CAL_0007" not in joined
+
+
 def test_parse_failure_goes_to_retry_queue(tmp_path):
     # 构造一条会解析失败的输入（空 blinded/文本），确认写入 retry_queue 而非丢弃
     items = [{"blinded_item_id": "CAL_X", "public_evidence_text": "有效文本用于生成",

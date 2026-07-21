@@ -67,6 +67,41 @@ def test_strict_returns_nonzero_on_p0(tmp_path):
     assert rc == 1
 
 
+def test_quality_gate_blocks_p1(tmp_path):
+    # 含 P1 负面框架词时，--quality-gate P1 应返回非零
+    (tmp_path / "README.md").write_text("当前质量风险偏高。", encoding="utf-8")
+    rc = lint.main(["--root", str(tmp_path), "--format", "json",
+                    "--quality-gate", "P1", "--config", str(CONFIG)])
+    assert rc == 1
+
+
+def test_quality_gate_passes_clean(tmp_path):
+    (tmp_path / "README.md").write_text("这是一段清楚直接的说明。\n", encoding="utf-8")
+    rc = lint.main(["--root", str(tmp_path), "--format", "json",
+                    "--quality-gate", "P1", "--config", str(CONFIG)])
+    assert rc == 0
+
+
+def test_gate_flags_extra_calibration_board(tmp_path):
+    # 页面出现两个"自动校准参考集"板块时，P1 门槛应判未通过
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "index.html").write_text(
+        "<h3>自动校准参考集</h3><p>说明一。</p><h3>自动校准参考集</h3><p>说明二。</p>",
+        encoding="utf-8")
+    fails = lint.evaluate_gate([], str(tmp_path), "P1")
+    assert any("自动校准板块" in f for f in fails)
+
+
+def test_new_scan_targets_and_terms():
+    # 新增 config/**/*.yaml 扫描目标与术语（横截面/mock/provider/manifest）
+    assert "config/**/*.yaml" in lint.DEFAULT_TARGET_GLOBS
+    assert "config/*.yaml" in lint.DEFAULT_TARGET_GLOBS
+    assert "evaluation/*.yaml" in lint.DEFAULT_TARGET_GLOBS
+    for term in ["横截面", "mock", "provider", "manifest"]:
+        assert term in RULES["technical_terms"]
+
+
 # ---- 页面与 README 文案质量 ----
 
 def test_page_has_no_not_this_but_that():
