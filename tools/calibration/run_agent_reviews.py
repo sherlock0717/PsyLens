@@ -14,8 +14,9 @@
   原始响应单独保存，解析失败进入 retry queue，429、超时与网络错误按退避重试，
   支持断点续跑。运行器不记录密钥。
 
-代理只获得盲测证据文本与可选父样本上下文，看不到来源编号、平台名称、当前标签、
-编码来源、重测关系或其他代理的结果。
+代理只获得脱敏证据文本与可选父样本上下文。结构化来源信息（平台字段、来源编号、
+当前标签、编码来源、重测关系）不会提供给代理，也看不到其他代理的结果。公开脱敏
+文本按原貌保留，其中的自然表达属于证据内容。
 """
 from __future__ import annotations
 
@@ -99,9 +100,10 @@ def read_sample(path):
 
 
 def reviewer_input(rows):
-    """构造盲测输入：只保留代理可见字段（盲测编号、文本与上下文）。
+    """构造盲测输入，只保留盲测编号、脱敏文本与可选上下文。
 
-    不含来源编号、平台名称与重测关系，代理无法反推样本身份。
+    不提供结构化来源、平台字段、当前标签和重测关系。公开脱敏文本按原貌保留，
+    其中的自然表达（如“楼主”“评论区”）属于证据内容，不作改写。
     """
     return [{
         "blinded_item_id": r.get("blinded_item_id", ""),
@@ -310,16 +312,51 @@ def parse_model_json(content, item, reviewer_id, run_id, model_name, prompt_vers
     return row
 
 
-def _load_done_ids(out_path):
-    done = set()
-    if out_path.exists():
-        for line in out_path.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                try:
-                    done.add(json.loads(line)["blinded_item_id"])
-                except Exception:  # noqa: BLE001
-                    pass
-    return done
+def load_resume_state(out_path, expected_run_id):
+    """读取已有输出，校验续跑身份。
+
+    返回 ``(done_ids, existing_run_ids, error)``：
+    - 输出不存在或为空：done_ids 为空集，existing_run_ids 为空集，error 为 None（允许开始）；
+    - 输出存在且非空：逐行严格解析，收集 blinded_item_id 与 run_id；
+      * 非法 JSON 行 -> error="resume_output_invalid"；
+      * 缺少 run_id -> error="resume_run_id_missing"；
+      * 缺少 blinded_item_id -> error="resume_output_invalid"；
+      * 存在多个不同 run_id -> error="resume_mixed_run_ids"；
+      * 唯一 run_id 与 expected_run_id 不一致 -> error="resume_run_id_mismatch"；
+      * 一致 -> 返回 done_ids，error 为 None。
+
+    不静默忽略损坏的数据行。
+    """
+    out_path = Path(out_path)
+    if not out_path.exists() or out_path.stat().st_size == 0:
+        return set(), set(), None
+    done_ids, run_ids = set(), set()
+    for line in out_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            obj = json.loads(line)
+        except json.JSONDecodeError:
+            return set(), run_ids, "resume_output_invalid"
+        if not isinstance(obj, dict) or "blinded_item_id" not in obj:
+            return set(), run_ids, "resume_output_invalid"
+        if "run_id" not in obj:
+            return set(), run_ids, "resume_run_id_missing"
+        run_ids.add(obj["run_id"])
+        done_ids.add(obj["blinded_item_id"])
+    if len(run_ids) > 1:
+        return set(), run_ids, "resume_mixed_run_ids"
+    if run_ids and next(iter(run_ids)) != expected_run_id:
+        return set(), run_ids, "resume_run_id_mismatch"
+    return done_ids, run_ids, None
+
+
+_RESUME_ERROR_MESSAGES = {
+    "resume_output_invalid": "已有输出包含损坏的数据行，无法安全续跑。请使用新的输出目录。",
+    "resume_run_id_missing": "已有输出缺少 run_id，无法确认运行身份。请使用新的输出目录。",
+    "resume_mixed_run_ids": "已有输出混入多组 run_id，无法安全续跑。请使用新的输出目录。",
+    "resume_run_id_mismatch": "已有结果来自另一组模型或参数。请使用新的输出目录，或恢复原来的运行配置。",
+}
 
 
 def make_run_id(provider, model_name, reviewer_id, prompt_version, temperature, seed):
@@ -343,12 +380,24 @@ def run_one_reviewer(items, reviewer_id, output_dir, provider, model, prompt_pat
     out_path = output_dir / f"agent_reviews_{reviewer_id}.jsonl"
     retry_path = output_dir / f"retry_queue_{run_id}.jsonl"
 
+    def _error(code, existing_run_ids, message=None):
+        return {"reviewer_id": reviewer_id, "run_id": run_id, "error": code,
+                "message": message or _RESUME_ERROR_MESSAGES.get(code, code),
+                "expected_run_id": run_id, "existing_run_ids": sorted(existing_run_ids),
+                "output_path": str(out_path),
+                "parsed_ok": 0, "parse_failed": 0, "elapsed_seconds": 0.0, "token_estimate": 0}
+
     # 输出安全：非 resume 且输出已存在且非空时，拒绝继续 append。
     if not resume and out_path.exists() and out_path.stat().st_size > 0:
-        return {"reviewer_id": reviewer_id, "error": "output_exists_nonempty",
-                "message": f"{out_path} 已存在且非空；请改用新的 --output 目录，或加 --resume 续跑。",
-                "parsed_ok": 0, "parse_failed": 0, "elapsed_seconds": 0.0, "token_estimate": 0}
-    done_ids = _load_done_ids(out_path) if resume else set()
+        return _error("output_exists_nonempty", set(),
+                      f"{out_path} 已存在且非空；请改用新的 --output 目录，或加 --resume 续跑。")
+
+    if resume:
+        done_ids, existing_run_ids, err = load_resume_state(out_path, run_id)
+        if err:
+            return _error(err, existing_run_ids)
+    else:
+        done_ids = set()
 
     t0 = time.time()
     ok, failed, tokens = 0, 0, 0
@@ -381,7 +430,7 @@ def run_one_reviewer(items, reviewer_id, output_dir, provider, model, prompt_pat
             fout.write(json.dumps(row, ensure_ascii=False) + "\n")
             ok += 1
     elapsed = round(time.time() - t0, 4)
-    return {"reviewer_id": reviewer_id, "prompt_version": prompt_version,
+    return {"reviewer_id": reviewer_id, "run_id": run_id, "prompt_version": prompt_version,
             "prompt_sha256": prompt_sha, "parsed_ok": ok, "parse_failed": failed,
             "elapsed_seconds": elapsed, "token_estimate": tokens}
 
@@ -458,6 +507,7 @@ def main(argv=None):
         }
     report.update({
         "input_items": len(items),
+        "run_ids": {r["reviewer_id"]: r.get("run_id") for r in results},
         "reviewers": results,
         "parse_success_rate": round(total_ok / denom, 4) if denom else None,
         "parse_success_numerator": total_ok,
