@@ -88,7 +88,7 @@
 - 话题 × 机制交叉；
 - 平台分布；
 - ID、父样本、平台和文本定位；
-- 重复、URL 和缺失字段。
+- 重复、URL 和字段覆盖。
 
 评测方法见 [`../evaluation/EVALUATION_METHOD.md`](../evaluation/EVALUATION_METHOD.md)。
 
