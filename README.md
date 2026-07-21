@@ -53,7 +53,7 @@ PsyLens 把分散的玩家反馈整理成可核查的产品线索，并对整条
 
 v1.1 通过三个互不查看彼此结果的代理，对分层样本做独立复检，输出一致结果、争议标签和重复运行稳定性。
 
-**自动校准参考集**：由多个互不查看彼此结果的代理独立判断后形成的参考标签，用于发现稳定结果和争议案例。它是自动校准参考，不是人工金标准。流程见 [`docs/evaluation/AGENT_CALIBRATION_WORKFLOW.md`](docs/evaluation/AGENT_CALIBRATION_WORKFLOW.md)。
+**自动校准参考集**：由多个互不查看彼此结果的代理独立判断后形成的参考标签，用于发现稳定结果和争议案例。它定位为自动校准参考，人工金标准另行建立。流程见 [`docs/evaluation/AGENT_CALIBRATION_WORKFLOW.md`](docs/evaluation/AGENT_CALIBRATION_WORKFLOW.md)。
 
 ## 运行与复现
 
@@ -81,7 +81,7 @@ python tools/lint_public_copy.py --root . --format markdown
 
 三个平台采用等额抽样，编码来源包含历史 AI 结果与离线规则提案。证据数量也会受文本长度和切分粒度影响。当前分布用于方法审计、探索性分析和研究设计。它为访谈、问卷、行为分析和实验提供问题线索。总体占比与因果结论由这些后续研究继续检验。
 
-公开数据还包含两个含义不同的字段，各统计一次即可：`mechanism_label=uncertain` 有 486 条，表示机制暂时无法明确归类；`analysis_inclusion_status=included_flagged_uncertain` 有 163 条，表示证据仍被保留但纳入时需要提醒。两者各自统计一次即可。
+公开数据还包含两个含义不同的字段，各统计一次即可：`mechanism_label=uncertain` 有 486 条，表示机制暂时无法明确归类；`analysis_inclusion_status=included_flagged_uncertain` 有 163 条，表示证据仍被保留但纳入时需要提醒。
 
 ## 权利与使用
 

@@ -182,7 +182,7 @@
         <article><h3>信任与沟通落差</h3><p>公告、解释、反馈回应或承诺执行不足，削弱玩家对运营方的信任。</p><span>trust & communication gap</span></article>
         <article><h3>归属感下降</h3><p>玩家与游戏、社区或身份群体之间出现疏离和退出倾向。</p><span>belonging drop</span></article>
         <article><h3>规范与安全风险</h3><p>外挂、辱骂、骚扰、误封和举报无效等问题影响参与秩序与安全感。</p><span>norm & safety risk</span></article>
-        <article><h3>显式不确定</h3><p>文本过短、依赖上下文或同时指向多个机制时保留 uncertain，避免牵强分类。</p><span>uncertain</span></article>
+        <article><h3>暂时保留为不确定</h3><p>文本过短、依赖上下文或同时指向多个机制时保留 uncertain，避免牵强分类。</p><span>uncertain</span></article>
       </div>
       <div class="method-callout">
         <strong>分析原则</strong>
@@ -208,7 +208,7 @@
         <li><span>08</span><div><h3>结构与分布审计</h3><p>检查编号、父样本、文本回溯、重复、字段覆盖、证据密度与标签分布。</p></div><em>检查：回溯率 100%</em></li>
       </ol>
       <div class="method-callout split-callout">
-        <div><strong>两种不确定性需要分开</strong><p>486 条 `mechanism_label=uncertain` 表示机制暂时无法明确归类；163 条 `included_flagged_uncertain` 表示证据纳入时需要提醒。两者各自统计一次即可。</p></div>
+        <div><strong>两种不确定性需要分开</strong><p>486 条 `mechanism_label=uncertain` 表示机制暂时无法明确归类；163 条 `included_flagged_uncertain` 表示证据纳入时需要提醒。两者含义不同，分别统计。</p></div>
         <a data-doc="data_cleaning" href="methodology/DATA_CLEANING_AND_CODING.md">查看字段与清洗细则 →</a>
       </div>
     </section>
@@ -224,7 +224,7 @@
         <article><span>B</span><h3>清洗与隐私</h3><p>字段白名单、URL 扫描、重复组、空值和文件哈希。</p><strong>当前：URL 0，重复组 0</strong></article>
         <article><span>C</span><h3>编码可用性</h3><p>合法标签、不确定比例、相邻标签边界和编码来源差异。</p><strong>当前关注：486 条保留类别样本</strong></article>
         <article><span>D</span><h3>分析支撑</h3><p>结论引用具体证据，同时报告平台、样本量与分母。</p><strong>当前：页面结果均由公开数据计算</strong></article>
-        <article><span>E</span><h3>运行复现</h3><p>相同输入生成一致输出，manifest 与文件哈希对应。</p><strong>当前：Ubuntu / Windows CI 运行</strong></article>
+        <article><span>E</span><h3>运行复现</h3><p>相同输入生成一致输出，文件校验记录与文件哈希对应。</p><strong>当前：Ubuntu / Windows CI 运行</strong></article>
       </div>
       <div class="metric-grid" id="metricGrid" aria-label="结构评测结果">
         <article class="metric"><span>样本编号</span><strong>360 / 360</strong><p>无重复</p></article>
@@ -235,7 +235,7 @@
       <div class="evaluation-note">
         <h3>自动校准计划</h3>
         <p>v1.1 用三个独立代理复检分层样本。代理互不查看彼此结果，各自独立判断。</p>
-        <p>结果展示一致标签、争议标签和重复运行的稳定性。这些结果作为自动校准参考，帮助发现稳定结论和需要重点核对的标签边界，不作为人工金标准。</p>
+        <p>结果展示一致标签、争议标签和重复运行的稳定性。这些结果定位为自动校准参考，帮助发现稳定结论和需要重点核对的标签边界，人工金标准另行建立。</p>
         <a data-doc="evaluation_method" href="evaluation/EVALUATION_METHOD.md">查看评测框架 →</a>
       </div>
     </section>
@@ -280,7 +280,7 @@
           <ul class="check-list">
             <li>相同输入与配置生成一致产物</li>
             <li>输出写入独立 artifacts 目录</li>
-            <li>包含 JSON、Markdown、HTML 和 manifest</li>
+            <li>包含 JSON、Markdown、HTML 和文件校验记录</li>
           </ul>
         </div>
         <div class="code-panel">
