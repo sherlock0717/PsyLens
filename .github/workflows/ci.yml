@@ -10,6 +10,8 @@ jobs:
   test:
     name: Public release checks (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: "1"
     strategy:
       fail-fast: false
       matrix:
@@ -63,8 +65,6 @@ jobs:
         run: ruff check demo/src demo/tests pipeline tools tests
 
       - name: Public copy P1 gate
-        env:
-          PYTHONUTF8: "1"
         run: >-
           python tools/lint_public_copy.py --root . --quality-gate P1
           --format json --output "${{ runner.temp }}/public_copy_report.json"
