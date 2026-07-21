@@ -275,7 +275,7 @@ def _compute_stats(rows, mech_label_lists, by_blinded, sample_map, private_map,
         "retest_consistency": retest,
         "high_dispute_label_pairs": [{"pair": p, "count": c} for p, c in high_dispute_pairs],
         "fleiss_kappa_mechanism": fleiss_kappa(mech_label_lists),
-        "note": "共识为自动校准参考，不是人工金标准，也不覆盖公开数据现有标签。",
+        "note": "共识定位为自动校准参考，人工金标准另行建立，也不覆盖公开数据现有标签。",
     }
 
 
@@ -291,8 +291,8 @@ def render_report_md(stats):
         lines += ["> 本报告为本地固定示例模式的结构自测（result_type="
                   f"{MOCK_RESULT_TYPE}）。以下一致率、标签熵和标签流向只用于验证流程能否跑通，"
                   "不能作为真实模型校准结果、标签可靠性或 Codebook 质量结论。", ""]
-    lines += ["本报告汇总三个独立代理对分层证据的复检结果。共识只作为自动校准参考，"
-              "用于发现稳定结果和争议案例，不是人工金标准。", "",
+    lines += ["本报告汇总三个独立代理对分层证据的复检结果。共识定位为自动校准参考，"
+              "用于发现稳定结果和争议案例，人工金标准另行建立。", "",
               f"- 结果类型：{rtype}",
               f"- 参与统计的证据：{stats['item_count']} 条", "",
              "## 一致程度", "",
