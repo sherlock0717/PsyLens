@@ -32,7 +32,22 @@
       "enum": ["complete", "needs_parent_context", "over_segmented", "under_segmented", "not_evidence"],
       "description": "证据边界判断：完整、需父样本上下文、切分过细、切分过粗、不构成证据"
     },
-    "surface_topic": {"type": "string", "description": "表层话题标签"},
+    "surface_topic": {
+      "type": "string",
+      "enum": [
+        "balance",
+        "matchmaking",
+        "event_design",
+        "progression",
+        "community_conflict",
+        "communication_transparency",
+        "rewards",
+        "new_player_onboarding",
+        "other_uncertain",
+        ""
+      ],
+      "description": "表层话题标签，取值固定为九项；无法判断时可留空（由程序按可选字段处理）"
+    },
     "mechanism_label": {
       "type": "string",
       "enum": [

@@ -24,6 +24,35 @@ prompt_version: a-1.0
 先判断 boundary_status：complete、needs_parent_context、over_segmented、under_segmented、not_evidence。
 若边界不完整，倾向保留 uncertain 并说明 abstain_reason。
 
-## 输出
+## 模型输出契约
 
-按 agent_review_schema.json 输出结构化结果，decision_basis 用普通中文说明依据。
+只输出一个 JSON 对象，字段见下。不要输出 run_id、model_name、prompt_version、prompt_sha256、created_at、evidence_text，这些由程序补充。不要输出多余文字或注释。
+
+字段与允许值：
+
+- surface_topic：balance、matchmaking、event_design、progression、community_conflict、communication_transparency、rewards、new_player_onboarding、other_uncertain。
+- mechanism_label：competence_frustration、fairness_threat、trust_communication_gap、belonging_drop、norm_safety_risk、uncertain。
+- boundary_status：complete、needs_parent_context、over_segmented、under_segmented、not_evidence。
+- confidence_band：high、medium、low。
+- abstain_reason：none、insufficient_context、multiple_mechanisms、unclear_topic、unclear_boundary、other。
+- evidence_phrase：从证据文本中原样摘取的短语，必须是原文子串；无法摘取时留空。
+- decision_basis：用普通中文说明依据。
+
+约束：
+
+- mechanism_label 为 uncertain 时，abstain_reason 不能为 none。
+- evidence_phrase 非空时必须是证据文本的子串。
+
+JSON 示例（模型实际需要填写的内容）：
+
+```json
+{
+  "surface_topic": "matchmaking",
+  "mechanism_label": "fairness_threat",
+  "boundary_status": "complete",
+  "confidence_band": "high",
+  "abstain_reason": "none",
+  "evidence_phrase": "连胜连败",
+  "decision_basis": "文本强调匹配结果不公平，偏向公平受损。"
+}
+```

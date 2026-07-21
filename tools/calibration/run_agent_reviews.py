@@ -23,6 +23,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 import urllib.error
@@ -40,11 +41,22 @@ REAL_RESULT_TYPE = "real_agent_calibration"
 
 ALLOWED_MECH = ["competence_frustration", "fairness_threat", "trust_communication_gap",
                 "belonging_drop", "norm_safety_risk", "uncertain"]
+ALLOWED_TOPIC = ["balance", "matchmaking", "event_design", "progression",
+                 "community_conflict", "communication_transparency", "rewards",
+                 "new_player_onboarding", "other_uncertain"]
+ALLOWED_BOUNDARY = ["complete", "needs_parent_context", "over_segmented",
+                    "under_segmented", "not_evidence"]
+ALLOWED_CONFIDENCE = ["high", "medium", "low"]
+ALLOWED_ABSTAIN = ["none", "insufficient_context", "multiple_mechanisms",
+                   "unclear_topic", "unclear_boundary", "other"]
 # 复检输出以 blinded_item_id 为主键；不含来源编号，来源只在共识后经私有映射回填。
 REQUIRED_FIELDS = ["run_id", "reviewer_id", "blinded_item_id", "model_name",
                    "prompt_version", "prompt_sha256", "evidence_text", "boundary_status",
                    "surface_topic", "mechanism_label", "evidence_phrase", "confidence_band",
                    "abstain_reason", "decision_basis", "created_at"]
+# 模型只需填写的字段（其余由程序补充：run_id、model_name、prompt_* 与 created_at）。
+MODEL_OUTPUT_FIELDS = ["boundary_status", "surface_topic", "mechanism_label",
+                       "evidence_phrase", "confidence_band", "abstain_reason", "decision_basis"]
 OPTIONAL_EMPTY = {"surface_topic", "evidence_phrase"}
 
 # 关键词 -> 机制（简单启发式，仅用于本地固定示例模式，不代表真实模型能力）
@@ -154,11 +166,34 @@ def mock_review(item, reviewer_id, run_id, model_name, prompt_version, prompt_sh
 
 
 def validate(row):
-    missing = [f for f in REQUIRED_FIELDS
-               if f not in row or (row[f] == "" and f not in OPTIONAL_EMPTY)]
+    """校验一条复检结果：必填字段、全部枚举，以及两项交叉约束。
+
+    - evidence_phrase 非空时必须是 evidence_text 的子串（防止杜撰引用）；
+    - mechanism_label=uncertain 时 abstain_reason 不能为 none（弃权必须给出原因）。
+    返回问题列表，空列表表示通过。
+    """
+    problems = [f for f in REQUIRED_FIELDS
+                if f not in row or (row[f] == "" and f not in OPTIONAL_EMPTY)]
     if row.get("mechanism_label") not in ALLOWED_MECH:
-        missing.append("mechanism_label:invalid")
-    return missing
+        problems.append("mechanism_label:invalid")
+    if row.get("boundary_status") not in ALLOWED_BOUNDARY:
+        problems.append("boundary_status:invalid")
+    if row.get("confidence_band") not in ALLOWED_CONFIDENCE:
+        problems.append("confidence_band:invalid")
+    if row.get("abstain_reason") not in ALLOWED_ABSTAIN:
+        problems.append("abstain_reason:invalid")
+    # surface_topic 允许留空（OPTIONAL_EMPTY）；非空时必须是合法值
+    topic = row.get("surface_topic", "")
+    if topic and topic not in ALLOWED_TOPIC:
+        problems.append("surface_topic:invalid")
+    # evidence_phrase 非空时须出现在 evidence_text 中
+    phrase = (row.get("evidence_phrase") or "").strip()
+    if phrase and phrase not in (row.get("evidence_text") or ""):
+        problems.append("evidence_phrase:not_in_text")
+    # uncertain 必须给出弃权原因
+    if row.get("mechanism_label") == "uncertain" and row.get("abstain_reason") == "none":
+        problems.append("abstain_reason:required_for_uncertain")
+    return problems
 
 
 # ---- 真实 provider：OpenAI 兼容接口 ----
@@ -232,10 +267,25 @@ def call_openai_compatible(llm, messages, temperature, seed, timeout=60, max_ret
     return None, {"error": "retry_exhausted", "last_error": last_err}
 
 
+def _strip_code_fence(content):
+    """去除模型输出外层的 ```json ... ``` 或 ``` ... ``` 代码块围栏。"""
+    if not isinstance(content, str):
+        return content
+    text = content.strip()
+    m = re.match(r"^```[a-zA-Z0-9_-]*\s*\n?(.*?)\n?```$", text, re.DOTALL)
+    if m:
+        return m.group(1).strip()
+    return text
+
+
 def parse_model_json(content, item, reviewer_id, run_id, model_name, prompt_version, prompt_sha):
-    """解析模型返回的 JSON，补全运行元数据。解析失败返回 None。"""
+    """解析模型返回的 JSON，补全运行元数据。解析失败返回 None。
+
+    模型只需填写 MODEL_OUTPUT_FIELDS；run_id、model_name、prompt_* 与 created_at
+    由程序补充。支持去除外层 ```json 代码块围栏。
+    """
     try:
-        obj = json.loads(content)
+        obj = json.loads(_strip_code_fence(content))
     except (json.JSONDecodeError, TypeError):
         return None
     if not isinstance(obj, dict):
@@ -272,18 +322,32 @@ def _load_done_ids(out_path):
     return done
 
 
+def make_run_id(provider, model_name, reviewer_id, prompt_version, temperature, seed):
+    """运行标识包含 provider、model、reviewer、prompt_version、temperature、seed，
+    以便区分不同模型/参数的运行，避免产物混淆。"""
+    safe_model = re.sub(r"[^A-Za-z0-9_.-]", "_", str(model_name))
+    return f"{provider}-{safe_model}-{reviewer_id}-{prompt_version}-t{temperature}-s{seed}"
+
+
 def run_one_reviewer(items, reviewer_id, output_dir, provider, model, prompt_path,
                      dry_run, temperature=0.0, seed=20260720, llm=None, resume=False):
     prompt_text, prompt_version, prompt_sha = load_prompt(reviewer_id, prompt_path)
-    run_id = f"{provider}-{reviewer_id}-{prompt_version}"
     use_real = provider == "openai_compatible" and not dry_run
     model_name = model or (llm["model"] if (use_real and llm) else "mock-deterministic")
+    run_id = make_run_id(provider, model_name, reviewer_id, prompt_version, temperature, seed)
     output_dir = Path(output_dir)
-    raw_dir = output_dir / "raw_model_responses"
+    # raw 响应与 retry 队列按 run_id 分开，避免不同模型/参数的运行混在一起。
+    raw_dir = output_dir / "raw_model_responses" / run_id
     raw_dir.mkdir(parents=True, exist_ok=True)
 
     out_path = output_dir / f"agent_reviews_{reviewer_id}.jsonl"
-    retry_path = output_dir / "retry_queue.jsonl"
+    retry_path = output_dir / f"retry_queue_{run_id}.jsonl"
+
+    # 输出安全：非 resume 且输出已存在且非空时，拒绝继续 append。
+    if not resume and out_path.exists() and out_path.stat().st_size > 0:
+        return {"reviewer_id": reviewer_id, "error": "output_exists_nonempty",
+                "message": f"{out_path} 已存在且非空；请改用新的 --output 目录，或加 --resume 续跑。",
+                "parsed_ok": 0, "parse_failed": 0, "elapsed_seconds": 0.0, "token_estimate": 0}
     done_ids = _load_done_ids(out_path) if resume else set()
 
     t0 = time.time()
@@ -361,6 +425,13 @@ def main(argv=None):
     results = [run_one_reviewer(items, rid, output_dir, args.provider, args.model,
                                 args.prompt, args.dry_run, args.temperature, args.seed,
                                 llm, args.resume) for rid in reviewers]
+
+    # 输出安全：若有 reviewer 因输出已存在而拒绝写入，明确报错并退出。
+    errored = [r for r in results if r.get("error")]
+    if errored:
+        for r in errored:
+            print(f"错误：{r['message']}", file=sys.stderr)
+        return 3
 
     total_ok = sum(r["parsed_ok"] for r in results)
     total_fail = sum(r["parse_failed"] for r in results)
