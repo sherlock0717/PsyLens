@@ -20,6 +20,9 @@ from pathlib import Path
 
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = TOOLS_DIR.parent.parent
+MOCK_RESULT_TYPE = "mock_pipeline_self_test"
+MOCK_CONSENSUS_DIR = REPO_ROOT / "artifacts" / "calibration" / "mock_self_test" / "consensus"
+SYNTHETIC_STATUS = "synthetic_example_only"
 
 # 固定的相邻标签对与普通中文区分规则（提案，不直接改 Codebook）
 LABEL_PAIRS = [
@@ -45,8 +48,10 @@ def _mechs(row):
     return [row["reviewer_a_mechanism"], row["reviewer_b_mechanism"], row["reviewer_c_mechanism"]]
 
 
-def analyze(rows, text_by_src=None):
+def analyze(rows, text_by_src=None, result_type=MOCK_RESULT_TYPE):
     text_by_src = text_by_src or {}
+    # 本地固定示例模式下，Codebook 建议只是合成示例，标注 synthetic_example_only。
+    proposal_status = SYNTHETIC_STATUS if result_type == MOCK_RESULT_TYPE else "from_real_calibration"
     levels = Counter(r["agreement_level"] for r in rows)
     disputed = [r for r in rows if r["needs_adjudication"] == "yes"]
 
@@ -75,6 +80,7 @@ def analyze(rows, text_by_src=None):
                 dispute_ex.append(ex)
         proposals.append({
             "label_pair": f"{a} vs {b}",
+            "proposal_status": proposal_status,
             "problem_pattern": "两个相邻标签在同批证据中同时出现，需明确区分边界。",
             "sample_count": len(matched),
             "agree_examples": agree_ex[:2],
@@ -114,8 +120,13 @@ def render_codebook_md(proposals):
     lines = ["# Codebook 改进建议（提案）", "",
              "本文件是自动校准发现的相邻标签区分提案，不直接修改正式 Codebook。"
              "每条建议给出问题模式、样本数、示例、当前规则、建议规则、预期效果与可能副作用。", ""]
+    status = proposals[0].get("proposal_status") if proposals else SYNTHETIC_STATUS
+    if status == SYNTHETIC_STATUS:
+        lines += [f"> 提案状态：{SYNTHETIC_STATUS}。以下建议来自本地固定示例模式的合成数据，"
+                  "只用于演示提案结构，不能作为真实模型校准得出的 Codebook 质量结论。", ""]
     for p in proposals:
         lines += [f"## {p['label_pair']}", "",
+                  f"- 提案状态：{p.get('proposal_status', SYNTHETIC_STATUS)}",
                   f"- 问题模式：{p['problem_pattern']}",
                   f"- 相关样本数：{p['sample_count']}",
                   f"- 当前规则：{p['current_rule']}",
@@ -141,19 +152,30 @@ def render_codebook_md(proposals):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description="分析争议项并生成 Codebook 改进建议（提案，不改正式 Codebook）")
-    ap.add_argument("--input", default=str(REPO_ROOT / "artifacts" / "calibration" / "mock_consensus" / "consensus_reference.csv"))
-    ap.add_argument("--output", default=str(REPO_ROOT / "artifacts" / "calibration" / "mock_consensus" / "disagreement_report.md"))
+    ap.add_argument("--input", default=str(MOCK_CONSENSUS_DIR / "consensus_reference.csv"))
+    ap.add_argument("--output", default=str(MOCK_CONSENSUS_DIR / "disagreement_report.md"))
     ap.add_argument("--sample", default=str(REPO_ROOT / "data" / "calibration" / "calibration_sample.csv"))
-    ap.add_argument("--codebook-output", default=str(REPO_ROOT / "artifacts" / "calibration" / "codebook_revision_proposals.md"))
+    ap.add_argument("--private-key", default=str(REPO_ROOT / "artifacts" / "calibration" / "private_sampling_key.csv"))
+    ap.add_argument("--codebook-output", default=str(MOCK_CONSENSUS_DIR / "codebook_revision_proposals.md"))
+    ap.add_argument("--result-type", default=MOCK_RESULT_TYPE,
+                    help="结果类型；本地固定示例为 mock_pipeline_self_test，提案标注 synthetic_example_only")
     args = ap.parse_args(argv)
 
     rows = _read_csv(args.input)
-    text_by_src = {}
+    # 示例文本本身是公开脱敏文本；经私有映射把 source_evidence_id 关联到 blinded_item_id，
+    # 再从公开样本取文本。缺少私有映射时示例文本留空，不影响提案结构。
+    text_by_blinded = {}
     if Path(args.sample).exists():
         for s in _read_csv(args.sample):
-            text_by_src[s.get("source_evidence_id", "")] = s.get("public_evidence_text", "")
+            text_by_blinded[s.get("blinded_item_id", "")] = s.get("public_evidence_text", "")
+    text_by_src = {}
+    if Path(args.private_key).exists():
+        for pr in _read_csv(args.private_key):
+            src = pr.get("source_evidence_id", "")
+            if src:
+                text_by_src[src] = text_by_blinded.get(pr.get("blinded_item_id", ""), "")
 
-    levels, disputed, pair_counter, proposals = analyze(rows, text_by_src)
+    levels, disputed, pair_counter, proposals = analyze(rows, text_by_src, args.result_type)
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     Path(args.output).write_text(render_disagreement_md(levels, disputed, pair_counter, rows), encoding="utf-8")

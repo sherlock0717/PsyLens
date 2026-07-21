@@ -1,44 +1,53 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""多代理独立复检运行器（默认离线、确定性 mock）。
+"""多代理独立复检运行器。
 
-代理只获得盲测证据文本与可选父样本上下文，看不到当前标签、编码来源、平台
-名称或其他代理的结果。若本地没有可用模型或 API，运行器生成确定性 mock 输出，
-用于跑通 schema、解析和后续共识分析；此时不声称调用过真实模型，运行状态记为
-READY_NOT_RUN。
+支持两种明确分开的运行方式：
 
-用法：
-    python tools/calibration/run_agent_reviews.py --dry-run \
-        --input data/calibration/calibration_sample.csv --max-items 30
+- ``--provider mock``（默认）：本地固定示例模式。运行器生成确定性示例输出，
+  用于跑通结构、解析和后续共识流程。结果只是结构自测，不是真实模型校准，
+  报告标注 ``result_type=mock_pipeline_self_test``，默认写入
+  ``artifacts/calibration/mock_self_test/reviews``。
+- ``--provider openai_compatible``：真实模型模式。按 OpenAI 兼容接口调用外部
+  模型，读取环境变量 ``PSYLENS_LLM_BASE_URL`` / ``PSYLENS_LLM_API_KEY`` /
+  ``PSYLENS_LLM_MODEL``；Prompt 真实传入，temperature 与 seed 进入请求体，
+  原始响应单独保存，解析失败进入 retry queue，429、超时与网络错误按退避重试，
+  支持断点续跑。运行器不记录密钥。
 
-输出（默认写入 artifacts/calibration/mock_reviews）：
-    agent_reviews_a.jsonl / agent_reviews_b.jsonl / agent_reviews_c.jsonl
-    raw_model_responses/**（原始响应，gitignore）
-    retry_queue.jsonl（解析失败项，不静默丢弃）
-    run_report.json
+代理只获得盲测证据文本与可选父样本上下文，看不到来源编号、平台名称、当前标签、
+编码来源、重测关系或其他代理的结果。
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import os
 import sys
 import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = TOOLS_DIR.parent.parent
-DEFAULT_OUTPUT = REPO_ROOT / "artifacts" / "calibration" / "mock_reviews"
+MOCK_OUTPUT = REPO_ROOT / "artifacts" / "calibration" / "mock_self_test" / "reviews"
+REAL_OUTPUT = REPO_ROOT / "artifacts" / "calibration" / "agent_reviews"
 PROMPT_DIR = REPO_ROOT / "config" / "calibration" / "prompts"
+
+MOCK_RESULT_TYPE = "mock_pipeline_self_test"
+REAL_RESULT_TYPE = "real_agent_calibration"
 
 ALLOWED_MECH = ["competence_frustration", "fairness_threat", "trust_communication_gap",
                 "belonging_drop", "norm_safety_risk", "uncertain"]
-REQUIRED_FIELDS = ["run_id", "reviewer_id", "model_name", "prompt_version", "prompt_sha256",
-                   "sample_id", "evidence_id", "evidence_text", "boundary_status",
+# 复检输出以 blinded_item_id 为主键；不含来源编号，来源只在共识后经私有映射回填。
+REQUIRED_FIELDS = ["run_id", "reviewer_id", "blinded_item_id", "model_name",
+                   "prompt_version", "prompt_sha256", "evidence_text", "boundary_status",
                    "surface_topic", "mechanism_label", "evidence_phrase", "confidence_band",
                    "abstain_reason", "decision_basis", "created_at"]
+OPTIONAL_EMPTY = {"surface_topic", "evidence_phrase"}
 
-# 关键词 -> 机制（简单启发式，仅用于 mock 判断，不代表真实模型能力）
+# 关键词 -> 机制（简单启发式，仅用于本地固定示例模式，不代表真实模型能力）
 MECH_KEYWORDS = [
     ("norm_safety_risk", ["外挂", "举报", "封号", "辱骂", "脚本", "挂机"]),
     ("trust_communication_gap", ["官方", "公告", "说明", "回应", "解释", "客服"]),
@@ -58,10 +67,7 @@ def _sha256_text(text):
 
 
 def load_prompt(reviewer_id, prompt_path):
-    if prompt_path:
-        p = Path(prompt_path)
-    else:
-        p = PROMPT_DIR / f"reviewer_{reviewer_id}.md"
+    p = Path(prompt_path) if prompt_path else PROMPT_DIR / f"reviewer_{reviewer_id}.md"
     if p.exists():
         text = p.read_text(encoding="utf-8")
     else:
@@ -81,20 +87,16 @@ def read_sample(path):
 
 
 def reviewer_input(rows):
-    """构造盲测输入：只保留代理可见字段。"""
+    """构造盲测输入：只保留代理可见字段（盲测编号、文本与上下文）。
+
+    不含来源编号、平台名称与重测关系，代理无法反推样本身份。
+    """
     return [{
         "blinded_item_id": r.get("blinded_item_id", ""),
         "public_evidence_text": r.get("public_evidence_text", ""),
         "parent_context": r.get("parent_context", ""),
         "context_available": r.get("context_available", "no"),
-        # 以下仅供运行器回填溯源，不进入模型输入
-        "_source_evidence_id": r.get("source_evidence_id", ""),
     } for r in rows]
-
-
-def _base_mechanism(text):
-    hits = [mech for mech, kws in MECH_KEYWORDS if any(k in text for k in kws)]
-    return hits[0] if hits else "uncertain"
 
 
 def _all_mechanism_hits(text):
@@ -109,7 +111,7 @@ def _topic(text):
 
 
 def mock_review(item, reviewer_id, run_id, model_name, prompt_version, prompt_sha):
-    """确定性 mock 判断，不同 reviewer 使用不同判断结构。"""
+    """确定性示例判断（本地固定示例模式），不同 reviewer 使用不同判断结构。"""
     text = item["public_evidence_text"] or ""
     hits = _all_mechanism_hits(text)
     base = hits[0] if hits else "uncertain"
@@ -139,8 +141,6 @@ def mock_review(item, reviewer_id, run_id, model_name, prompt_version, prompt_sh
         "model_name": model_name,
         "prompt_version": prompt_version,
         "prompt_sha256": prompt_sha,
-        "sample_id": item["_source_evidence_id"].rsplit("_U", 1)[0] if "_U" in item["_source_evidence_id"] else "",
-        "evidence_id": item["_source_evidence_id"],
         "evidence_text": text,
         "boundary_status": boundary,
         "surface_topic": _topic(text) if mech != "uncertain" else "other_uncertain",
@@ -148,49 +148,165 @@ def mock_review(item, reviewer_id, run_id, model_name, prompt_version, prompt_sh
         "evidence_phrase": text[:12],
         "confidence_band": conf,
         "abstain_reason": abstain,
-        "decision_basis": f"reviewer_{reviewer_id} 依据文本关键词与边界判断得出（mock）",
+        "decision_basis": f"reviewer_{reviewer_id} 依据文本关键词与边界判断得出（本地固定示例）",
         "created_at": "2026-07-20T00:00:00+08:00",
     }
 
 
 def validate(row):
-    missing = [f for f in REQUIRED_FIELDS if f not in row or row[f] == "" and f not in ("surface_topic", "evidence_phrase", "sample_id")]
+    missing = [f for f in REQUIRED_FIELDS
+               if f not in row or (row[f] == "" and f not in OPTIONAL_EMPTY)]
     if row.get("mechanism_label") not in ALLOWED_MECH:
         missing.append("mechanism_label:invalid")
     return missing
 
 
-def run_one_reviewer(items, reviewer_id, output_dir, provider, model, prompt_path, dry_run):
+# ---- 真实 provider：OpenAI 兼容接口 ----
+
+def llm_config_from_env():
+    """从环境变量读取真实模型配置；缺失项返回 None（不记录密钥内容）。"""
+    base_url = os.environ.get("PSYLENS_LLM_BASE_URL", "").strip()
+    api_key = os.environ.get("PSYLENS_LLM_API_KEY", "").strip()
+    model = os.environ.get("PSYLENS_LLM_MODEL", "").strip()
+    if not (base_url and api_key and model):
+        return None
+    return {"base_url": base_url.rstrip("/"), "api_key": api_key, "model": model}
+
+
+def build_messages(prompt_text, item):
+    """把 Prompt 与盲测证据组装成 OpenAI 兼容 messages（真实传入模型）。"""
+    ctx = item.get("parent_context", "") or "（无）"
+    user = (f"证据编号：{item['blinded_item_id']}\n"
+            f"证据文本：{item['public_evidence_text']}\n"
+            f"父样本上下文：{ctx}\n"
+            "请按 schema 输出 JSON。")
+    return [{"role": "system", "content": prompt_text},
+            {"role": "user", "content": user}]
+
+
+class RetryableError(Exception):
+    """可重试错误：429、超时或网络错误。"""
+
+
+def _http_post_json(url, headers, body, timeout):
+    req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+            return resp.status, resp.read().decode("utf-8")
+    except urllib.error.HTTPError as e:
+        status = e.code
+        text = e.read().decode("utf-8", errors="replace")
+        if status == 429 or 500 <= status < 600:
+            raise RetryableError(f"http_{status}") from e
+        return status, text
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        raise RetryableError(f"network:{type(e).__name__}") from e
+
+
+def call_openai_compatible(llm, messages, temperature, seed, timeout=60, max_retries=4):
+    """调用 OpenAI 兼容 /chat/completions；429、超时与网络错误按退避重试。
+
+    返回 ``(content_text, meta)``；密钥只用于请求头，不写入日志或返回值。
+    """
+    url = f"{llm['base_url']}/chat/completions"
+    payload = {"model": llm["model"], "messages": messages,
+               "temperature": temperature, "seed": seed,
+               "response_format": {"type": "json_object"}}
+    body = json.dumps(payload).encode("utf-8")
+    headers = {"Content-Type": "application/json",
+               "Authorization": f"Bearer {llm['api_key']}"}
+    last_err = None
+    for attempt in range(max_retries):
+        try:
+            status, text = _http_post_json(url, headers, body, timeout)
+        except RetryableError as e:
+            last_err = str(e)
+            time.sleep(min(2 ** attempt, 8))
+            continue
+        if status != 200:
+            return None, {"http_status": status, "error": "non_200"}
+        data = json.loads(text)
+        content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+        usage = data.get("usage", {})
+        return content, {"http_status": 200, "usage": usage}
+    return None, {"error": "retry_exhausted", "last_error": last_err}
+
+
+def parse_model_json(content, item, reviewer_id, run_id, model_name, prompt_version, prompt_sha):
+    """解析模型返回的 JSON，补全运行元数据。解析失败返回 None。"""
+    try:
+        obj = json.loads(content)
+    except (json.JSONDecodeError, TypeError):
+        return None
+    if not isinstance(obj, dict):
+        return None
+    row = {
+        "run_id": run_id,
+        "reviewer_id": reviewer_id,
+        "blinded_item_id": item["blinded_item_id"],
+        "model_name": model_name,
+        "prompt_version": prompt_version,
+        "prompt_sha256": prompt_sha,
+        "evidence_text": item["public_evidence_text"],
+        "boundary_status": obj.get("boundary_status", ""),
+        "surface_topic": obj.get("surface_topic", ""),
+        "mechanism_label": obj.get("mechanism_label", ""),
+        "evidence_phrase": obj.get("evidence_phrase", ""),
+        "confidence_band": obj.get("confidence_band", ""),
+        "abstain_reason": obj.get("abstain_reason", "none"),
+        "decision_basis": obj.get("decision_basis", ""),
+        "created_at": obj.get("created_at", "") or time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+    }
+    return row
+
+
+def _load_done_ids(out_path):
+    done = set()
+    if out_path.exists():
+        for line in out_path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                try:
+                    done.add(json.loads(line)["blinded_item_id"])
+                except Exception:  # noqa: BLE001
+                    pass
+    return done
+
+
+def run_one_reviewer(items, reviewer_id, output_dir, provider, model, prompt_path,
+                     dry_run, temperature=0.0, seed=20260720, llm=None, resume=False):
     prompt_text, prompt_version, prompt_sha = load_prompt(reviewer_id, prompt_path)
     run_id = f"{provider}-{reviewer_id}-{prompt_version}"
-    model_name = model or ("mock-deterministic" if provider == "mock" or dry_run else provider)
+    use_real = provider == "openai_compatible" and not dry_run
+    model_name = model or (llm["model"] if (use_real and llm) else "mock-deterministic")
     output_dir = Path(output_dir)
     raw_dir = output_dir / "raw_model_responses"
     raw_dir.mkdir(parents=True, exist_ok=True)
 
     out_path = output_dir / f"agent_reviews_{reviewer_id}.jsonl"
     retry_path = output_dir / "retry_queue.jsonl"
-    done_ids = set()
-    if out_path.exists():  # resume：跳过已完成项
-        for line in out_path.read_text(encoding="utf-8").splitlines():
-            if line.strip():
-                try:
-                    done_ids.add(json.loads(line)["evidence_id"])
-                except Exception:  # noqa: BLE001
-                    pass
+    done_ids = _load_done_ids(out_path) if resume else set()
 
     t0 = time.time()
-    ok, failed = 0, 0
+    ok, failed, tokens = 0, 0, 0
     raw_path = raw_dir / f"raw_{reviewer_id}.jsonl"
     with out_path.open("a", encoding="utf-8") as fout, \
             raw_path.open("a", encoding="utf-8") as fraw:
         for item in items:
-            if item["_source_evidence_id"] in done_ids:
+            if item["blinded_item_id"] in done_ids:
                 continue
-            row = mock_review(item, reviewer_id, run_id, model_name, prompt_version, prompt_sha)
-            fraw.write(json.dumps({"blinded_item_id": item["blinded_item_id"],
-                                   "raw": row["decision_basis"]}, ensure_ascii=False) + "\n")
-            missing = validate(row)
+            if use_real:
+                messages = build_messages(prompt_text, item)
+                content, meta = call_openai_compatible(llm, messages, temperature, seed)
+                tokens += (meta.get("usage") or {}).get("total_tokens", 0) or 0
+                fraw.write(json.dumps({"blinded_item_id": item["blinded_item_id"],
+                                       "raw": content, "meta": meta}, ensure_ascii=False) + "\n")
+                row = parse_model_json(content, item, reviewer_id, run_id, model_name,
+                                       prompt_version, prompt_sha) if content else None
+            else:
+                row = mock_review(item, reviewer_id, run_id, model_name, prompt_version, prompt_sha)
+                fraw.write(json.dumps({"blinded_item_id": item["blinded_item_id"],
+                                       "raw": row["decision_basis"]}, ensure_ascii=False) + "\n")
+            missing = validate(row) if row else ["parse_failed"]
             if missing:
                 failed += 1
                 with retry_path.open("a", encoding="utf-8") as fq:
@@ -203,59 +319,84 @@ def run_one_reviewer(items, reviewer_id, output_dir, provider, model, prompt_pat
     elapsed = round(time.time() - t0, 4)
     return {"reviewer_id": reviewer_id, "prompt_version": prompt_version,
             "prompt_sha256": prompt_sha, "parsed_ok": ok, "parse_failed": failed,
-            "elapsed_seconds": elapsed, "token_estimate": 0}
+            "elapsed_seconds": elapsed, "token_estimate": tokens}
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="多代理独立复检运行器（默认离线 mock，代理互相盲测）")
-    ap.add_argument("--provider", default="mock")
-    ap.add_argument("--model", default=None)
+    ap = argparse.ArgumentParser(description="多代理独立复检运行器（代理互相盲测，输出以盲测编号为主键）")
+    ap.add_argument("--provider", default="mock", choices=["mock", "openai_compatible"],
+                    help="mock=本地固定示例模式；openai_compatible=真实模型模式")
+    ap.add_argument("--model", default=None, help="真实模型名称；默认取环境变量 PSYLENS_LLM_MODEL")
     ap.add_argument("--reviewer-id", default=None, choices=["a", "b", "c"])
     ap.add_argument("--input", default=str(REPO_ROOT / "data" / "calibration" / "calibration_sample.csv"))
-    ap.add_argument("--output", default=str(DEFAULT_OUTPUT))
+    ap.add_argument("--output", default=None, help="输出目录；mock 默认 mock_self_test/reviews")
     ap.add_argument("--prompt", default=None)
     ap.add_argument("--temperature", type=float, default=0.0)
     ap.add_argument("--seed", type=int, default=20260720)
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--max-items", type=int, default=None)
-    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--dry-run", action="store_true", help="不调用真实模型，仅跑本地固定示例")
     args = ap.parse_args(argv)
 
-    real_model = args.provider not in ("mock", "") and not args.dry_run
-    if real_model:
-        print("未配置真实模型调用后端；本运行器默认离线。请以 --provider mock 或 --dry-run 运行。",
-              file=sys.stderr)
-        return 2
+    is_mock = args.provider == "mock" or args.dry_run
+    llm = None
+    if not is_mock:
+        llm = llm_config_from_env()
+        if llm is None:
+            print("provider=openai_compatible 需要环境变量 PSYLENS_LLM_BASE_URL / "
+                  "PSYLENS_LLM_API_KEY / PSYLENS_LLM_MODEL；未配置，退出。",
+                  file=sys.stderr)
+            return 2
+
+    default_out = MOCK_OUTPUT if is_mock else REAL_OUTPUT
+    output_dir = Path(args.output) if args.output else default_out
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     rows = read_sample(args.input)
     items = reviewer_input(rows)
     if args.max_items:
         items = items[:args.max_items]
 
-    output_dir = Path(args.output)
-    output_dir.mkdir(parents=True, exist_ok=True)
     reviewers = [args.reviewer_id] if args.reviewer_id else ["a", "b", "c"]
     results = [run_one_reviewer(items, rid, output_dir, args.provider, args.model,
-                                args.prompt, args.dry_run) for rid in reviewers]
+                                args.prompt, args.dry_run, args.temperature, args.seed,
+                                llm, args.resume) for rid in reviewers]
 
     total_ok = sum(r["parsed_ok"] for r in results)
     total_fail = sum(r["parse_failed"] for r in results)
     denom = total_ok + total_fail
-    report = {
-        "schema_version": "agent-review-run-1.0",
-        "agent_review_execution": "READY_NOT_RUN",
-        "execution_note": "本次为离线 mock，未调用真实模型；结构、解析与后续共识流程已跑通。",
-        "provider": args.provider,
+    if is_mock:
+        report = {
+            "schema_version": "agent-review-run-1.0",
+            "result_type": MOCK_RESULT_TYPE,
+            "agent_review_execution": "READY_NOT_RUN",
+            "execution_note": "本地固定示例模式，未调用真实模型；结构、解析与后续共识流程已跑通。"
+                              "结果仅为结构自测，不能作为真实模型校准或标签可靠性结论。",
+            "provider": args.provider,
+        }
+    else:
+        report = {
+            "schema_version": "agent-review-run-1.0",
+            "result_type": REAL_RESULT_TYPE,
+            "agent_review_execution": "RUN",
+            "execution_note": "真实模型模式，已按 OpenAI 兼容接口调用外部模型。",
+            "provider": args.provider,
+            "model_name": llm["model"] if llm else args.model,
+            "temperature": args.temperature,
+            "seed": args.seed,
+        }
+    report.update({
         "input_items": len(items),
         "reviewers": results,
         "parse_success_rate": round(total_ok / denom, 4) if denom else None,
         "parse_success_numerator": total_ok,
         "parse_success_denominator": denom,
-    }
+    })
     (output_dir / "run_report.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print("多代理复检运行完成：")
-    print("  agent_review_execution=READY_NOT_RUN（结构与解析已跑通，未调用真实模型）")
+    print(f"  result_type={report['result_type']}")
+    print(f"  agent_review_execution={report['agent_review_execution']}")
     print(f"  input_count={len(items)} reviewers={','.join(reviewers)}")
     print(f"  parse_success={total_ok}/{denom}")
     print(f"  output_path={output_dir}")

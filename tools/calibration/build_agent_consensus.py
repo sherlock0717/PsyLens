@@ -30,6 +30,9 @@ from pathlib import Path
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = TOOLS_DIR.parent.parent
 CALIBRATION_VERSION = "calibration-1.1"
+MOCK_RESULT_TYPE = "mock_pipeline_self_test"
+MOCK_REVIEWS_DIR = REPO_ROOT / "artifacts" / "calibration" / "mock_self_test" / "reviews"
+MOCK_CONSENSUS_DIR = REPO_ROOT / "artifacts" / "calibration" / "mock_self_test" / "consensus"
 MECHS = ["competence_frustration", "fairness_threat", "trust_communication_gap",
          "belonging_drop", "norm_safety_risk", "uncertain"]
 
@@ -101,17 +104,21 @@ def fleiss_kappa(items_label_lists):
     return round((P_bar - P_e) / (1 - P_e), 4)
 
 
-def build_consensus(reviews_by_reviewer, sample_rows, private_rows):
+def build_consensus(reviews_by_reviewer, sample_rows, private_rows, result_type=MOCK_RESULT_TYPE):
     # blinded_item_id -> reviewer -> row
     by_blinded = defaultdict(dict)
     for rid, rows in reviews_by_reviewer.items():
         for r in rows:
-            by_blinded[r.get("blinded_item_id", r.get("evidence_id"))][rid] = r
+            by_blinded[r.get("blinded_item_id", "")][rid] = r
 
     sample_map = {r["blinded_item_id"]: r for r in sample_rows}
     private_map = {r["blinded_item_id"]: r for r in private_rows}
 
-    main_blinded = [b for b, s in sample_map.items() if s.get("is_retest") == "false"] or list(by_blinded)
+    # 来源编号、重测关系只来自私有映射；公开样本看不到这些字段。
+    def meta(blinded):
+        return private_map.get(blinded) or sample_map.get(blinded) or {}
+
+    main_blinded = [b for b in by_blinded if meta(b).get("is_retest", "false") != "true"]
     consensus_rows = []
     mech_label_lists = []
 
@@ -134,7 +141,8 @@ def build_consensus(reviews_by_reviewer, sample_rows, private_rows):
         consensus_topic = t_top if _t_level in ("unanimous", "majority") else ""
         needs_adj = level != "unanimous"
 
-        src = sample_map.get(blinded, {}).get("source_evidence_id", per["a"].get("evidence_id", ""))
+        # 来源编号在共识生成后通过私有映射回填；无私有映射时留空。
+        src = meta(blinded).get("source_evidence_id", "")
         consensus_rows.append({
             "source_evidence_id": src,
             "reviewer_a_topic": topics[0], "reviewer_b_topic": topics[1], "reviewer_c_topic": topics[2],
@@ -149,11 +157,12 @@ def build_consensus(reviews_by_reviewer, sample_rows, private_rows):
         })
 
     stats = _compute_stats(consensus_rows, mech_label_lists, by_blinded, sample_map, private_map,
-                           reviews_by_reviewer)
+                           reviews_by_reviewer, result_type)
     return consensus_rows, stats
 
 
-def _compute_stats(rows, mech_label_lists, by_blinded, sample_map, private_map, reviews_by_reviewer):
+def _compute_stats(rows, mech_label_lists, by_blinded, sample_map, private_map,
+                   reviews_by_reviewer, result_type=MOCK_RESULT_TYPE):
     n = len(rows)
     levels = Counter(r["agreement_level"] for r in rows)
     unanimous = levels.get("unanimous", 0)
@@ -211,9 +220,13 @@ def _compute_stats(rows, mech_label_lists, by_blinded, sample_map, private_map, 
         }
         confusion = {k: dict(v) for k, v in conf.items()}
 
-    # 重测一致率：同一 reviewer 在主项与重测项上的机制是否一致
+    # 重测一致率：同一 reviewer 在主项与重测项上的机制是否一致。
+    # 重测关系只来自私有映射；公开样本不含 retest_group_id。
+    meta_map = {}
+    for b in set(sample_map) | set(private_map):
+        meta_map[b] = private_map.get(b) or sample_map.get(b) or {}
     retest_groups = defaultdict(dict)  # group -> reviewer -> [labels]
-    for b, s in sample_map.items():
+    for b, s in meta_map.items():
         grp = s.get("retest_group_id", "")
         if not grp:
             continue
@@ -241,6 +254,7 @@ def _compute_stats(rows, mech_label_lists, by_blinded, sample_map, private_map, 
     high_dispute_pairs = pair_counter.most_common(5)
 
     return {
+        "result_type": result_type,
         "item_count": n,
         "three_way_agreement": {"rate": round(unanimous / n, 4) if n else None,
                                 "numerator": unanimous, "denominator": n},
@@ -271,10 +285,16 @@ def render_report_md(stats):
             return "n/a"
         return f"{d['rate'] * 100:.1f}%（{d['numerator']}/{d['denominator']}）"
 
-    lines = ["# 自动校准共识报告", "",
-             "本报告汇总三个独立代理对分层证据的复检结果。共识只作为自动校准参考，"
-             "用于发现稳定结果和争议案例，不是人工金标准。", "",
-             f"- 参与统计的证据：{stats['item_count']} 条", "",
+    rtype = stats.get("result_type", MOCK_RESULT_TYPE)
+    lines = ["# 自动校准共识报告", ""]
+    if rtype == MOCK_RESULT_TYPE:
+        lines += ["> 本报告为本地固定示例模式的结构自测（result_type="
+                  f"{MOCK_RESULT_TYPE}）。以下一致率、标签熵和标签流向只用于验证流程能否跑通，"
+                  "不能作为真实模型校准结果、标签可靠性或 Codebook 质量结论。", ""]
+    lines += ["本报告汇总三个独立代理对分层证据的复检结果。共识只作为自动校准参考，"
+              "用于发现稳定结果和争议案例，不是人工金标准。", "",
+              f"- 结果类型：{rtype}",
+              f"- 参与统计的证据：{stats['item_count']} 条", "",
              "## 一致程度", "",
              f"- 三路完全一致：{rate(stats['three_way_agreement'])}。三名代理给出相同机制标签的比例。",
              f"- 多数一致（含完全一致）：{rate(stats['majority_agreement'])}。至少两名代理一致的比例。",
@@ -311,20 +331,34 @@ def render_report_md(stats):
     return "\n".join(lines) + "\n"
 
 
+def _detect_result_type(input_dir):
+    """从复检 run_report.json 读取 result_type；默认按结构自测处理。"""
+    rp = Path(input_dir) / "run_report.json"
+    if rp.exists():
+        try:
+            return json.loads(rp.read_text(encoding="utf-8")).get("result_type", MOCK_RESULT_TYPE)
+        except Exception:  # noqa: BLE001
+            return MOCK_RESULT_TYPE
+    return MOCK_RESULT_TYPE
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="汇总多代理复检的共识与争议（共识为参考，非金标准）")
-    ap.add_argument("--input-dir", default=str(REPO_ROOT / "artifacts" / "calibration" / "mock_reviews"))
-    ap.add_argument("--output-dir", default=str(REPO_ROOT / "artifacts" / "calibration" / "mock_consensus"))
+    ap.add_argument("--input-dir", default=str(MOCK_REVIEWS_DIR))
+    ap.add_argument("--output-dir", default=str(MOCK_CONSENSUS_DIR))
     ap.add_argument("--sample", default=str(REPO_ROOT / "data" / "calibration" / "calibration_sample.csv"))
     ap.add_argument("--private-key", default=str(REPO_ROOT / "artifacts" / "calibration" / "private_sampling_key.csv"))
+    ap.add_argument("--result-type", default=None,
+                    help="结果类型；默认从 run_report.json 推断，本地固定示例为 mock_pipeline_self_test")
     args = ap.parse_args(argv)
 
     input_dir = Path(args.input_dir)
     reviews = {rid: _read_jsonl(input_dir / f"agent_reviews_{rid}.jsonl") for rid in ("a", "b", "c")}
     sample_rows = _read_csv(args.sample)
     private_rows = _read_csv(args.private_key)
+    result_type = args.result_type or _detect_result_type(input_dir)
 
-    rows, stats = build_consensus(reviews, sample_rows, private_rows)
+    rows, stats = build_consensus(reviews, sample_rows, private_rows, result_type)
 
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -344,6 +378,7 @@ def main(argv=None):
     (out_dir / "calibration_report.md").write_text(render_report_md(stats), encoding="utf-8")
 
     print("共识分析完成：")
+    print(f"  result_type={stats.get('result_type')}")
     print(f"  item_count={stats['item_count']}")
     tw = stats["three_way_agreement"]
     print(f"  three_way_agreement={tw['numerator']}/{tw['denominator']}")
