@@ -63,7 +63,11 @@ jobs:
         run: ruff check demo/src demo/tests pipeline tools tests
 
       - name: Public copy P1 gate
-        run: python tools/lint_public_copy.py --root . --quality-gate P1 --format json
+        env:
+          PYTHONUTF8: "1"
+        run: >-
+          python tools/lint_public_copy.py --root . --quality-gate P1
+          --format json --output "${{ runner.temp }}/public_copy_report.json"
 
       - name: Test suite
         run: python -m pytest demo/tests tests -q
