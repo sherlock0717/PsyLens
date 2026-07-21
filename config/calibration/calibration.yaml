@@ -1,0 +1,37 @@
+# PsyLens 自动校准抽样配置（config/calibration/calibration.yaml）
+# 供 tools/calibration/build_calibration_sample.py 读取。
+# 校准结果为“自动校准参考”，不是人工金标准，也不覆盖公开数据的现有标签。
+
+sample_size: 300
+retest_size: 30
+reviewer_count: 3
+random_seed: 20260720
+
+# 分层维度：从公开证据的下列字段构造分层，保证覆盖。
+stratify_by:
+  - platform_source
+  - surface_topic
+  - mechanism_label
+  - label_source
+  - analysis_inclusion_status
+
+# 文本长度分桶（依据公开证据文本字符数）。
+length_buckets:
+  - short
+  - medium
+  - long
+
+# 长度阈值（字符数）：short <= short_max；medium <= medium_max；其余为 long。
+length_short_max: 15
+length_medium_max: 40
+
+# 每个分层值至少保证的样本数（保证稀有标签也被覆盖）。
+min_per_stratum_value: 2
+
+# 输入公开数据（只读，不覆盖）。
+input_evidence: data/public/evidence_public.csv
+input_samples: data/public/samples_public.csv
+
+# 输出目录：公开校准样本写入 data/calibration，私有映射与运行产物写入 artifacts/calibration。
+public_output: data/calibration/calibration_sample.csv
+artifact_dir: artifacts/calibration
