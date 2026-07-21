@@ -95,7 +95,8 @@ def test_consensus_not_named_gold():
     assert "gold" not in joined
     reviews, sample_rows = _fixture()
     _rows, stats = consensus.build_consensus(reviews, sample_rows, [])
-    assert "金标准" in stats["note"] and "不是" in stats["note"]
+    assert "自动校准参考" in stats["note"]
+    assert "人工金标准另行建立" in stats["note"]
 
 
 def test_mock_stats_marked_as_self_test():

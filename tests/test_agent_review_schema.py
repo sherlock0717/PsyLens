@@ -93,6 +93,60 @@ def test_reviewer_input_has_no_retest_relation():
     assert "RT_CAL_0007" not in joined
 
 
+def test_validate_checks_all_enums():
+    base = runner.mock_review(_item("匹配连败很不公平"), "b", "r", "mock", "b-1.0", "sha")
+    for field, bad in [("boundary_status", "x"), ("confidence_band", "x"),
+                       ("abstain_reason", "x"), ("surface_topic", "x")]:
+        row = dict(base)
+        row[field] = bad
+        assert any(p.startswith(field) for p in runner.validate(row)), field
+
+
+def test_validate_evidence_phrase_must_be_in_text():
+    row = runner.mock_review(_item("这个英雄强度太低"), "b", "r", "mock", "b-1.0", "sha")
+    row["evidence_phrase"] = "根本不存在的短语"
+    assert "evidence_phrase:not_in_text" in runner.validate(row)
+
+
+def test_validate_uncertain_requires_abstain_reason():
+    row = runner.mock_review(_item("嗯"), "a", "r", "mock", "a-1.0", "sha")
+    row["mechanism_label"] = "uncertain"
+    row["abstain_reason"] = "none"
+    assert "abstain_reason:required_for_uncertain" in runner.validate(row)
+
+
+def test_parse_model_json_strips_code_fence():
+    content = '```json\n{"mechanism_label": "fairness_threat", "surface_topic": "matchmaking",\n' \
+              '"boundary_status": "complete", "confidence_band": "high", "abstain_reason": "none",\n' \
+              '"evidence_phrase": "", "decision_basis": "x"}\n```'
+    item = {"blinded_item_id": "CAL_0001", "public_evidence_text": "匹配不公平"}
+    row = runner.parse_model_json(content, item, "b", "run", "model", "b-1.0", "sha")
+    assert row is not None
+    assert row["mechanism_label"] == "fairness_threat"
+    assert row["blinded_item_id"] == "CAL_0001"
+
+
+def test_run_id_contains_all_parts():
+    rid = runner.make_run_id("openai_compatible", "gpt-x", "a", "a-1.0", 0.2, 123)
+    for part in ["openai_compatible", "gpt-x", "a-1.0", "t0.2", "s123"]:
+        assert part in rid, part
+
+
+def test_output_dir_safety_blocks_nonresume_append(tmp_path):
+    items = [{"blinded_item_id": "CAL_0001", "public_evidence_text": "匹配连败不公平",
+              "parent_context": "", "context_available": "no"}]
+    out = tmp_path / "reviews"
+    r1 = runner.run_one_reviewer(items, "a", out, "mock", None, None, True)
+    assert r1["parsed_ok"] == 1
+    # 第二次非 resume：输出已存在且非空 -> 返回错误，不再 append
+    r2 = runner.run_one_reviewer(items, "a", out, "mock", None, None, True)
+    assert r2.get("error") == "output_exists_nonempty"
+    # resume 模式：跳过已完成项，不报错
+    r3 = runner.run_one_reviewer(items, "a", out, "mock", None, None, True, resume=True)
+    assert r3["parsed_ok"] == 0
+    assert not r3.get("error")
+
+
 def test_parse_failure_goes_to_retry_queue(tmp_path):
     # 构造一条会解析失败的输入（空 blinded/文本），确认写入 retry_queue 而非丢弃
     items = [{"blinded_item_id": "CAL_X", "public_evidence_text": "有效文本用于生成",
@@ -114,4 +168,5 @@ def test_parse_failure_goes_to_retry_queue(tmp_path):
         runner.mock_review = orig
     assert result["parse_failed"] == 1
     assert result["parsed_ok"] == 0
-    assert (out / "retry_queue.jsonl").exists()
+    # retry 队列按 run_id 分开命名（retry_queue_<run_id>.jsonl）
+    assert list(out.glob("retry_queue_*.jsonl"))
