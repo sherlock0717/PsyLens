@@ -243,7 +243,7 @@ def cover(doc):
     font(p.add_run("360 条公开样本  ·  927 条证据单元  ·  三个平台等额抽样  ·  文本回溯率 100%"), size=11.5, bold=True, color=RGBColor(18, 73, 105))
     doc.add_paragraph("")
     for label, value in [
-        ("项目定位", "心理学启发的社区反馈编码、分析与可靠性评测"),
+        ("项目定位", "社区反馈分析案例、可复现数据处理流程、心理学双层编码、可靠性评测与自动校准原型"),
         ("公开产物", "脱敏数据、编码手册、分析页面、离线 Demo 与复现脚本"),
         ("版本日期", "2026 年 7 月"),
     ]:
@@ -252,7 +252,7 @@ def cover(doc):
         font(p.add_run(label + "  "), size=10, bold=True, color=MUTED)
         font(p.add_run(value), size=10.5)
     p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(110)
+    p.paragraph_format.space_before = Pt(48)
     font(p.add_run("Copyright © 2026 Sherlock0717. All rights reserved."), size=8.5, color=MUTED)
     doc.add_page_break()
 
@@ -293,6 +293,7 @@ def build(samples_path: Path, evidence_path: Path, output: Path):
     cover(doc)
 
     doc.add_heading("执行摘要", level=1)
+    paragraph(doc, "PsyLens 是一个社区反馈分析案例，同时提供可复现的数据处理流程、心理学启发的双层编码方法、可靠性评测工具和可接入模型的自动校准原型。真实模型运行结果、模型之间的一致性比较和人工金标准不属于当前版本的交付范围。")
     paragraph(doc, "PsyLens 将社区公开讨论整理成可回溯的证据单元，并用表层话题与体验机制两套编码描述问题位置和玩家体验方向。当前案例覆盖 NGA、贴吧与 B 站，每个平台等额保留 120 条样本。")
     paragraph(doc, "公开数据包含 360 条样本和 927 条证据，平均每条样本切出 2.575 条证据。样本 ID、证据 ID、父样本关联、平台字段与文本定位检查均通过；公开文件未检出 URL，规范化后未发现文本重复组。")
     table(doc, ["指标", "当前值", "说明"], [
@@ -344,7 +345,7 @@ def build(samples_path: Path, evidence_path: Path, output: Path):
         "切分后清理首尾空白，默认少于 6 个字符的片段不单独进入候选；",
         "不跨样本拼接，不补写省略信息，不改变原句立场；",
         "每条证据文本必须能够在父样本公开文本中逐字定位；",
-        "信息不足时保留显式不确定类别。",
+        "信息不足时保留暂时不确定类别。",
     ])
 
     doc.add_heading("4. 心理学分析框架", level=1)
@@ -371,7 +372,7 @@ def build(samples_path: Path, evidence_path: Path, output: Path):
     combinations = [((topic, mechanism), count) for (topic, mechanism), count in cross.items() if topic != "other_uncertain" and mechanism != "uncertain"]
     combinations.sort(key=lambda item: (-item[1], item[0]))
     table(doc, ["组合", "证据数", "占全部证据"], [[f"{TOPIC_CN[topic]} × {MECH_CN[mechanism]}", count, pct(count, n_evidence)] for (topic, mechanism), count in combinations[:10]], widths=[9.2, 2.8, 3.5], size=8.8)
-    paragraph(doc, "平衡 × 胜任受挫是数量最高的具体组合，说明角色、装备和机制强度经常与“难以发挥作用”同时出现。平衡 × 公平受损与匹配 × 公平受损提示部分玩家把负面结果归因于规则或分配方式。沟通透明 × 信任落差数量较少，但构念对应关系清晰。")
+    paragraph(doc, "平衡 × 胜任受挫是数量最高的具体组合，说明角色、装备和机制强度经常与“难以发挥作用”同时出现。平衡 × 公平受损与匹配 × 公平受损提示部分玩家把负面结果归因于规则或分配方式。沟通透明 × 信任落差数量较少，但体验类型对应关系清晰。")
     doc.add_heading("5.4 平台描述性比较", level=2)
     platform_detail = []
     for key in ["Bili", "NGA", "Tieba"]:
@@ -402,11 +403,23 @@ def build(samples_path: Path, evidence_path: Path, output: Path):
         ["机制不确定率", pct(mechanisms['uncertain'], n_evidence), "重点诊断", "需要改进上下文与标签边界"],
         ["缺失日期", str(date_missing), "限制时间分析", "日期属于可选字段"],
     ], widths=[4.2, 2.4, 3.2, 5.7], size=8.4)
-    doc.add_heading("6.1 下一阶段一致性评测", level=2)
-    paragraph(doc, "建议从平台、主要话题、主要机制和不确定类别中分层抽样，由两名编码者独立判断证据纳入、表层话题与机制标签。记录独立结果、争议类型、裁决理由和手册修订，并计算适用于名义变量的 Krippendorff’s alpha。")
-    paragraph(doc, "一致性指标需要与混淆矩阵、争议样本和返修成本一起解释。较高一致性只能说明编码者使用同一规则时结果稳定，不能单独证明构念完整或产品结论有效。")
+    doc.add_heading("6.1 编码一致性评测方法（扩展）", level=2)
+    paragraph(doc, "编码一致性评测从平台、主要话题、主要机制和不确定类别中分层抽样，由两名编码者独立判断证据纳入、表层话题与机制标签。记录独立结果、争议类型、裁决理由和手册修订，并计算适用于名义变量的 Krippendorff’s alpha。Krippendorff’s alpha 是一种衡量多名编码者判断一致程度的统计量。")
+    paragraph(doc, "一致性指标需要与混淆矩阵、争议样本和返修成本一起解释。较高一致性只能说明编码者使用同一规则时结果稳定，不能单独证明体验类型划分完整或产品结论有效。")
 
-    doc.add_heading("7. 产品方向与验证设计", level=1)
+    doc.add_heading("7. 文案质量检查", level=1)
+    paragraph(doc, "公开文案由 tools/lint_public_copy.py 自动检查，覆盖 README、页面、方法文档以及 Python 中面向读者的文字。检查器识别模板化宣传词、负面框架句式、过长句子、页面中的内部工程状态和未解释的英文缩写。检查器设有发布门槛（一道自动关卡）：只有文案检查达到设定级别，页面和文档才允许发布。仓库在 Ubuntu 与 Windows 两套环境运行持续集成，包含编译检查、Ruff 静态检查、测试套件、文案质量门槛，以及一次本地固定示例校准流程的冒烟运行与公开字段安全检查。")
+
+    doc.add_heading("8. 自动校准工具", level=1)
+    paragraph(doc, "仓库提供一套编码复检与争议分析工具，用于观察标签在多次独立判断下是否稳定。它是可接入模型的自动校准原型，当前公开版本不发布模型成绩。")
+    doc.add_heading("8.1 分层抽样与三路复检", level=2)
+    paragraph(doc, "抽样从公开证据中取 300 条主样本，另加 30 条重测样本，按平台、话题、机制、编码来源、纳入状态和文本长度分层。重测样本用于观察同一条证据在重复判断下是否得到一致结果。两部分合并后统一编号并重新排序，公开样本只保留复检所需的脱敏字段，来源、平台、当前标签和重测关系写入私有映射文件。")
+    paragraph(doc, "三名独立 Reviewer 使用不同的判断结构，但共用同一套标签集合和定义：Reviewer A 严格依据编码手册分类；Reviewer B 先概括主要诉求再匹配标签；Reviewer C 先排除相邻标签再做判断。三名 Reviewer 互不查看彼此结果。共识分析汇总一致标签与争议标签，争议项转化为编码手册的改进提案。")
+    doc.add_heading("8.2 运行方式与扩展入口", level=2)
+    paragraph(doc, "工具提供两种运行方式。本地固定示例模式按关键词生成确定性示例输出，用来验证数据流、输出格式和统计流程；它只用于验证流程，不是真实模型校准结果。OpenAI-compatible 接口作为扩展入口保留，可在本地配置环境变量后接入外部模型；当前公开版本不包含真实模型运行结果，也不发布模型成绩。")
+    callout(doc, "结果性质说明", "本地固定示例只用于验证流程；当前版本不发布模型成绩；自动结果定位为参考，不等同于人工金标准。")
+
+    doc.add_heading("9. 产品方向与验证设计", level=1)
     paragraph(doc, "当前结果适合形成产品假设，后续通过独立研究验证。以下方向根据高频话题、主要机制与证据示例整理：")
     table(doc, ["方向", "证据线索", "产品假设", "验证指标"], [
         ["角色与强化适配信息", "平衡 × 胜任受挫", "在选择阶段提供强化适配、阵容缺口与风险提示", "A/B 对比选择后退出率、低贡献局比例、相关负面反馈"],
@@ -417,7 +430,7 @@ def build(samples_path: Path, evidence_path: Path, output: Path):
     ], widths=[3.1, 3.2, 5.2, 4.0], size=7.9)
     paragraph(doc, "验证时应预先定义目标用户、干预内容、主要指标、观察窗口和停止条件。反馈数量下降需要结合活跃度、任务完成、对局质量与留存指标，避免把沉默误判为体验改善。")
 
-    doc.add_heading("8. 解释边界", level=1)
+    doc.add_heading("10. 解释边界", level=1)
     bullets(doc, [
         "三个平台各 120 条属于等额抽样设计，不能代表平台真实讨论规模或总体玩家意见占比；",
         "证据数量受到文本长度和切分粒度影响，不能直接等同于问题强度；",
@@ -427,7 +440,7 @@ def build(samples_path: Path, evidence_path: Path, output: Path):
         "产品方向需要通过访谈、问卷、行为日志或实验验证。",
     ])
 
-    doc.add_heading("9. 复现与仓库入口", level=1)
+    doc.add_heading("11. 复现与仓库入口", level=1)
     paragraph(doc, "公开数据规范化、统计汇总与 Demo 均可离线运行。")
     for command in [
         "python tools/normalize_public_dataset.py --source-dir data/public --output-dir artifacts/normalized_public",
@@ -439,7 +452,7 @@ def build(samples_path: Path, evidence_path: Path, output: Path):
         p.paragraph_format.left_indent = Cm(0.6)
         font(p.add_run(command), name="Consolas", size=8.5, color=RGBColor(28, 78, 105))
     table(doc, ["路径", "内容"], [
-        ["data/public/", "公开样本、证据、manifest 与字段说明"],
+        ["data/public/", "公开样本、证据、文件校验记录与字段说明"],
         ["docs/methodology/", "心理学框架、证据切分、话题与机制手册"],
         ["docs/evaluation/", "评测方法与当前结果"],
         ["pipeline/", "采集契约、配置与 Prompt 模板"],

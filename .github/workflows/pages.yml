@@ -37,8 +37,12 @@ jobs:
           python -m pytest demo/tests tests -q
           python tools/normalize_public_dataset.py --source-dir data/public --output-dir artifacts/normalized_public
           python tools/summarize_public_analysis.py --public-dir data/public --output artifacts/public_analysis_summary.json
-          python tools/build_project_brief_docx.py --output artifacts/PsyLens_project_brief.docx
           python tools/run_demo.py --provider mock --output artifacts/demo/pages
+
+      - name: Build project brief into docs/files
+        run: |
+          python tools/build_project_brief_docx.py --output docs/files/PsyLens_project_brief.docx
+          python -c "from pathlib import Path; p=Path('docs/files/PsyLens_project_brief.docx'); assert p.exists() and p.stat().st_size > 10000"
 
       - name: Upload site
         uses: actions/upload-pages-artifact@v3

@@ -1,8 +1,8 @@
-# 多代理自动校准流程
+# 多代理自动校准工具
 
-这份文档说明 PsyLens v1.1 的自动校准流程：用多个互不查看彼此结果的代理，对分层证据做独立复检，输出一致结果、争议标签和重复运行稳定性。
+这份文档说明 PsyLens 的自动校准工具：用多个互不查看彼此结果的代理，对分层证据做独立复检，输出共识标签、争议标签和重复运行稳定性。
 
-校准结果定位为自动校准参考，用于发现稳定结论和需要重点核对的标签，人工金标准另行建立，也不覆盖公开数据的现有标签。
+校准结果定位为自动校准参考，用于发现稳定结论和需要重点核对的标签，人工金标准另行建立，也不覆盖公开数据的现有标签。当前公开版本不包含真实模型运行结果。
 
 ## 名词解释
 
@@ -44,7 +44,7 @@
 
 - **本地固定示例模式**（`--provider mock`，默认）：运行器按关键词生成确定性示例输出，用来跑通结构、解析和后续共识流程。它是结构自测，不是真实模型校准。此时报告标注 `result_type=mock_pipeline_self_test`、运行状态 `READY_NOT_RUN`，产物写入 `artifacts/calibration/mock_self_test/`。这里的一致率、标签熵和标签流向只用于验证流程能否跑通，不能作为真实模型校准结果、标签可靠性或 Codebook 质量结论。
 
-- **真实模型模式**（`--provider openai_compatible`）：按 OpenAI 兼容接口调用外部模型。运行器从环境变量 `PSYLENS_LLM_BASE_URL`、`PSYLENS_LLM_API_KEY`、`PSYLENS_LLM_MODEL` 读取配置：base_url 表示接口地址，api_key 表示访问密钥，model 表示模型名称。Prompt 真实传入模型，temperature 与 seed 进入请求体，原始响应单独保存。解析失败进入 retry queue（重试队列），429、超时和网络错误按退避重试，支持断点续跑，运行器不记录密钥。此时报告标注 `result_type=real_agent_calibration`。
+- **OpenAI-compatible 扩展入口**（`--provider openai_compatible`）：作为扩展入口保留，按 OpenAI 兼容接口调用外部模型。运行器从环境变量 `PSYLENS_LLM_BASE_URL`、`PSYLENS_LLM_API_KEY`、`PSYLENS_LLM_MODEL` 读取配置：base_url 表示接口地址，api_key 表示访问密钥，model 表示模型名称。Prompt 真实传入模型，temperature 与 seed 进入请求体，原始响应单独保存。解析失败进入 retry queue（重试队列），429、超时和网络错误按退避重试，支持断点续跑，运行器不记录密钥。此时报告标注 `result_type=real_agent_calibration`。当前公开版本不包含真实模型运行结果。
 
 `result_type` 是结果类型标记，用来区分“结构自测”与“真实校准”。页面、README 和正式方法结论只引用真实校准结果，不引用本地固定示例模式的数值。
 
