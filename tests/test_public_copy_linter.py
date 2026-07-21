@@ -128,7 +128,8 @@ def test_page_no_repeated_human_review_status():
 
 def test_page_uses_positive_calibration_framing():
     v = _visible(INDEX.read_text(encoding="utf-8"))
-    assert "自动校准计划" in v
+    assert "自动校准工具" in v
+    assert "自动校准计划" not in v
     assert "校准重点" in v
     assert "结果使用说明" in v
 
