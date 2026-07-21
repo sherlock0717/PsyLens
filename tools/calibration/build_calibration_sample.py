@@ -29,7 +29,7 @@ from pathlib import Path
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = TOOLS_DIR.parent.parent
 
-# 公开校准样本只保留盲测所需字段：代理凭这些字段判断，无法反推来源、平台或重测关系。
+# 公开校准样本只保留盲测所需字段：不含结构化的来源、平台或重测字段（脱敏文本按原貌保留）。
 PUBLIC_FIELDS = ["blinded_item_id", "public_evidence_text", "parent_context",
                  "context_available", "length_bucket"]
 # 私有映射保存来源、平台、分层、重测关系与当前标签，仅写入 gitignore 的 artifacts 目录。

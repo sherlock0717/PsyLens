@@ -32,7 +32,7 @@ is_retest, retest_group_id, current_surface_topic, current_mechanism_label,
 label_source, review_status, analysis_inclusion_status
 ```
 
-这样代理无法从公开样本反推来源、平台或哪些项是重复项。来源编号只在共识生成后，通过私有映射按 `blinded_item_id` 回填。该私有文件与原始模型响应都不进入公开仓库，已在 `.gitignore` 中排除。
+这样公开样本不含结构化的来源、平台或重测字段；脱敏文本按原貌保留，其中的自然表达属于证据内容。来源编号只在共识生成后，通过私有映射按 `blinded_item_id` 回填。该私有文件与原始模型响应都不进入公开仓库，已在 `.gitignore` 中排除。
 
 ## 生成方式
 

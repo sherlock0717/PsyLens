@@ -69,7 +69,7 @@ def test_reviewer_input_hides_labels():
 
 
 def test_reviewer_input_has_no_source_id():
-    """reviewer 输入不含来源编号，代理无法反推样本来源。"""
+    """reviewer 输入不含结构化来源编号字段。"""
     rows = [{"blinded_item_id": "CAL_0001", "source_evidence_id": "NGA_0001_U01",
              "public_evidence_text": "文本", "parent_context": "", "context_available": "no"}]
     items = runner.reviewer_input(rows)

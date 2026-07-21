@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""校验 mock 校准产物与公开样本安全性（供 CI 与本地使用）。
+"""校验 mock 校准产物与公开样本的结构化字段安全性（供 CI 与本地使用）。
 
 检查项：
 - 复检与共识报告的 result_type 均为 mock_pipeline_self_test；
-- 公开校准样本不含平台、来源、当前标签与重测线索（列名与取值）；
-- 公开样本不出现平台缩写 BILI / NGA / TIEBA。
+- 公开校准样本中是否存在结构化的平台字段、来源编号字段、当前标签字段、
+  重测字段，以及 BILI / NGA / TIEBA 等内部来源编号前缀。
 
-任一检查不通过则以非零码退出，便于 CI 阻断。
+只检查结构化字段与来源编号前缀，不判断脱敏文本内容。任一检查不通过则以非零码退出，
+便于 CI 阻断。
 """
 from __future__ import annotations
 
@@ -73,7 +74,8 @@ def main(argv=None):
         for msg in problems:
             print(f"  - {msg}", file=sys.stderr)
         return 1
-    print("校准产物校验通过：result_type=mock_pipeline_self_test，公开样本无泄漏线索。")
+    print("校准产物校验通过：result_type=mock_pipeline_self_test，"
+          "公开样本未包含结构化来源、当前标签或重测字段。")
     return 0
 
 

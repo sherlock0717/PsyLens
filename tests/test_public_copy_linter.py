@@ -144,3 +144,46 @@ def test_readme_explains_key_terms():
     assert "证据单元" in text and "从一条完整反馈" in text
     assert "体验机制" in text
     assert "自动校准参考集" in text
+
+
+# ---- 平台盲测表述准确性 ----
+
+_BLINDING_FILES = [
+    "config/calibration/prompts/reviewer_a.md",
+    "config/calibration/prompts/reviewer_b.md",
+    "config/calibration/prompts/reviewer_c.md",
+    "docs/evaluation/AGENT_CALIBRATION_WORKFLOW.md",
+    "tools/calibration/run_agent_reviews.py",
+    "tools/calibration/verify_mock_outputs.py",
+]
+
+
+def test_blinding_wording_removed_overclaims():
+    """盲测相关文件不再出现过度声明的旧表述。"""
+    for rel in _BLINDING_FILES:
+        text = (REPO_ROOT / rel).read_text(encoding="utf-8")
+        assert "看不到平台名称" not in text, rel
+        assert "无法反推样本身份" not in text, rel
+        assert "无泄漏线索" not in text, rel
+
+
+def test_prompts_state_structured_blinding_and_raw_text():
+    """三个 Prompt 明确结构化来源不提供，且公开脱敏文本按原貌保留。"""
+    for rel in ["config/calibration/prompts/reviewer_a.md",
+                "config/calibration/prompts/reviewer_b.md",
+                "config/calibration/prompts/reviewer_c.md"]:
+        text = (REPO_ROOT / rel).read_text(encoding="utf-8")
+        assert "平台字段" in text
+        assert "公开脱敏文本按原貌保留" in text
+
+
+def test_workflow_doc_notes_natural_expressions_retained():
+    text = (REPO_ROOT / "docs/evaluation/AGENT_CALIBRATION_WORKFLOW.md").read_text(encoding="utf-8")
+    assert "公开脱敏文本按原貌保留" in text
+    assert "楼主" in text and "评论区" in text
+
+
+def test_verify_tool_states_structured_fields_only():
+    text = (REPO_ROOT / "tools/calibration/verify_mock_outputs.py").read_text(encoding="utf-8")
+    assert "结构化" in text
+    assert "无泄漏线索" not in text
