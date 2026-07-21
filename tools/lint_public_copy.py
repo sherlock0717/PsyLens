@@ -23,6 +23,7 @@ import csv
 import json
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 TOOLS_DIR = Path(__file__).resolve().parent
@@ -37,16 +38,22 @@ DEFAULT_TARGET_GLOBS = [
     "demo/**/*.md",
     "tools/**/*.py",
     "demo/src/**/*.py",
+    "evaluation/*.yaml",
+    "config/*.yaml",
+    "config/**/*.yaml",
 ]
+
+# 需要向读者解释的术语；同一句堆叠过多且无解释时判 technical_term_overload。
+EXTRA_TECHNICAL_TERMS = ["构念", "横截面", "mock", "provider", "manifest", "Kappa", "标签熵", "schema"]
 
 # 若未安装 PyYAML 或配置缺失时使用的内置默认规则。
 DEFAULT_RULES = {
     "banned_phrases": ["赋能", "打通", "深度洞察", "全链路", "全方位", "值得注意的是",
                        "不难发现", "显而易见", "站得住", "普通语言"],
     "discouraged_phrases": ["质量风险", "做不了", "无法使用", "不可用", "缺失字段", "字段缺失"],
-    "technical_terms": ["构念", "语义链路", "grounding", "adjudication", "标签熵",
+    "technical_terms": ["构念", "横截面", "语义链路", "grounding", "adjudication", "标签熵",
                         "calibration", "abstain", "schema", "pipeline", "deterministic",
-                        "混淆矩阵", "Kappa", "Alpha"],
+                        "混淆矩阵", "Kappa", "Alpha", "mock", "provider", "manifest"],
     "internal_process_terms": ["BLOCKED", "发布阻断", "返修", "phase1/", "phase2/", "Issue #"],
     "repeated_status_terms": ["未人工复核", "尚未人工复核", "待人工复核", "人工复核", "不确定率"],
     "allowed_files": ["docs/CONTENT_STYLE_GUIDE.md", "config/public_copy_rules.yaml",
@@ -120,6 +127,12 @@ def load_rules(config_path):
         loaded = parse_simple_yaml(text)
     if isinstance(loaded, dict):
         rules.update({k: v for k, v in loaded.items() if v is not None})
+    # 始终确保任务要求的术语在检查范围内（不因配置遗漏而漏检）。
+    terms = list(rules.get("technical_terms", []))
+    for t in EXTRA_TECHNICAL_TERMS:
+        if t not in terms:
+            terms.append(t)
+    rules["technical_terms"] = terms
     return rules
 
 
@@ -171,11 +184,24 @@ def _iter_text_lines(path, rel):
     """返回 [(line_number, raw_line, text_for_check)]。
 
     .py 文件仅检查含中文的注释与字符串行（近似用户可见文案）。
+    .html 文件跳过 ``<script>`` 与 ``<style>`` 块，只检查面向读者的正文，
+    避免把 JS/CSS 代码行误判为长句或模板词。
     """
     lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
     out = []
     is_py = rel.endswith(".py")
+    is_html = rel.endswith((".html", ".htm"))
+    in_skip = False
     for i, raw in enumerate(lines, start=1):
+        if is_html:
+            low = raw.lower()
+            if not in_skip and re.search(r"<(script|style)\b", low):
+                in_skip = "</script>" not in low and "</style>" not in low
+                continue
+            if in_skip:
+                if "</script>" in low or "</style>" in low:
+                    in_skip = False
+                continue
         if is_py:
             stripped = raw.strip()
             has_cjk = re.search(r"[\u4e00-\u9fff]", raw)
@@ -283,8 +309,42 @@ def run(root, config_path, target_globs=None, extra_exclude=None, allowlist=None
     return all_findings, [rel for rel, _ in files]
 
 
+PRIORITY_ORDER = {"P0": 0, "P1": 1, "P2": 2}
+
+
+def _visible_html(root):
+    idx = Path(root) / "docs" / "index.html"
+    if not idx.exists():
+        return ""
+    return re.sub(r"<script[\s\S]*?</script>", "", idx.read_text(encoding="utf-8", errors="replace"))
+
+
+def evaluate_gate(findings, root, level, long_sentence_limit=10):
+    """按质量门槛评估发布条件，返回未通过原因列表（空列表表示通过）。
+
+    - 优先级门槛：不允许出现该级别及更高级别的问题（P0 最高）。
+    - 发布级门槛（P0/P1）额外检查：README 与 docs/index.html 的长句总数、
+      以及页面自动校准板块是否只出现一次。
+    """
+    fails = []
+    threshold = PRIORITY_ORDER[level]
+    blocking = [f for f in findings if PRIORITY_ORDER[f["priority"]] <= threshold]
+    if blocking:
+        by_pri = Counter(f["priority"] for f in blocking)
+        fails.append(f"存在 {len(blocking)} 处需处理问题（{dict(by_pri)}）")
+    if threshold <= PRIORITY_ORDER["P1"]:
+        long_hits = [f for f in findings if f["issue_type"] == "long_sentence"
+                     and f["file_path"] in ("README.md", "docs/index.html")]
+        if len(long_hits) > long_sentence_limit:
+            fails.append(f"README 与页面长句共 {len(long_hits)} 处，超过上限 {long_sentence_limit}")
+        page = _visible_html(root)
+        calib_boards = page.count("自动校准参考集")
+        if calib_boards > 1:
+            fails.append(f"页面自动校准板块出现 {calib_boards} 次，应只保留一次")
+    return fails
+
+
 def render_markdown(findings, scanned):
-    from collections import Counter
     by_type = Counter(f["issue_type"] for f in findings)
     by_file = Counter(f["file_path"] for f in findings)
     by_pri = Counter(f["priority"] for f in findings)
@@ -340,6 +400,8 @@ def main(argv=None):
     ap.add_argument("--output", default=None, help="输出文件路径；不指定则打印到标准输出")
     ap.add_argument("--format", choices=["json", "markdown", "csv"], default="markdown")
     ap.add_argument("--strict", action="store_true", help="存在 P0 问题时以退出码 1 结束")
+    ap.add_argument("--quality-gate", choices=["P0", "P1", "P2"], default=None,
+                    help="发布门槛：不允许出现该级别及更高级别的问题；P0/P1 额外检查长句上限与板块唯一性")
     ap.add_argument("--exclude", action="append", default=[], help="额外排除目录，可多次指定")
     ap.add_argument("--allowlist", action="append", default=[], help="额外豁免文件（相对路径），可多次指定")
     args = ap.parse_args(argv)
@@ -362,6 +424,15 @@ def main(argv=None):
                 w.writerow(f)
         else:
             print(render_markdown(findings, scanned))
+
+    if args.quality_gate:
+        gate_fails = evaluate_gate(findings, args.root, args.quality_gate)
+        if gate_fails:
+            print(f"quality-gate={args.quality_gate} 未通过：", file=sys.stderr)
+            for reason in gate_fails:
+                print(f"  - {reason}", file=sys.stderr)
+            return 1
+        print(f"quality-gate={args.quality_gate} 通过。")
 
     if args.strict and p0:
         print(f"strict 模式：存在 {len(p0)} 处 P0 问题，需先改写。", file=sys.stderr)
