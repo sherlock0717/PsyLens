@@ -33,6 +33,7 @@ jobs:
         run: |
           python -m compileall demo/src pipeline tools tests demo/tests
           ruff check demo/src demo/tests pipeline tools tests
+          python tools/lint_public_copy.py --root . --quality-gate P1 --format json
           python -m pytest demo/tests tests -q
           python tools/normalize_public_dataset.py --source-dir data/public --output-dir artifacts/normalized_public
           python tools/summarize_public_analysis.py --public-dir data/public --output artifacts/public_analysis_summary.json
