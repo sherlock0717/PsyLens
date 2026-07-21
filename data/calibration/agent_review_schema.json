@@ -1,0 +1,94 @@
+{
+  "schema_version": "agent-review-1.1",
+  "description": "单个代理对一条盲测证据的复检结果结构。输出以 blinded_item_id 为主键；代理互不查看彼此结果，也不获得来源编号、平台名称、当前标签、编码来源与重测关系。来源编号只在生成共识后经私有映射回填。",
+  "type": "object",
+  "required": [
+    "run_id",
+    "reviewer_id",
+    "blinded_item_id",
+    "model_name",
+    "prompt_version",
+    "prompt_sha256",
+    "evidence_text",
+    "boundary_status",
+    "surface_topic",
+    "mechanism_label",
+    "evidence_phrase",
+    "confidence_band",
+    "abstain_reason",
+    "decision_basis",
+    "created_at"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "description": "本次运行标识"},
+    "reviewer_id": {"type": "string", "enum": ["a", "b", "c"], "description": "代理编号"},
+    "blinded_item_id": {"type": "string", "description": "盲测项主键；代理可见的唯一标识"},
+    "model_name": {"type": "string", "description": "使用的模型名称或本地固定示例标识"},
+    "prompt_version": {"type": "string", "description": "Prompt 版本号"},
+    "prompt_sha256": {"type": "string", "description": "Prompt 文本的 SHA-256，用于复现"},
+    "evidence_text": {"type": "string", "description": "证据文本（公开脱敏）"},
+    "boundary_status": {
+      "type": "string",
+      "enum": ["complete", "needs_parent_context", "over_segmented", "under_segmented", "not_evidence"],
+      "description": "证据边界判断：完整、需父样本上下文、切分过细、切分过粗、不构成证据"
+    },
+    "surface_topic": {
+      "type": "string",
+      "enum": [
+        "balance",
+        "matchmaking",
+        "event_design",
+        "progression",
+        "community_conflict",
+        "communication_transparency",
+        "rewards",
+        "new_player_onboarding",
+        "other_uncertain",
+        ""
+      ],
+      "description": "表层话题标签，取值固定为九项；无法判断时可留空（由程序按可选字段处理）"
+    },
+    "mechanism_label": {
+      "type": "string",
+      "enum": [
+        "competence_frustration",
+        "fairness_threat",
+        "trust_communication_gap",
+        "belonging_drop",
+        "norm_safety_risk",
+        "uncertain"
+      ],
+      "description": "体验机制标签，取值固定为六项"
+    },
+    "evidence_phrase": {"type": "string", "description": "支撑判断的证据短语，应能在证据文本中找到"},
+    "confidence_band": {
+      "type": "string",
+      "enum": ["high", "medium", "low"],
+      "description": "置信区间：高、中、低"
+    },
+    "abstain_reason": {
+      "type": "string",
+      "enum": ["none", "insufficient_context", "multiple_mechanisms", "unclear_topic", "unclear_boundary", "other"],
+      "description": "弃权原因；未弃权为 none"
+    },
+    "decision_basis": {"type": "string", "description": "普通中文说明判断依据"},
+    "created_at": {"type": "string", "description": "生成时间"}
+  },
+  "reviewer_visible_fields": [
+    "blinded_item_id",
+    "public_evidence_text",
+    "parent_context",
+    "context_available"
+  ],
+  "reviewer_hidden_fields": [
+    "source_evidence_id",
+    "current_surface_topic",
+    "current_mechanism_label",
+    "label_source",
+    "review_status",
+    "platform_source",
+    "is_retest",
+    "retest_group_id",
+    "other_reviewer_results"
+  ]
+}

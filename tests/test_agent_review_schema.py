@@ -1,0 +1,172 @@
+# -*- coding: utf-8 -*-
+"""代理复检 schema 与输出校验：合法标签、必填字段、解析失败进入队列不静默丢弃。"""
+import importlib.util
+import json
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+SCHEMA = REPO_ROOT / "data" / "calibration" / "agent_review_schema.json"
+
+
+def _load(rel):
+    spec = importlib.util.spec_from_file_location(Path(rel).stem, REPO_ROOT / rel)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+runner = _load("tools/calibration/run_agent_reviews.py")
+
+
+def test_schema_structure():
+    schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
+    props = schema["properties"]
+    assert set(schema["required"]).issubset(props)
+    assert props["mechanism_label"]["enum"] == runner.ALLOWED_MECH
+    assert len(props["boundary_status"]["enum"]) == 5
+    assert set(props["confidence_band"]["enum"]) == {"high", "medium", "low"}
+    assert len(props["abstain_reason"]["enum"]) == 6
+    # reviewer 不可见字段包含当前标签与平台
+    for hidden in ["current_mechanism_label", "label_source", "platform_source",
+                   "review_status", "other_reviewer_results"]:
+        assert hidden in schema["reviewer_hidden_fields"]
+
+
+def _item(text, blinded="CAL_0001", src="NGA_0001_U01"):
+    return {"blinded_item_id": blinded, "public_evidence_text": text,
+            "parent_context": text, "context_available": "yes", "_source_evidence_id": src}
+
+
+def test_mock_review_is_valid():
+    row = runner.mock_review(_item("这个英雄强度太低了根本打不出输出"), "b",
+                             "run", "mock", "b-1.0", "sha")
+    assert runner.validate(row) == []
+    assert row["mechanism_label"] in runner.ALLOWED_MECH
+    for field in runner.REQUIRED_FIELDS:
+        assert field in row
+
+
+def test_validate_flags_missing_and_invalid():
+    row = runner.mock_review(_item("测试文本足够长用于判断"), "a", "r", "mock", "a-1.0", "sha")
+    bad = dict(row)
+    del bad["created_at"]
+    assert "created_at" in runner.validate(bad)
+    bad2 = dict(row)
+    bad2["mechanism_label"] = "not_a_label"
+    assert "mechanism_label:invalid" in runner.validate(bad2)
+
+
+def test_reviewer_input_hides_labels():
+    rows = [{"blinded_item_id": "CAL_0001", "source_evidence_id": "NGA_0001_U01",
+             "public_evidence_text": "文本", "parent_context": "父文本",
+             "context_available": "yes", "mechanism_label": "fairness_threat",
+             "surface_topic": "balance", "platform_source": "NGA"}]
+    items = runner.reviewer_input(rows)
+    keys = set(items[0].keys())
+    for hidden in ["mechanism_label", "surface_topic", "platform_source"]:
+        assert hidden not in keys, hidden
+    assert "public_evidence_text" in keys
+
+
+def test_reviewer_input_has_no_source_id():
+    """reviewer 输入不含结构化来源编号字段。"""
+    rows = [{"blinded_item_id": "CAL_0001", "source_evidence_id": "NGA_0001_U01",
+             "public_evidence_text": "文本", "parent_context": "", "context_available": "no"}]
+    items = runner.reviewer_input(rows)
+    keys = set(items[0].keys())
+    assert "source_evidence_id" not in keys
+    # 取值中也不出现来源编号
+    joined = " ".join(str(v) for v in items[0].values())
+    assert "NGA_0001_U01" not in joined
+
+
+def test_reviewer_input_has_no_retest_relation():
+    """reviewer 输入不含重测标记与重测组，代理看不出哪些项是重复项。"""
+    rows = [{"blinded_item_id": "CAL_R001", "public_evidence_text": "文本",
+             "parent_context": "", "context_available": "no",
+             "is_retest": "true", "retest_group_id": "RT_CAL_0007"}]
+    items = runner.reviewer_input(rows)
+    keys = set(items[0].keys())
+    assert "is_retest" not in keys
+    assert "retest_group_id" not in keys
+    joined = " ".join(str(v) for v in items[0].values())
+    assert "RT_CAL_0007" not in joined
+
+
+def test_validate_checks_all_enums():
+    base = runner.mock_review(_item("匹配连败很不公平"), "b", "r", "mock", "b-1.0", "sha")
+    for field, bad in [("boundary_status", "x"), ("confidence_band", "x"),
+                       ("abstain_reason", "x"), ("surface_topic", "x")]:
+        row = dict(base)
+        row[field] = bad
+        assert any(p.startswith(field) for p in runner.validate(row)), field
+
+
+def test_validate_evidence_phrase_must_be_in_text():
+    row = runner.mock_review(_item("这个英雄强度太低"), "b", "r", "mock", "b-1.0", "sha")
+    row["evidence_phrase"] = "根本不存在的短语"
+    assert "evidence_phrase:not_in_text" in runner.validate(row)
+
+
+def test_validate_uncertain_requires_abstain_reason():
+    row = runner.mock_review(_item("嗯"), "a", "r", "mock", "a-1.0", "sha")
+    row["mechanism_label"] = "uncertain"
+    row["abstain_reason"] = "none"
+    assert "abstain_reason:required_for_uncertain" in runner.validate(row)
+
+
+def test_parse_model_json_strips_code_fence():
+    content = '```json\n{"mechanism_label": "fairness_threat", "surface_topic": "matchmaking",\n' \
+              '"boundary_status": "complete", "confidence_band": "high", "abstain_reason": "none",\n' \
+              '"evidence_phrase": "", "decision_basis": "x"}\n```'
+    item = {"blinded_item_id": "CAL_0001", "public_evidence_text": "匹配不公平"}
+    row = runner.parse_model_json(content, item, "b", "run", "model", "b-1.0", "sha")
+    assert row is not None
+    assert row["mechanism_label"] == "fairness_threat"
+    assert row["blinded_item_id"] == "CAL_0001"
+
+
+def test_run_id_contains_all_parts():
+    rid = runner.make_run_id("openai_compatible", "gpt-x", "a", "a-1.0", 0.2, 123)
+    for part in ["openai_compatible", "gpt-x", "a-1.0", "t0.2", "s123"]:
+        assert part in rid, part
+
+
+def test_output_dir_safety_blocks_nonresume_append(tmp_path):
+    items = [{"blinded_item_id": "CAL_0001", "public_evidence_text": "匹配连败不公平",
+              "parent_context": "", "context_available": "no"}]
+    out = tmp_path / "reviews"
+    r1 = runner.run_one_reviewer(items, "a", out, "mock", None, None, True)
+    assert r1["parsed_ok"] == 1
+    # 第二次非 resume：输出已存在且非空 -> 返回错误，不再 append
+    r2 = runner.run_one_reviewer(items, "a", out, "mock", None, None, True)
+    assert r2.get("error") == "output_exists_nonempty"
+    # resume 模式：跳过已完成项，不报错
+    r3 = runner.run_one_reviewer(items, "a", out, "mock", None, None, True, resume=True)
+    assert r3["parsed_ok"] == 0
+    assert not r3.get("error")
+
+
+def test_parse_failure_goes_to_retry_queue(tmp_path):
+    # 构造一条会解析失败的输入（空 blinded/文本），确认写入 retry_queue 而非丢弃
+    items = [{"blinded_item_id": "CAL_X", "public_evidence_text": "有效文本用于生成",
+              "parent_context": "", "context_available": "no",
+              "_source_evidence_id": "NGA_9999_U01"}]
+    out = tmp_path / "reviews"
+    # 猴子补丁：让 mock_review 产出缺字段的行，验证进入 retry_queue
+    orig = runner.mock_review
+
+    def broken(item, rid, *a, **k):
+        row = orig(item, rid, *a, **k)
+        del row["confidence_band"]
+        return row
+
+    runner.mock_review = broken
+    try:
+        result = runner.run_one_reviewer(items, "a", out, "mock", None, None, True)
+    finally:
+        runner.mock_review = orig
+    assert result["parse_failed"] == 1
+    assert result["parsed_ok"] == 0
+    # retry 队列按 run_id 分开命名（retry_queue_<run_id>.jsonl）
+    assert list(out.glob("retry_queue_*.jsonl"))

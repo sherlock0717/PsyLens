@@ -11,10 +11,16 @@ __pycache__/
 
 # 环境与凭据（严禁提交）
 .env
+.env*
 *.env
 *cookie*.txt
 *cookies*.txt
 *.key
+local_secrets/
+
+# 自动校准私有映射与原始模型响应（严禁提交）
+artifacts/calibration/private_*
+artifacts/calibration/raw_model_responses/
 
 # 编辑器 / 系统
 .DS_Store

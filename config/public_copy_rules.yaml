@@ -1,0 +1,104 @@
+# PsyLens 公开文案检查规则（config/public_copy_rules.yaml）
+# 供 tools/lint_public_copy.py 读取。工具只做发现与提醒，不自动改写整段文本。
+# 规则分三档优先级：P0 必须改写，P1 建议改写，P2 关注项。
+
+# P0：模板化空话，出现即判 P0。这些词很少表达具体事实。
+banned_phrases:
+  - 赋能
+  - 打通
+  - 闭环赋能
+  - 多维度协同
+  - 深度洞察
+  - 全链路
+  - 全方位
+  - 系统性提升
+  - 精准捕捉
+  - 有效支撑
+  - 提供抓手
+  - 实现落地
+  - 形成范式
+  - 具备较强价值
+  - 从某种意义上说
+  - 值得注意的是
+  - 不难发现
+  - 显而易见
+  - 站得住
+  - 普通语言
+
+# P1：以项目不足为主线的负面表达，建议改写为能力、覆盖率或校准动作。
+discouraged_phrases:
+  - 质量风险
+  - 做不了
+  - 无法完成
+  - 无法使用
+  - 不可用
+  - 待复核不足
+  - 人工复核不足
+  - 真实抓取不可用
+  - 缺失字段
+  - 字段缺失
+
+# 术语：面向读者正文首次出现应有中文解释。同一句堆叠过多判 technical_term_overload。
+technical_terms:
+  - 构念
+  - 语义链路
+  - grounding
+  - adjudication
+  - label entropy
+  - 标签熵
+  - calibration
+  - proxy
+  - abstain
+  - schema
+  - pipeline
+  - deterministic
+  - 混淆矩阵
+  - Kappa
+  - Alpha
+
+# 页面（展示层）不应出现的内部工程状态与过程词。
+internal_process_terms:
+  - BLOCKED
+  - 发布阻断
+  - 返修
+  - phase1/
+  - phase2/
+  - Issue #
+  - 待复核状态
+  - reset --hard
+  - force push
+
+# 重复状态提醒：同一文件内这些词出现次数超过阈值即提示集中说明一次。
+repeated_status_terms:
+  - 未人工复核
+  - 尚未人工复核
+  - 待人工复核
+  - 人工复核
+  - 不确定率
+
+# 白名单：这些文件是规则或字段说明本身，必然引用受限词，豁免负面/模板/术语判定。
+allowed_files:
+  - docs/CONTENT_STYLE_GUIDE.md
+  - config/public_copy_rules.yaml
+  - tools/lint_public_copy.py
+  - docs/methodology/MECHANISM_CODEBOOK.md
+  - docs/methodology/SURFACE_TOPIC_CODEBOOK.md
+
+# 排除目录：不扫描。
+excluded_paths:
+  - data
+  - artifacts
+  - archive
+  - .git
+  - tests/fixtures
+  - docs/files
+  - node_modules
+
+# 句子长度阈值（汉字与字符数）。超过判 long_sentence（P2）。
+max_sentence_length: 60
+
+# 单句未解释术语上限。超过判 technical_term_overload（P2）。
+max_unexplained_terms_per_sentence: 3
+
+# 重复状态提醒阈值：同一文件超过该次数判 repeated_status（P1）。
+max_repeated_status_per_file: 3

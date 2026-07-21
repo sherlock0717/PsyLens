@@ -10,6 +10,8 @@ jobs:
   test:
     name: Public release checks (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    env:
+      PYTHONUTF8: "1"
     strategy:
       fail-fast: false
       matrix:
@@ -59,8 +61,42 @@ jobs:
       - name: Ruff - Tests
         run: ruff check tests
 
+      - name: Ruff - Full tree
+        run: ruff check demo/src demo/tests pipeline tools tests
+
+      - name: Public copy P1 gate
+        run: >-
+          python tools/lint_public_copy.py --root . --quality-gate P1
+          --format json --output "${{ runner.temp }}/public_copy_report.json"
+
       - name: Test suite
         run: python -m pytest demo/tests tests -q
+
+      - name: Calibration pipeline smoke (mock, temp dir)
+        shell: bash
+        run: |
+          python tools/calibration/build_calibration_sample.py --config config/calibration/calibration.yaml
+          python tools/calibration/run_agent_reviews.py --provider mock \
+            --input data/calibration/calibration_sample.csv --max-items 30 \
+            --output "$RUNNER_TEMP/cal_reviews"
+          python tools/calibration/build_agent_consensus.py \
+            --input-dir "$RUNNER_TEMP/cal_reviews" --output-dir "$RUNNER_TEMP/cal_consensus"
+          python tools/calibration/analyze_disagreements.py \
+            --input "$RUNNER_TEMP/cal_consensus/consensus_reference.csv" \
+            --output "$RUNNER_TEMP/cal_consensus/disagreement_report.md" \
+            --codebook-output "$RUNNER_TEMP/cal_consensus/codebook_revision_proposals.md"
+
+      - name: Verify calibration outputs and public safety
+        shell: bash
+        env:
+          RUN_REPORT: ${{ runner.temp }}/cal_reviews/run_report.json
+          CONS_REPORT: ${{ runner.temp }}/cal_consensus/calibration_report.json
+        run: |
+          python tools/calibration/verify_mock_outputs.py \
+            --run-report "$RUN_REPORT" \
+            --consensus-report "$CONS_REPORT" \
+            --public-sample data/calibration/calibration_sample.csv
+          git diff --quiet -- data/public docs/files
 
       - name: Normalize public data smoke
         run: python tools/normalize_public_dataset.py --source-dir data/public --output-dir artifacts/normalized_public

@@ -173,7 +173,7 @@ def test_readme_and_method_docs_are_consistent():
     assert "data/v2/" not in readme
     assert "作品集" not in readme
     assert not re.search(r"不是.{0,40}而是", readme)
-    assert readme.count("## 解释边界") == 1
+    assert readme.count("## 结果使用说明") == 1
     assert "486" in readme and "163" in readme
 
     scanned = [
