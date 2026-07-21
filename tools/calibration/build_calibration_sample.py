@@ -29,13 +29,14 @@ from pathlib import Path
 TOOLS_DIR = Path(__file__).resolve().parent
 REPO_ROOT = TOOLS_DIR.parent.parent
 
-PUBLIC_FIELDS = ["blinded_item_id", "source_evidence_id", "public_evidence_text",
-                 "parent_context", "context_available", "length_bucket",
-                 "sampling_stratum", "is_retest", "retest_group_id"]
+# 公开校准样本只保留盲测所需字段：代理凭这些字段判断，无法反推来源、平台或重测关系。
+PUBLIC_FIELDS = ["blinded_item_id", "public_evidence_text", "parent_context",
+                 "context_available", "length_bucket"]
+# 私有映射保存来源、平台、分层、重测关系与当前标签，仅写入 gitignore 的 artifacts 目录。
 PRIVATE_FIELDS = ["blinded_item_id", "source_evidence_id", "platform_source",
+                  "sampling_stratum", "is_retest", "retest_group_id",
                   "current_surface_topic", "current_mechanism_label", "label_source",
-                  "review_status", "analysis_inclusion_status", "sampling_stratum_full",
-                  "is_retest", "retest_group_id"]
+                  "review_status", "analysis_inclusion_status"]
 
 
 def _coerce(v):
@@ -157,35 +158,32 @@ def build(config_path):
         pc = parent_text.get(e.get("sample_id", ""), "")
         public_rows.append({
             "blinded_item_id": blinded,
-            "source_evidence_id": eid,
             "public_evidence_text": e.get("unit_text", ""),
             "parent_context": pc,
             "context_available": "yes" if pc else "no",
             "length_bucket": e["_len_bucket"],
-            "sampling_stratum": stratum_codes[e["_stratum_full"]],
-            "is_retest": "false",
-            "retest_group_id": "",
         })
         private_rows.append({
             "blinded_item_id": blinded,
             "source_evidence_id": eid,
             "platform_source": e.get("platform_source", ""),
+            "sampling_stratum": stratum_codes[e["_stratum_full"]],
+            "is_retest": "false",
+            "retest_group_id": "",
             "current_surface_topic": e.get("surface_topic", ""),
             "current_mechanism_label": e.get("mechanism_label", ""),
             "label_source": e.get("label_source", ""),
             "review_status": e.get("review_status", ""),
             "analysis_inclusion_status": e.get("analysis_inclusion_status", ""),
-            "sampling_stratum_full": e["_stratum_full"],
-            "is_retest": "false",
-            "retest_group_id": "",
         })
 
-    # 重测样本：从主样本中确定性抽 retest_size 条，重新盲测编号
+    # 重测样本：从主样本中确定性抽 retest_size 条，重新盲测编号。
+    # 重测关系（is_retest / retest_group_id）只写入私有映射，公开样本看不到。
     retest_rng = random.Random(seed + 1)
     retest_pick = selected_ids[:]
     retest_rng.shuffle(retest_pick)
     retest_pick = sorted(retest_pick[:retest_size])
-    src_to_blinded = {r["source_evidence_id"]: r["blinded_item_id"] for r in public_rows}
+    src_to_blinded = {p["source_evidence_id"]: p["blinded_item_id"] for p in private_rows}
     for j, eid in enumerate(retest_pick, start=1):
         e = by_id[eid]
         blinded = f"CAL_R{j:03d}"
@@ -193,30 +191,28 @@ def build(config_path):
         pc = parent_text.get(e.get("sample_id", ""), "")
         public_rows.append({
             "blinded_item_id": blinded,
-            "source_evidence_id": eid,
             "public_evidence_text": e.get("unit_text", ""),
             "parent_context": pc,
             "context_available": "yes" if pc else "no",
             "length_bucket": e["_len_bucket"],
+        })
+        private_rows.append({
+            "blinded_item_id": blinded,
+            "source_evidence_id": eid,
+            "platform_source": e.get("platform_source", ""),
             "sampling_stratum": stratum_codes[e["_stratum_full"]],
             "is_retest": "true",
             "retest_group_id": group,
-        })
-        private_rows.append({
-            "blinded_item_id": blinded, "source_evidence_id": eid,
-            "platform_source": e.get("platform_source", ""),
             "current_surface_topic": e.get("surface_topic", ""),
             "current_mechanism_label": e.get("mechanism_label", ""),
             "label_source": e.get("label_source", ""),
             "review_status": e.get("review_status", ""),
             "analysis_inclusion_status": e.get("analysis_inclusion_status", ""),
-            "sampling_stratum_full": e["_stratum_full"],
-            "is_retest": "true", "retest_group_id": group,
         })
-        # 主样本对应行标记同一重测组
-        for r in public_rows:
-            if r["source_evidence_id"] == eid and r["is_retest"] == "false":
-                r["retest_group_id"] = group
+        # 主样本对应的私有行标记同一重测组（仅私有可见）
+        for p in private_rows:
+            if p["source_evidence_id"] == eid and p["is_retest"] == "false":
+                p["retest_group_id"] = group
 
     # 覆盖率报告
     def coverage(field):

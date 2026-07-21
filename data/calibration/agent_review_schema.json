@@ -1,15 +1,14 @@
 {
-  "schema_version": "agent-review-1.0",
-  "description": "单个代理对一条盲测证据的复检结果结构。代理互不查看彼此结果，也不获得当前标签、编码来源、复核状态与平台名称。",
+  "schema_version": "agent-review-1.1",
+  "description": "单个代理对一条盲测证据的复检结果结构。输出以 blinded_item_id 为主键；代理互不查看彼此结果，也不获得来源编号、平台名称、当前标签、编码来源与重测关系。来源编号只在生成共识后经私有映射回填。",
   "type": "object",
   "required": [
     "run_id",
     "reviewer_id",
+    "blinded_item_id",
     "model_name",
     "prompt_version",
     "prompt_sha256",
-    "sample_id",
-    "evidence_id",
     "evidence_text",
     "boundary_status",
     "surface_topic",
@@ -23,11 +22,10 @@
   "properties": {
     "run_id": {"type": "string", "description": "本次运行标识"},
     "reviewer_id": {"type": "string", "enum": ["a", "b", "c"], "description": "代理编号"},
-    "model_name": {"type": "string", "description": "使用的模型名称或 mock 标识"},
+    "blinded_item_id": {"type": "string", "description": "盲测项主键；代理可见的唯一标识"},
+    "model_name": {"type": "string", "description": "使用的模型名称或本地固定示例标识"},
     "prompt_version": {"type": "string", "description": "Prompt 版本号"},
     "prompt_sha256": {"type": "string", "description": "Prompt 文本的 SHA-256，用于复现"},
-    "sample_id": {"type": "string", "description": "证据所属样本编号（由运行器回填，模型不可见）"},
-    "evidence_id": {"type": "string", "description": "证据编号（由运行器回填，模型不可见）"},
     "evidence_text": {"type": "string", "description": "证据文本（公开脱敏）"},
     "boundary_status": {
       "type": "string",
@@ -68,11 +66,14 @@
     "context_available"
   ],
   "reviewer_hidden_fields": [
+    "source_evidence_id",
     "current_surface_topic",
     "current_mechanism_label",
     "label_source",
     "review_status",
     "platform_source",
+    "is_retest",
+    "retest_group_id",
     "other_reviewer_results"
   ]
 }
