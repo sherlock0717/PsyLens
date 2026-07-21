@@ -113,8 +113,8 @@
         </article>
         <article class="finding-card">
           <span class="finding-value">486</span>
-          <h3>显式保留类别构成校准重点</h3>
-          <p>486 条证据的体验机制标注为 uncertain，主要涉及短文本、上下文依赖和多种解释并存，是标签边界校准的重点材料。</p>
+          <h3>暂时保留为不确定的证据是校准重点</h3>
+          <p>486 条证据的体验机制暂时保留为不确定。它们多为短文本、依赖上下文或存在多种解释，是标签边界校准的重点材料。</p>
         </article>
       </div>
 
@@ -173,8 +173,8 @@
     <section class="section" id="psychology">
       <div class="section-heading wide">
         <p class="section-label">心理学框架</p>
-        <h2>用有限构念描述体验方向，同时保留具体问题</h2>
-        <p>机制层参考自我决定理论、公平判断、组织信任、社群归属与规范安全研究。构念被转化为可观察的文本判据。</p>
+        <h2>用有限的体验类型描述体验方向，同时保留具体问题</h2>
+        <p>机制层参考自我决定理论、公平判断、组织信任、社群归属与规范安全研究。每种体验类型都转化为可观察的文本判据。</p>
       </div>
       <div class="construct-grid">
         <article><h3>胜任受挫</h3><p>玩家感到难以理解、有效行动或看到投入结果。常见于角色适配、难度、任务和团队协作。</p><span>competence frustration</span></article>
@@ -186,7 +186,7 @@
       </div>
       <div class="method-callout">
         <strong>分析原则</strong>
-        <p>先判断证据是否独立，再分别编码具体话题与体验机制。交叉组合用于提出可验证的产品问题，不能替代问卷、访谈、行为日志或实验。</p>
+        <p>先判断证据是否独立，再分别编码具体话题与体验机制。交叉组合用于提出可验证的产品问题，再由问卷、访谈、行为日志或实验继续检验。</p>
         <a data-doc="psychology" href="methodology/PSYCHOLOGY_FRAMEWORK.md">查看心理学框架与参考文献 →</a>
       </div>
     </section>
@@ -208,7 +208,7 @@
         <li><span>08</span><div><h3>结构与分布审计</h3><p>检查编号、父样本、文本回溯、重复、字段覆盖、证据密度与标签分布。</p></div><em>检查：回溯率 100%</em></li>
       </ol>
       <div class="method-callout split-callout">
-        <div><strong>两种不确定性需要分开</strong><p>486 条 `mechanism_label=uncertain` 表示机制无法明确归类；163 条 `included_flagged_uncertain` 表示证据纳入时需要提醒。两者不能合并成同一“不确定率”。</p></div>
+        <div><strong>两种不确定性需要分开</strong><p>486 条 `mechanism_label=uncertain` 表示机制暂时无法明确归类；163 条 `included_flagged_uncertain` 表示证据纳入时需要提醒。两者各自统计一次即可。</p></div>
         <a data-doc="data_cleaning" href="methodology/DATA_CLEANING_AND_CODING.md">查看字段与清洗细则 →</a>
       </div>
     </section>
@@ -234,21 +234,9 @@
       </div>
       <div class="evaluation-note">
         <h3>自动校准计划</h3>
-        <p>v1.1 通过三个独立代理复检分层样本，展示一致结果、争议标签和重复运行稳定性。代理结果作为自动校准参考，用于发现稳定结论和需要重点核对的标签边界。</p>
+        <p>v1.1 用三个独立代理复检分层样本。代理互不查看彼此结果，各自独立判断。</p>
+        <p>结果展示一致标签、争议标签和重复运行的稳定性。这些结果作为自动校准参考，帮助发现稳定结论和需要重点核对的标签边界，不作为人工金标准。</p>
         <a data-doc="evaluation_method" href="evaluation/EVALUATION_METHOD.md">查看评测框架 →</a>
-      </div>
-    </section>
-
-    <section class="section" id="calibration">
-      <div class="section-heading wide">
-        <p class="section-label">编码稳定性与争议分布</p>
-        <h2>用多代理复检观察标签的稳定与分歧</h2>
-        <p>这一板块展示自动校准结果，帮助读者看到哪些标签稳定、哪些标签存在分歧。</p>
-      </div>
-      <div class="method-callout">
-        <strong>自动校准参考集</strong>
-        <p>v1.1 将通过三个独立代理复检分层样本，展示一致结果、争议标签和重复运行稳定性。自动校准参考集由多个互不查看彼此结果的代理独立判断形成，用于发现稳定结论和重点核对项，作为参考而非人工金标准。</p>
-        <a data-doc="evaluation_method" href="evaluation/EVALUATION_METHOD.md">查看校准方法 →</a>
       </div>
     </section>
 
@@ -273,12 +261,12 @@
       <div class="scope-box">
         <p class="section-label">结果使用说明</p>
         <h2>当前比例用于探索与方法审计</h2>
-        <p id="scopeNote">编码分布用于审视方法表现和发现分析线索。三个平台采用等额抽样，且编码来源包含历史 AI 结果与离线规则提案，因此页面不把这些比例解释为总体玩家意见占比。</p>
+        <p id="scopeNote">编码分布用于审视方法表现、发现分析线索。这些比例反映当前样本的整体分布，适合用于探索。</p>
         <ul>
-          <li>等额样本设计不反映平台真实讨论规模；</li>
+          <li>等额样本用于跨平台对照，平台的真实讨论规模另行说明；</li>
           <li>证据数量同时受到原文长度和切分粒度影响；</li>
-          <li>240 条样本缺少日期，当前页面不进行时间趋势推断；</li>
-          <li>产品方向需要通过访谈、问卷、行为日志或实验继续检验。</li>
+          <li>日期字段覆盖 120 / 360 条样本，时间趋势在日期覆盖扩展后启用；</li>
+          <li>产品方向由访谈、问卷、行为日志或实验继续检验。</li>
         </ul>
       </div>
     </section>
@@ -288,7 +276,7 @@
         <div>
           <p class="section-label">离线 Demo</p>
           <h2>用少量脱敏反馈复现分析链路</h2>
-          <p>Demo 在本地生成证据、草稿洞察、产品假设与评测报告。默认使用确定性 mock provider，不联网，也不读取密钥。</p>
+          <p>Demo 在本地生成证据、草稿洞察、产品假设与评测报告。默认使用本地固定示例模式，不联网，也不读取密钥。</p>
           <ul class="check-list">
             <li>相同输入与配置生成一致产物</li>
             <li>输出写入独立 artifacts 目录</li>
@@ -311,7 +299,7 @@
       <div class="resource-grid" id="fileLinks">
         <a data-doc="project_brief" href="files/PsyLens_project_brief.docx"><strong>完整项目说明</strong><span>研究设计、结果、方法与参考文献</span></a>
         <a data-doc="public_data" href="https://github.com/sherlock0717/PsyLens/tree/main/data/public"><strong>公开数据</strong><span>脱敏样本、证据与字段说明</span></a>
-        <a data-doc="psychology" href="methodology/PSYCHOLOGY_FRAMEWORK.md"><strong>心理学框架</strong><span>构念、编码原则与参考文献</span></a>
+        <a data-doc="psychology" href="methodology/PSYCHOLOGY_FRAMEWORK.md"><strong>心理学框架</strong><span>体验类型、编码原则与参考文献</span></a>
         <a data-doc="data_cleaning" href="methodology/DATA_CLEANING_AND_CODING.md"><strong>数据处理方法</strong><span>清洗、切分、脱敏与质量检查</span></a>
         <a data-doc="evaluation_method" href="evaluation/EVALUATION_METHOD.md"><strong>评测方法</strong><span>结构、编码、支撑与复现</span></a>
         <a data-doc="readme" href="https://github.com/sherlock0717/PsyLens/blob/main/README.md"><strong>README</strong><span>仓库结构与快速运行</span></a>
